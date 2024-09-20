@@ -1,0 +1,240 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\User;
+use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+class UserResource extends Resource
+{
+    protected static ?string $model = User::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
+    protected static ?string $label =   'Tabel Pengguna';
+
+    protected static ?string $navigationLabel = 'Pengguna';
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $navigationGroup = 'Menu Utama';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->orderBy('created_at', 'DESC');
+    }
+
+
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                FileUpload::make('avatar_url')
+                    ->label('Gambar Profile')
+                    ->directory('avatars')
+                    ->image()
+                    ->imageEditor()
+                    ->columnSpanFull()
+                    ->maxSize(1024 * 4),
+
+
+                TextInput::make('name')
+                    ->label('Username')
+                    ->required()
+                    ->minLength(3)
+                    ->maxLength(199),
+
+                TextInput::make('email')
+                    ->label('Alamat Email')
+                    ->required()
+                    ->email()
+                    ->unique(User::class, 'email', fn($record) => $record)
+                    ->minLength(3)
+                    ->maxLength(199),
+
+                Select::make('role')
+                    ->label('Peran Pengguna')
+                    ->required()
+                    ->live()
+                    ->options(
+                        [
+                            'admin' => 'Admin',
+                            'kpa' => 'KPA',
+                            'penyedia_jasa' => 'Penyedia Jasa',
+                            'ppk' => 'PPK',
+                            'spm' => 'SPM',
+                            'bendahara' => 'Bendahara'
+                        ]
+                    ),
+                Fieldset::make('Katasandi')->schema([
+
+                    TextInput::make('password')
+                        ->label('Katasandi')
+                        ->required(function ($record) {
+                            return !$record;
+                        })
+                        ->password()
+                        ->revealable()
+                        ->minLength(3)
+                        ->maxLength(199),
+
+                    TextInput::make('confirm_password')
+                        ->label('Konfirmasi')
+                        ->password()
+                        ->revealable()
+                        ->same('password')
+
+                ]),
+                Section::make('Data Penyedia Jasa')
+                    ->disabled(function (Get $get) {
+                        return $get('role') !== 'penyedia_jasa';
+                    })
+                    ->visible(function (Get $get) {
+                        return $get('role') == 'penyedia_jasa';
+                    })->relationship('services_provider')
+                    ->schema([
+                        Fieldset::make('Identitas')->schema([
+                            TextInput::make('registration_number')
+                                ->label('Nomor Registrasi')
+                                ->minLength(3)
+                                ->maxLength(199)
+                                ->required(),
+
+                            TextInput::make('name')
+                                ->label('Nama Penyedia')
+                                ->minLength(3)
+                                ->maxLength(199)
+                                ->required(),
+
+                            TextInput::make('npwp')
+                                ->label('NPWP')
+                                ->length(16)
+                                ->maxLength(16)
+                                ->required(),
+
+
+                            TextInput::make('account_number')
+                                ->label('Nomor Rekening')
+                                ->length(16)
+                                ->maxLength(16)
+                                ->type('number')
+                                ->required(),
+
+                            TextInput::make('address')
+                                ->label('Alamat')
+                                ->length(16)
+                                ->maxLength(16)
+                                ->required(),
+
+                            Select::make('job_package')
+                                ->multiple()
+                                ->label('Paket Pekerjaan')
+                                ->options([
+                                    'tailwind' => 'Tailwind CSS',
+                                    'alpine' => 'Alpine.js',
+                                    'laravel' => 'Laravel',
+                                    'livewire' => 'Laravel Livewire',
+                                ])
+
+                        ]),
+
+
+                    ]),
+
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                ImageColumn::make('avatar_url')
+                    ->label('Profile')
+                    ->circular()
+                    ->defaultImageUrl('/images/default_avatar.png'),
+
+                TextColumn::make('name')
+                    ->label('Nama')
+                    ->searchable()
+                    ->formatStateUsing(fn(User $record): string => ucwords($record->name))
+                    ->sortable(),
+
+                TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('role')
+                    ->label('Peran')
+                    ->badge()
+                    ->searchable()
+                    ->toggleable()
+                    ->sortable(),
+            ])
+            ->filters([
+                SelectFilter::make('role')
+                    ->label('Admin')
+                    ->options([
+                        'admin' => 'admin',
+                        'kpa' => 'kpa',
+                        'penyedia_jasa' => 'penyedia_jasa',
+                        'ppk' => 'ppk',
+                        'spm' => 'spm',
+                        'bendahara' => 'bendahara'
+                    ]),
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        "active"  =>  "Aktif",
+                        "inactive" =>  "Tidak Aktif",
+                        "banned" =>  "Banned",
+                    ]),
+            ])
+            ->filtersFormWidth('md')
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
+        ];
+    }
+}

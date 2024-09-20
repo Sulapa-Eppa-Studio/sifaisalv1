@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('p_p_k_s', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('full_name');
             $table->string('nip')->unique();
             $table->string('position');
-            $table->string('working_unit');
+            $table->string('working_package');
             $table->timestamps();
         });
     }

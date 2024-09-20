@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('service_providers', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('full_name');
+            $table->string('registration_number');
+            $table->string('npwp');
+            $table->string('address');
+            $table->string('account_number');
+            $table->string('working_package');
             $table->timestamps();
         });
     }
