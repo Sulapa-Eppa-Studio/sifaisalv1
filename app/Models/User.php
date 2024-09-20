@@ -24,6 +24,7 @@ class User extends Authenticatable implements HasAvatar
         'email',
         'avatar_url',
         'password',
+        'role',
     ];
 
     /**
@@ -52,5 +53,13 @@ class User extends Authenticatable implements HasAvatar
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->avatar_url ? Storage::url("$this->avatar_url") : null;
+    }
+
+
+    // relationships
+
+    public function services_provider()
+    {
+        return $this->hasOne(\App\Models\ServiceProvider::class);
     }
 }
