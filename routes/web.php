@@ -7,7 +7,7 @@ Route::get('/', function () {
     // redirect to the admin panel
 
     if (Auth::guest()) {
-        return redirect('/login');
+        return redirect('/admin/login');
     }
 
     switch (Auth::user()->role) {
