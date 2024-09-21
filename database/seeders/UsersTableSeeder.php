@@ -5,9 +5,9 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use App\Models\User;
-use App\Models\Kpa;
-use App\Models\Ppk;
-use App\Models\Spm;
+use App\Models\KPA;
+use App\Models\PPK;
+use App\Models\SPM;
 use App\Models\ServiceProvider;
 use App\Models\Treasurer;
 
@@ -17,9 +17,9 @@ class UsersTableSeeder extends Seeder
     {
         // Define roles and their corresponding models
         $roles = [
-            'Kpa' => Kpa::class,
-            'Ppk' => Ppk::class,
-            'Spm' => Spm::class,
+            'KPA' => KPA::class,
+            'PPK' => PPK::class,
+            'SPM' => SPM::class,
             'ServiceProvider' => ServiceProvider::class,
             'Treasurer' => Treasurer::class,
         ];
@@ -39,7 +39,7 @@ class UsersTableSeeder extends Seeder
             // Generate 5 users for each role
             for ($i = 1; $i <= rand(1, 50); $i++) {
                 $name = "$role User $i";
-                $email = strtolower($role) . $i . '@example.com';
+                $email = strtolower($role) . $i . '@mail.io';
 
                 // Create the user
                 $user = User::create([
@@ -57,8 +57,8 @@ class UsersTableSeeder extends Seeder
                         $model::create([
                             'user_id'   => $user->id,
                             'full_name' => $name,
-                            'nip'       => 'NIP' . $i,
-                            'position'  => 'Position ' . $i,
+                            'nip'       => 'NIP' . str_pad($i, 8, '0', STR_PAD_LEFT),
+                            'position'  => 'Kepala ' . $i,
                         ]);
                         break;
 
@@ -66,9 +66,9 @@ class UsersTableSeeder extends Seeder
                         $model::create([
                             'user_id'          => $user->id,
                             'full_name'        => $name,
-                            'nip'              => 'NIP' . $i,
-                            'position'         => 'Position ' . $i,
-                            'working_package'  => 'Package ' . $i,
+                            'nip'              => str_pad($i, 8, '0', STR_PAD_LEFT),
+                            'position'         => 'Pejabat ' . $i,
+                            'working_package'  => 'Paket ' . $i,
                         ]);
                         break;
 
@@ -76,20 +76,20 @@ class UsersTableSeeder extends Seeder
                         $model::create([
                             'user_id'      => $user->id,
                             'full_name'    => $name,
-                            'nip'          => 'NIP' . $i,
-                            'position'     => 'Position ' . $i,
+                            'nip'          => str_pad($i, 8, '0', STR_PAD_LEFT),
+                            'position'     => 'Staff ' . $i,
                             'working_unit' => 'Unit ' . $i,
                         ]);
                         break;
 
                     case 'ServiceProvider':
                         $model::create([
-                            'user_id'            => $user->id,
-                            'full_name'          => $name,
-                            'registration_number' => 'RegNo' . $i,
-                            'npwp'               => 'NPWP' . $i,
-                            'address'            => 'Address ' . $i,
-                            'account_number'     => 'Account' . $i,
+                            'user_id'             => $user->id,
+                            'full_name'           => $name,
+                            'registration_number' => str_pad($i, 6, '0', STR_PAD_LEFT),
+                            'npwp'                => str_pad($i, 15, '0', STR_PAD_LEFT),
+                            'address'             => 'Alamat ' . $i,
+                            'account_number'      => 'Account' . str_pad($i, 10, '0', STR_PAD_LEFT),
                         ]);
                         break;
 
@@ -97,8 +97,8 @@ class UsersTableSeeder extends Seeder
                         $model::create([
                             'user_id'      => $user->id,
                             'full_name'    => $name,
-                            'nip'          => 'NIP' . $i,
-                            'position'     => 'Position ' . $i,
+                            'nip'          => str_pad($i, 8, '0', STR_PAD_LEFT),
+                            'position'     => 'Bendahara ' . $i,
                             'working_unit' => 'Unit ' . $i,
                         ]);
                         break;

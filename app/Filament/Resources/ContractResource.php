@@ -54,7 +54,7 @@ class ContractResource extends Resource
                 Forms\Components\TextInput::make('execution_time')
                     ->label('Durasi Pekerjaan')
                     ->required()
-                    ->numeric(),
+                    ->numeric()->suffix(' Hari'),
 
                 Forms\Components\TextInput::make('payment_stages')
                     ->label('Tahapan Pembayaran')
@@ -64,7 +64,7 @@ class ContractResource extends Resource
 
                 Forms\Components\Select::make('work_package')
                     ->label('Paket Pekerjaan')
-                    ->options(WorkPackage::get()->pluck('name', 'name')->toArray())
+                    ->options(WorkPackage::pluck('name', 'name')->toArray())
                     ->required(),
 
                 Forms\Components\Toggle::make('advance_payment')
@@ -73,11 +73,10 @@ class ContractResource extends Resource
 
                 Fieldset::make('Petugas PPK')
                     ->schema([
-
                         Forms\Components\Select::make('ppk_officer')
                             ->label('Pejabat PPK')
                             ->required()
-                            ->options(PPK::get()->pluck('full_name', 'id')->toArray()),
+                            ->options(PPK::pluck('full_name', 'id')->toArray()),
 
                         Forms\Components\TextInput::make('working_unit')
                             ->label('Unit Kerja')
@@ -91,20 +90,38 @@ class ContractResource extends Resource
                             ->label('Penyedia Jasa')
                             ->required()
                             ->columnSpanFull()
-                            ->options(ServiceProvider::get()->pluck('full_name', 'id')->toArray()),
+                            ->options(ServiceProvider::pluck('full_name', 'id')->toArray())
+                            ->reactive()
+                            ->afterStateUpdated(function (callable $set, $state) {
+                                if ($state) {
+                                    $serviceProvider = ServiceProvider::find($state);
+                                    if ($serviceProvider) {
+                                        $set('npwp', $serviceProvider->npwp);
+                                        $set('bank_account_number', $serviceProvider->account_number);
+                                    } else {
+                                        $set('npwp', null);
+                                        $set('bank_account_number', null);
+                                    }
+                                } else {
+                                    $set('npwp', null);
+                                    $set('bank_account_number', null);
+                                }
+                            }),
 
                         Forms\Components\TextInput::make('npwp')
                             ->label('NPWP')
                             ->required()
-                            ->length(16),
+                            ->length(16)
+                            ->readOnly()
+                            ->dehydrated(),
 
                         Forms\Components\TextInput::make('bank_account_number')
                             ->label('Nomor Rekening Bank')
                             ->required()
-                            ->maxLength(20),
+                            ->maxLength(20)
+                            ->readOnly()
+                            ->dehydrated(),
                     ]),
-
-
             ]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\AccountWidget;
 use App\Filament\Widgets\AdminContractDashboard;
 use App\Filament\Widgets\AdminDashboardCharts;
 use Filament\Facades\Filament;
@@ -14,6 +15,7 @@ class Dashboard extends Page
     protected static string $routePath = '/';
 
     protected static ?int $navigationSort = -2;
+
 
     /**
      * @var view-string
@@ -53,6 +55,7 @@ class Dashboard extends Page
     public function getWidgets(): array
     {
         return [
+            AccountWidget::class,
             AdminDashboardCharts::class, // Widget pengguna yang sebelumnya sudah ada
             AdminContractDashboard::class, // Widget kontrak yang baru ditambahkan
         ];
