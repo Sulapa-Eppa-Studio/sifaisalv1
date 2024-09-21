@@ -89,7 +89,7 @@ class UsersTableSeeder extends Seeder
                             'registration_number' => str_pad($i, 6, '0', STR_PAD_LEFT),
                             'npwp'                => str_pad($i, 15, '0', STR_PAD_LEFT),
                             'address'             => 'Alamat ' . $i,
-                            'account_number'      => 'Account' . str_pad($i, 10, '0', STR_PAD_LEFT),
+                            'account_number'      =>  str_pad($i, 10, '0', STR_PAD_LEFT),
                         ]);
                         break;
 
