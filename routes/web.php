@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     // redirect to the admin panel
+
+    if (Auth::guest()) {
+        return redirect('/login');
+    }
+
     switch (Auth::user()->role) {
         case 'admin':
             return redirect('/admin');
