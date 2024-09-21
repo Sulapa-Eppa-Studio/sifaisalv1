@@ -87,7 +87,7 @@ class ContractResource extends Resource
 
                 Fieldset::make('Penyedia Jasa')
                     ->schema([
-                        Forms\Components\Select::make('service_provider')
+                        Forms\Components\Select::make('service_provider_id')
                             ->label('Penyedia Jasa')
                             ->required()
                             ->columnSpanFull()
