@@ -17,9 +17,9 @@ class UsersTableSeeder extends Seeder
     {
         // Define roles and their corresponding models
         $roles = [
-            'KPA' => Kpa::class,
-            'PPK' => Ppk::class,
-            'SPM' => Spm::class,
+            'Kpa' => Kpa::class,
+            'Ppk' => Ppk::class,
+            'Spm' => Spm::class,
             'ServiceProvider' => ServiceProvider::class,
             'Treasurer' => Treasurer::class,
         ];
