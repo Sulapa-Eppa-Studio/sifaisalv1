@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use App\Models\WorkPackage;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
@@ -42,8 +43,6 @@ class UserResource extends Resource
         return parent::getEloquentQuery()->orderBy('created_at', 'DESC');
     }
 
-
-
     public static function form(Form $form): Form
     {
         return $form
@@ -74,6 +73,7 @@ class UserResource extends Resource
                 Select::make('role')
                     ->label('Peran Pengguna')
                     ->required()
+                    ->columnSpanFull()
                     ->live()
                     ->options(
                         [
@@ -85,6 +85,7 @@ class UserResource extends Resource
                             'bendahara' => 'Bendahara'
                         ]
                     ),
+
                 Fieldset::make('Katasandi')->schema([
 
                     TextInput::make('password')
@@ -104,6 +105,135 @@ class UserResource extends Resource
                         ->same('password')
 
                 ]),
+
+
+                Section::make('Data KPA')
+                    ->disabled(function (Get $get) {
+                        return $get('role') !== 'kpa';
+                    })
+                    ->visible(function (Get $get) {
+                        return $get('role') == 'kpa';
+                    })->relationship('kpa')
+                    ->columns(2)
+                    ->schema([
+
+                        TextInput::make('full_name')
+                            ->label('Nama Lenkap')
+                            ->minLength(3)
+                            ->columnSpanFull()
+                            ->maxLength(199)
+                            ->required(),
+
+                        TextInput::make('nip')
+                            ->label('NIP')
+                            ->maxLength(16)
+                            ->required(),
+
+                        TextInput::make('position')
+                            ->label('Jabatan')
+                            ->maxLength(16)
+                            ->required(),
+                    ]),
+
+
+                Section::make('Data SPM')
+                    ->disabled(function (Get $get) {
+                        return $get('role') !== 'spm';
+                    })
+                    ->visible(function (Get $get) {
+                        return $get('role') == 'spm';
+                    })->relationship('spm')
+                    ->columns(2)
+                    ->schema([
+
+                        TextInput::make('full_name')
+                            ->label('Nama Penyedia')
+                            ->minLength(3)
+                            ->maxLength(199)
+                            ->required(),
+
+                        TextInput::make('nip')
+                            ->label('NIP')
+                            ->maxLength(16)
+                            ->required(),
+
+                        TextInput::make('position')
+                            ->label('Jabatan')
+                            ->maxLength(16)
+                            ->required(),
+
+                        TextInput::make('working_unit')
+                            ->label('Unit Kerja')
+                            ->string()
+                            ->required()
+                    ]),
+
+
+                Section::make('Data PPK')
+                    ->disabled(function (Get $get) {
+                        return $get('role') !== 'ppk';
+                    })
+                    ->visible(function (Get $get) {
+                        return $get('role') == 'ppk';
+                    })->relationship('ppk')
+                    ->columns(2)
+                    ->schema([
+
+                        TextInput::make('full_name')
+                            ->label('Nama Lenkap')
+                            ->minLength(3)
+                            ->maxLength(199)
+                            ->required(),
+
+                        TextInput::make('nip')
+                            ->label('NIP')
+                            ->maxLength(16)
+                            ->required(),
+
+                        TextInput::make('position')
+                            ->label('Jabatan')
+                            ->maxLength(16)
+                            ->required(),
+
+                        Select::make('working_package')
+                            ->label('Paket Pekerjaan')
+                            ->options(WorkPackage::all()->pluck('name', 'name')->toArray()),
+                    ]),
+
+
+
+                Section::make('Data Bendahara')
+                    ->disabled(function (Get $get) {
+                        return $get('role') !== 'treasurer';
+                    })
+                    ->visible(function (Get $get) {
+                        return $get('role') == 'treasurer';
+                    })->relationship('treasurer')
+                    ->columns(2)
+                    ->schema([
+
+                        TextInput::make('full_name')
+                            ->label('Nama Lenkap')
+                            ->minLength(3)
+                            ->maxLength(199)
+                            ->required(),
+
+                        TextInput::make('nip')
+                            ->label('NIP')
+                            ->maxLength(16)
+                            ->required(),
+
+                        TextInput::make('position')
+                            ->label('Jabatan')
+                            ->maxLength(16)
+                            ->required(),
+
+                        TextInput::make('working_unit')
+                            ->label('Unit Pekerjaan')
+                            ->required()
+                            ->maxLength(199),
+                    ]),
+
                 Section::make('Data Penyedia Jasa')
                     ->disabled(function (Get $get) {
                         return $get('role') !== 'penyedia_jasa';
@@ -119,7 +249,7 @@ class UserResource extends Resource
                                 ->maxLength(199)
                                 ->required(),
 
-                            TextInput::make('name')
+                            TextInput::make('full_name')
                                 ->label('Nama Penyedia')
                                 ->minLength(3)
                                 ->maxLength(199)
@@ -131,17 +261,14 @@ class UserResource extends Resource
                                 ->maxLength(16)
                                 ->required(),
 
-
                             TextInput::make('account_number')
                                 ->label('Nomor Rekening')
-                                ->length(16)
                                 ->maxLength(16)
                                 ->type('number')
                                 ->required(),
 
                             TextInput::make('address')
                                 ->label('Alamat')
-                                ->length(16)
                                 ->maxLength(16)
                                 ->required(),
 
@@ -156,8 +283,6 @@ class UserResource extends Resource
                                 ])
 
                         ]),
-
-
                     ]),
 
             ]);
@@ -189,6 +314,7 @@ class UserResource extends Resource
                     ->searchable()
                     ->toggleable()
                     ->sortable(),
+
             ])
             ->filters([
                 SelectFilter::make('role')
