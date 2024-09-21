@@ -62,4 +62,24 @@ class User extends Authenticatable implements HasAvatar
     {
         return $this->hasOne(\App\Models\ServiceProvider::class);
     }
+
+    public function kpa()
+    {
+        return $this->hasOne(\App\Models\KPA::class);
+    }
+
+    public function ppk()
+    {
+        return $this->hasOne(\App\Models\PPK::class);
+    }
+
+    public function spm()
+    {
+        return $this->hasOne(SPM::class);
+    }
+
+    public function treasurer()
+    {
+        return $this->hasOne(Treasurer::class);
+    }
 }

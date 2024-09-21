@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('npwp');
             $table->string('address');
             $table->string('account_number');
-            $table->string('working_package');
             $table->timestamps();
         });
     }

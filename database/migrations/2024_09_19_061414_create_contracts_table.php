@@ -20,12 +20,16 @@ return new class extends Migration
             $table->integer('execution_time'); // Masa Pelaksanaan (Hari Kalender)
             $table->boolean('advance_payment')->default(false); // Pemberian Uang Muka (Ya/Tidak)
             $table->integer('payment_stages'); // Jumlah Tahap Pembayaran
-            $table->string('service_provider'); // Penyedia Jasa
             $table->string('npwp', 20); // NPWP
             $table->string('bank_account_number', 20); // No. Rekening
             $table->string('ppk_officer'); // Pejabat Pembuat Komitmen
             $table->string('working_unit'); // Satuan Kerja
+            $table->foreignId('service_provider_id'); // Penyedia Jasa
+            $table->foreignId('admin_id');
             $table->timestamps();
+
+            $table->foreign('service_provider_id')->references('id')->on('service_providers');
+            $table->foreign('admin_id')->references('id')->on('users');
         });
     }
 
