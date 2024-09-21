@@ -19,6 +19,8 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
+use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
+use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -59,6 +61,11 @@ class AdminPanelProvider extends PanelProvider
 
                 \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),
 
+                FilamentBackgroundsPlugin::make()->imageProvider(
+                    MyImages::make()
+                        ->directory('bg-images')
+                ),
+
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')
                     ->setTitle('Profil Saya')
@@ -71,6 +78,7 @@ class AdminPanelProvider extends PanelProvider
                     ->shouldShowSanctumTokens()
                     ->shouldShowBrowserSessionsForm()
                     ->shouldShowAvatarForm()
+
             ])
             ->authMiddleware([
                 Authenticate::class,
