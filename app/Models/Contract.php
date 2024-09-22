@@ -11,7 +11,10 @@ class Contract extends Model
 
     public $guarded = [];
 
-    public function admin() {
+    public function admin() {}
 
+    public function termintSppPpks()
+    {
+        return $this->hasMany(TermintSppPpk::class);
     }
 }

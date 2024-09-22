@@ -82,4 +82,9 @@ class User extends Authenticatable implements HasAvatar
     {
         return $this->hasOne(Treasurer::class);
     }
+
+    public function termintSppPpks()
+    {
+        return $this->hasMany(TermintSppPpk::class);
+    }
 }
