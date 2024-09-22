@@ -30,6 +30,7 @@ class PpkPanelProvider extends PanelProvider
         return $panel
             ->id('ppk')
             ->path('ppk')
+            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -78,6 +79,7 @@ class PpkPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
             ])
             ->spa()
             ->authMiddleware([

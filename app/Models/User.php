@@ -4,7 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -54,6 +56,49 @@ class User extends Authenticatable implements HasAvatar
     {
         return $this->avatar_url ? Storage::url("$this->avatar_url") : null;
     }
+
+    // /**
+    //  * Implementasi metode dari FilamentUser.
+    //  *
+    //  * @param \Filament\Panel $panel
+    //  * @return bool
+    //  */
+    // public function canAccessPanel(Panel $panel): bool
+    // {
+    //     // if ($panel->getId() === 'admin') {
+    //     //     // Hanya pengguna dengan email @yourdomain.com dan sudah verifikasi email yang bisa mengakses panel admin
+    //     //     return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
+    //     // }
+
+    //     if ($panel->getId() === 'ppk') {
+    //         // Hanya pengguna dengan peran 'user' yang bisa mengakses panel user
+    //         return $this->hasRole('ppk');
+    //     }
+
+    //     if ($panel->getId() === 'kpa') {
+    //         // Hanya pengguna dengan peran 'user' yang bisa mengakses panel user
+    //         return $this->hasRole('kpa');
+    //     }
+
+    //     if ($panel->getId() === 'treasurer') {
+    //         // Hanya pengguna dengan peran 'user' yang bisa mengakses panel user
+    //         return $this->hasRole('treasurer');
+    //     }
+
+    //     if ($panel->getId() === 'spm') {
+    //         // Hanya pengguna dengan peran 'user' yang bisa mengakses panel user
+    //         return $this->hasRole('spm');
+    //     }
+
+    //     if ($panel->getId() === 'service-provider') {
+    //         // Hanya pengguna dengan peran 'user' yang bisa mengakses panel user
+    //         return $this->hasRole('service_provider');
+    //     }
+
+    //     // Untuk panel lain, izinkan akses berdasarkan kondisi yang diinginkan
+    //     return false;
+    // }
+
 
 
     // relationships

@@ -21,6 +21,10 @@ class TermintSppPpkResource extends Resource
 
     protected static ?string $navigationLabel = 'Termint SPP PPK';
 
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationGroup = 'Menu Utama';
+
     public static function form(Form $form): Form
     {
         return $form
