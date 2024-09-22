@@ -86,4 +86,21 @@ return [
 
     'livewire_loading_delay' => 'default',
 
+    'redirects' => [
+
+        /*
+        |--------------------------------------------------------------------------
+        | After Authentication Redirect
+        |--------------------------------------------------------------------------
+        |
+        | Tentukan jalur yang akan diarahkan setelah pengguna berhasil login.
+        | Secara default, pengguna akan diarahkan ke dashboard Filament.
+        | Anda dapat mengganti jalur ini sesuai kebutuhan aplikasi Anda.
+        |
+        */
+
+        'after_auth' => '/dashboard', // Ubah path ini sesuai kebutuhan
+
+    ],
+
 ];
