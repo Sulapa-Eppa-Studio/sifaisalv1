@@ -25,6 +25,7 @@ class PenyediaJasaPanelProvider extends PanelProvider
         return $panel
             ->id('penyediaJasa')
             ->path('penyedia-jasa')
+            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])

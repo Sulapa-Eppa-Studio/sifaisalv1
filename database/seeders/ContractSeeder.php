@@ -52,11 +52,11 @@ class ContractSeeder extends Seeder
             $admin = $admins->random();
 
             // Generate data lainnya
-            $executionTime = rand(30, 180); // Masa pelaksanaan antara 30 - 180 hari
+            $executionTime  = rand(30, 180); // Masa pelaksanaan antara 30 - 180 hari
             $advancePayment = rand(0, 1); // 0 atau 1
-            $paymentStages = rand(1, 5); // Tahapan pembayaran antara 1 - 5
-            $contractDate = Carbon::now()->subDays(rand(0, 365)); // Tanggal kontrak dalam 1 tahun terakhir
-            $ppkOfficer = $admin->name;
+            $paymentStages  = rand(1, 5); // Tahapan pembayaran antara 1 - 5
+            $contractDate   = Carbon::now()->subDays(rand(0, 365)); // Tanggal kontrak dalam 1 tahun terakhir
+
             $workingUnit = 'SNVT Pelaksanaan Jaringan Pemanfaatan Air Pompengan Jeneberang';
 
             // Buat kontrak
@@ -68,9 +68,9 @@ class ContractSeeder extends Seeder
                 'execution_time' => $executionTime,
                 'advance_payment' => $advancePayment,
                 'payment_stages' => $paymentStages,
+                'payment_value' =>  rand(10000000, 99999999),
                 'npwp' => $serviceProvider->npwp,
                 'bank_account_number' => $serviceProvider->account_number,
-                'ppk_officer' => $ppkOfficer,
                 'working_unit' => $workingUnit,
                 'service_provider_id' => $serviceProvider->id,
                 'admin_id' => $admin->id,
