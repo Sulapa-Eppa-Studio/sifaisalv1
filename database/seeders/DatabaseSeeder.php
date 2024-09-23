@@ -20,5 +20,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@mail.io',
             'role' => 'admin',
         ]);
+
+        $this->call(UsersTableSeeder::class);
+        $this->call(WorkPackagesSeeder::class);
+        $this->call(ContractSeeder::class);
     }
 }

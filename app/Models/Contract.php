@@ -17,4 +17,9 @@ class Contract extends Model
     {
         return $this->belongsTo(ServiceProvider::class);
     }
+  
+    public function termintSppPpks()
+    {
+        return $this->hasMany(TermintSppPpk::class);
+    }
 }

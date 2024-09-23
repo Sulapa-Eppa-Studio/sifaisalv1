@@ -89,7 +89,7 @@ class ContractResource extends Resource
 
                 Forms\Components\Select::make('work_package')
                     ->label('Paket Pekerjaan')
-                    ->options(WorkPackage::get()->pluck('name', 'name')->toArray())
+                    ->options(WorkPackage::pluck('name', 'name')->toArray())
                     ->required(),
 
                 Forms\Components\TextInput::make('working_unit')
@@ -124,29 +124,38 @@ class ContractResource extends Resource
                             ->required()
                             ->live()
                             ->columnSpanFull()
-                            ->afterStateUpdated(function (Get $get, Set $set, $state) {
-
-                                $service =  ServiceProvider::findOrFail($state);
-
-                                $set('npwp', $service->npwp);
-                                $set('bank_account_number', $service->account_number);
-                            })
-                            ->options(ServiceProvider::get()->pluck('full_name', 'id')->toArray()),
+                            ->options(ServiceProvider::pluck('full_name', 'id')->toArray())
+                            ->reactive()
+                            ->afterStateUpdated(function (callable $set, $state) {
+                                if ($state) {
+                                    $serviceProvider = ServiceProvider::find($state);
+                                    if ($serviceProvider) {
+                                        $set('npwp', $serviceProvider->npwp);
+                                        $set('bank_account_number', $serviceProvider->account_number);
+                                    } else {
+                                        $set('npwp', null);
+                                        $set('bank_account_number', null);
+                                    }
+                                } else {
+                                    $set('npwp', null);
+                                    $set('bank_account_number', null);
+                                }
+                            }),
 
                         Forms\Components\TextInput::make('npwp')
                             ->label('NPWP')
                             ->required()
+                            ->length(16)
                             ->readOnly()
-                            ->length(16),
+                            ->dehydrated(),
 
                         Forms\Components\TextInput::make('bank_account_number')
                             ->label('Nomor Rekening Bank')
                             ->required()
+                            ->maxLength(20)
                             ->readOnly()
-                            ->maxLength(20),
+                            ->dehydrated(),
                     ]),
-
-
             ]);
     }
 
