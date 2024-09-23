@@ -8,10 +8,14 @@ use App\Models\Contract;
 use App\Models\PPK;
 use App\Models\ServiceProvider;
 use App\Models\WorkPackage;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,6 +34,24 @@ class ContractResource extends Resource
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationGroup = 'Menu Utama';
+
+    public static function canAccess(): bool
+    {
+        return true;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user   =   get_auth_user();
+
+        $query = static::getModel()::query();
+
+        if ($user->role == 'penyedia_jasa') {
+            $query  =   static::getModel()::query()->where('service_provider_id', $user->services_provider->id);
+        }
+
+        return $query->orderBy('created_at', 'DESC');
+    }
 
     public static function form(Form $form): Form
     {
@@ -54,12 +76,15 @@ class ContractResource extends Resource
                 Forms\Components\TextInput::make('execution_time')
                     ->label('Durasi Pekerjaan')
                     ->required()
-                    ->numeric()->suffix(' Hari'),
+                    ->suffix('Hari')
+                    ->numeric(),
 
                 Forms\Components\TextInput::make('payment_stages')
                     ->label('Tahapan Pembayaran')
-                    ->required()
-                    ->prefix('Tahap ')
+                    ->disabled(function (Get $get) {
+                        return $get('advance_payment') == true;
+                    })
+                    ->suffix('Tahap')
                     ->numeric(),
 
                 Forms\Components\Select::make('work_package')
@@ -67,21 +92,29 @@ class ContractResource extends Resource
                     ->options(WorkPackage::pluck('name', 'name')->toArray())
                     ->required(),
 
-                Forms\Components\Toggle::make('advance_payment')
-                    ->label('Pembayaran Uang Muka')
-                    ->required(),
+                Forms\Components\TextInput::make('working_unit')
+                    ->label('Unit Kerja')
+                    ->required()
+                    ->columnSpanFull()
+                    ->maxLength(255),
 
-                Fieldset::make('Petugas PPK')
+                Fieldset::make('Informasi Pembayaran')
                     ->schema([
-                        Forms\Components\Select::make('ppk_officer')
-                            ->label('Pejabat PPK')
-                            ->required()
-                            ->options(PPK::pluck('full_name', 'id')->toArray()),
 
-                        Forms\Components\TextInput::make('working_unit')
-                            ->label('Unit Kerja')
+                        Forms\Components\TextInput::make('payment_value')
+                            ->label('Nilai Pembayaran')
                             ->required()
-                            ->maxLength(255),
+                            ->prefix('Rp. ')
+                            ->inlineLabel()
+                            ->stripCharacters(',')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->numeric(),
+
+                        Forms\Components\Toggle::make('advance_payment')
+                            ->label('Pembayaran Uang Muka')
+                            ->live()
+                            ->required(),
+
                     ]),
 
                 Fieldset::make('Penyedia Jasa')
@@ -89,6 +122,7 @@ class ContractResource extends Resource
                         Forms\Components\Select::make('service_provider_id')
                             ->label('Penyedia Jasa')
                             ->required()
+                            ->live()
                             ->columnSpanFull()
                             ->options(ServiceProvider::pluck('full_name', 'id')->toArray())
                             ->reactive()
@@ -207,7 +241,9 @@ class ContractResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

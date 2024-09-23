@@ -15,7 +15,7 @@ Route::get('/', function () {
             return redirect('/admin');
             break;
         case 'penyedia_jasa':
-            return redirect('/penyediaJasa');
+            return redirect('/penyedia-jasa');
             break;
         case 'ppk':
             return redirect('/ppk');

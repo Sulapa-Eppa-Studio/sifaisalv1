@@ -27,6 +27,11 @@ class WorkPackageResource extends Resource
 
     protected static ?string $navigationGroup = 'Menu Utama';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role == 'admin';
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->orderBy('created_at', 'DESC');

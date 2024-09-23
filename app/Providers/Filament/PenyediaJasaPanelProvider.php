@@ -24,7 +24,7 @@ class PenyediaJasaPanelProvider extends PanelProvider
     {
         return $panel
             ->id('penyediaJasa')
-            ->path('penyediaJasa')
+            ->path('penyedia-jasa')
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -36,7 +36,6 @@ class PenyediaJasaPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/PenyediaJasa/Widgets'), for: 'App\\Filament\\PenyediaJasa\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

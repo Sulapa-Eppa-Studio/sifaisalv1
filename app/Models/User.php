@@ -6,7 +6,7 @@ namespace App\Models;
 
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
-use Filament\Panel;
+use Filament\Tables\Columns\Layout\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -100,6 +100,11 @@ class User extends Authenticatable implements HasAvatar
     // }
 
 
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
 
     // relationships
 

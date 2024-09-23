@@ -13,6 +13,11 @@ class Contract extends Model
 
     public function admin() {}
 
+    public function service_provider()
+    {
+        return $this->belongsTo(ServiceProvider::class);
+    }
+  
     public function termintSppPpks()
     {
         return $this->hasMany(TermintSppPpk::class);
