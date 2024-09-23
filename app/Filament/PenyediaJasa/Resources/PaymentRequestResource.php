@@ -70,11 +70,14 @@ class PaymentRequestResource extends Resource
                 Fieldset::make('Dokumen Pendukung Untuk Pembayaran Uang Muka')
                     ->label('Dokumen')
                     ->hidden(function (Get $get) {
+
                         $number = $get('contract_number');
+
                         $ctx = Contract::find($number);
+
                         return $ctx?->advance_payment == true ? false : true;
                     })
-                    ->hiddenOn('view')
+                    ->visibleOn(['create', 'edit'])
                     ->columns(3)
                     ->schema([
 
@@ -121,7 +124,7 @@ class PaymentRequestResource extends Resource
                     ]),
 
 
-                Section::make('Dokumen Pendukung')
+                Fieldset::make('Dokumen Pendukung')
                     ->label('Dokumen')
                     ->columns(3)
                     ->hidden(function (Get $get) {
@@ -130,8 +133,10 @@ class PaymentRequestResource extends Resource
                         if (!$number) return true;
 
                         $ctx = Contract::find($number);
+
                         return $ctx?->advance_payment == true ? true : false;
                     })
+                    ->visibleOn(['create', 'edit'])
                     ->schema([
 
                         FileUpload::make('Surat Permohonan Pembayaran Tahap')
@@ -214,8 +219,7 @@ class PaymentRequestResource extends Resource
                             ->required()
                             ->minSize(12)
                             ->maxSize(1024 * 12),
-                    ])
-                    ->hiddenOn('view'),
+                    ]),
 
 
                 Fieldset::make('Data Kontrak')
