@@ -11,7 +11,10 @@ class Contract extends Model
 
     public $guarded = [];
 
-    public function admin() {
+    public function admin() {}
 
+    public function service_provider()
+    {
+        return $this->belongsTo(ServiceProvider::class);
     }
 }
