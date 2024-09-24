@@ -3,6 +3,11 @@
 namespace App\Filament\Ppk\Pages;
 
 use App\Filament\Ppk\Widgets\AccountWidget;
+use App\Filament\Ppk\Widgets\AveragePaymentValueChart;
+use App\Filament\Ppk\Widgets\PaymentRequestsPerMonthChart;
+use App\Filament\Ppk\Widgets\PaymentStaticsCard;
+use App\Filament\Ppk\Widgets\PaymentVerificationStatusChart;
+use App\Filament\Ppk\Widgets\TermintStatusTrendChart;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Support\Facades\FilamentIcon;
@@ -53,6 +58,9 @@ class Dashboard extends Page
     {
         return [
             AccountWidget::class,
+            PaymentStaticsCard::class,
+            PaymentRequestsPerMonthChart::class,
+            PaymentVerificationStatusChart::class,
         ];
     }
 
