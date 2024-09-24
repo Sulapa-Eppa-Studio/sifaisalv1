@@ -145,14 +145,12 @@ class ContractResource extends Resource
                         Forms\Components\TextInput::make('npwp')
                             ->label('NPWP')
                             ->required()
-                            ->length(16)
                             ->readOnly()
                             ->dehydrated(),
 
                         Forms\Components\TextInput::make('bank_account_number')
                             ->label('Nomor Rekening Bank')
                             ->required()
-                            ->maxLength(20)
                             ->readOnly()
                             ->dehydrated(),
                     ]),
