@@ -28,7 +28,7 @@ Route::get('/', function () {
             return redirect('/spm');
             break;
         case 'service_provider':
-            return redirect('/serviceProvider');
+            return redirect('/penyedia-jasa');
             break;
         case 'treasurer':
             return redirect('/treasurer');
