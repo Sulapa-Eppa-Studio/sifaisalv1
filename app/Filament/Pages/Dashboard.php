@@ -16,7 +16,6 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -2;
 
-
     /**
      * @var view-string
      */

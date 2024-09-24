@@ -1,53 +1,52 @@
 <?php
 
-namespace App\Filament\PenyediaJasa\Resources;
+namespace App\Filament\Ppk\Resources;
 
-use App\Filament\PenyediaJasa\Resources\PaymentRequestResource\Pages;
+use App\Filament\Ppk\Resources\PaymentRequestResource\Pages;
+use App\Filament\Ppk\Resources\PaymentRequestResource\RelationManagers;
 use App\Models\Contract;
+use App\Models\Document;
 use App\Models\PaymentRequest;
 use Filament\Facades\Filament;
+use Filament\Forms;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
+use Joaopaulolndev\FilamentPdfViewer\Forms\Components\PdfViewerField;
+use Symfony\Component\Yaml\Inline;
 
 class PaymentRequestResource extends Resource
 {
     protected static ?string $model = PaymentRequest::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $label = 'Permohonan Pembayaran';
-
-    protected static ?int $navigationSort = 2;
+    protected static ?string $label = 'Approval Pengajuan';
 
     protected static ?string $navigationGroup = 'Menu Utama';
 
-    public static function getEloquentQuery(): Builder
+    public static function canCreate(): bool
     {
-        $query = static::getModel()::query()->where('service_provider_id', get_auth_user()->services_provider->id);
-
-        if (
-            static::isScopedToTenant() &&
-            ($tenant = Filament::getTenant())
-        ) {
-            static::scopeEloquentQueryToTenant($query, $tenant);
-        }
-
-        return $query;
+        return false;
     }
 
     public static function canEdit(Model $record): bool
@@ -55,17 +54,24 @@ class PaymentRequestResource extends Resource
         return false;
     }
 
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(2)
             ->schema([
 
-                Select::make('contract_number')
-                    ->required()
-                    ->searchable()
-                    ->label('Nomor Kontrak')
-                    ->live()
-                    ->options(get_my_contracts_for_options()),
+                TextInput::make('contract.contract_number')
+                    ->required(),
 
                 TextInput::make('request_number')
                     ->required()
@@ -241,6 +247,7 @@ class PaymentRequestResource extends Resource
                     ]),
 
 
+
                 Fieldset::make('Data Kontrak')
                     ->relationship('contract')
                     ->visibleOn('view')
@@ -305,33 +312,28 @@ class PaymentRequestResource extends Resource
                             ->numeric()
                             ->required(),
 
-                        // TextInput::make('contract.service_provider.full_name')
-                        //     ->label('Penyedia Jasa'),
-
-                        // Select::make('admin_id')
-                        //     ->label('Admin')
-                        //     ->relationship('admin', 'name')
-                        //     ->required(),
-
                     ]),
 
 
-                // Select::make('verification_status')
-                //     ->columnSpanFull()
-                //     ->options([
-                //         'in_progress' => 'Dalam Proses',
-                //         'approved' => 'Disetujui',
-                //         'rejected' => 'Ditolak',
-                //     ])
-                //     ->default('in_progress')
-                //     ->label('Status Verifikasi'),
 
-                // Textarea::make('rejection_reason')
-                //     ->label('Alasan Penolakan')
-                //     ->columnSpanFull()
-                //     ->nullable(),
+                self::getPDFs(),
+
 
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = static::getModel()::query()->where('verification_progress', 'ppk')->orderBy('created_at', 'DESC');
+
+        if (
+            static::isScopedToTenant() &&
+            ($tenant = Filament::getTenant())
+        ) {
+            static::scopeEloquentQueryToTenant($query, $tenant);
+        }
+
+        return $query;
     }
 
     public static function table(Table $table): Table
@@ -371,6 +373,12 @@ class PaymentRequestResource extends Resource
                     ])
                     ->sortable(),
 
+                TextColumn::make('ppk_rejection_reason')
+                    ->label('Alasan Penolakan')
+                    ->limit(50)
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
+
                 TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -382,20 +390,82 @@ class PaymentRequestResource extends Resource
                     ->dateTime(),
             ])
             ->filters([
-                Filter::make('verification_status')
-                    ->query(fn(Builder $query): Builder => $query->where('verification_status', 'approved'))
-                    ->label('Approved Payments'),
-
-                Filter::make('verification_status')
-                    ->query(fn(Builder $query): Builder => $query->where('verification_status', 'in_progress'))
-                    ->label('In Progress Payments'),
-
-                Filter::make('verification_status')
-                    ->query(fn(Builder $query): Builder => $query->where('verification_status', 'rejected'))
-                    ->label('Rejected Payments'),
+                //
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+
+                Tables\Actions\Action::make('approve_btn')
+                    ->label('Setujui')
+                    ->requiresConfirmation()
+                    ->disabled(function (PaymentRequest $record) {
+
+                        if ($record->ppk_verification_status == 'in_progress') {
+                            return false;
+                        }
+
+                        return true;
+                    })
+                    ->action(function (PaymentRequest $record, array $data) {
+
+                        $record->update([
+                            'ppk_verification_status'   =>  'approved',
+                            'ppk_id'                    =>  get_auth_user()->ppk->id,
+                            'ppspm_verification_status' =>  'in_progress',
+                        ]);
+
+                        Notification::make('x_not')
+                            ->title('Permohonan Pembayaran Diterima')
+                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' Diterima')
+                            ->send();
+
+                        Notification::make('x_not_srv')
+                            ->title('Permohonan Pembayaran Diterima')
+                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' Diterima')
+                            ->sendToDatabase($record->service_provider->user);
+                    })
+                    ->icon('heroicon-o-check-circle'),
+
+                Tables\Actions\Action::make('reject_btn')
+                    ->label('Tolak')
+                    ->requiresConfirmation()
+                    ->disabled(function (PaymentRequest $record) {
+
+                        if ($record->ppk_verification_status == 'in_progress') {
+                            return false;
+                        }
+
+                        return true;
+                    })
+                    ->form([
+                        TextInput::make('reject_reason')
+                            ->label('Alasan Penolakan')
+                            ->required()
+                            ->placeholder('Kenapa anda menolaknya?')
+                            ->minLength(3)
+                            ->maxLength(199)
+                    ])
+                    ->action(function (PaymentRequest $record, array $data) {
+
+                        $record->update([
+                            'ppk_verification_status'   => 'rejected',
+                            'ppk_rejection_reason'      =>  $data['reject_reason'],
+                            'ppk_id'                    =>  get_auth_user()->ppk->id,
+                        ]);
+
+                        Notification::make('x_not')
+                            ->title('Permohonan Pembayaran ditolak')
+                            ->body('Berhasil Menolak Permohonan Dengan alasan ' . "' $record->ppk_rejection_reason '")
+                            ->send();
+
+                        Notification::make('x_not_srv')
+                            ->title('Permohonan Pembayaran ditolak')
+                            ->body('Petugas PPK Menolak Permohonan Anda Dengan alasan ' . "' $record->ppk_rejection_reason '")
+                            ->sendToDatabase($record->service_provider->user);
+                    })
+                    ->color('danger')
+                    ->icon('heroicon-o-x-mark'),
+
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -418,8 +488,34 @@ class PaymentRequestResource extends Resource
         return [
             'index' => Pages\ListPaymentRequests::route('/'),
             'create' => Pages\CreatePaymentRequest::route('/create'),
+            'view' => Pages\PaymentRequestPayment::route('/{record}/view'),
             'edit' => Pages\EditPaymentRequest::route('/{record}/edit'),
-            'view' => Pages\ViewPaymentRequest::route('/{record}'),
         ];
+    }
+
+    public static function getPDFs()
+    {
+        return Repeater::make('documents')
+            ->relationship()
+            ->label('Daftar Dokumen Pendukung')
+            ->columnSpanFull()
+            ->grid(2)
+            ->schema([
+
+                TextInput::make('name')->label(''),
+
+                Actions::make([
+
+                    Action::make('View')
+                        ->icon('heroicon-o-eye')
+                        ->label('Tampilkan')
+                        ->url(function (Document $record) {
+
+                            return asset('/storage/' . $record->path);
+                        }, true),
+
+                ])->inlineLabel(),
+
+            ]);
     }
 }

@@ -19,6 +19,9 @@ return new class extends Migration
             $table->integer('payment_value'); // Payment value (physical progress)
             $table->text('payment_description'); // Brief description of the payment request
             $table->enum('verification_progress', ['ppk', 'ppspm', 'treasurer', 'kpa'])->default('ppk'); // Verification progress
+
+            $table->foreignId('service_provider_id')->nullable()->constrained('service_providers')->cascadeOnDelete();
+
             $table->enum('ppk_verification_status', ['in_progress', 'approved', 'rejected'])->default('in_progress'); // Verification status (default: in progress)
             $table->text('ppk_rejection_reason')->nullable(); // Reason if rejected
             $table->foreignId('ppk_id')->nullable()->constrained('p_p_k_s')->onDelete('set null');
@@ -31,6 +34,7 @@ return new class extends Migration
             $table->enum('kpa_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('in_progress'); // Verification status (default: in progress)
             $table->text('kpa_rejection_reason')->nullable(); // Reason if rejected
             $table->foreignId('kpa_id')->nullable()->constrained('k_p_a_s')->onDelete('set null');
+
             $table->timestamps();
 
             $table->foreign('contract_number')->references('contract_number')->on('contracts')->onDelete('cascade');

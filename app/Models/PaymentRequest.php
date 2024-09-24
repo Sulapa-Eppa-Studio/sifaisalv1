@@ -19,6 +19,21 @@ class PaymentRequest extends Model
         'payment_description',
         'verification_status',
         'rejection_reason',
+        'service_provider_id',
+        'verification_progress',
+        'ppk_verification_status',
+        'ppk_rejection_reason',
+        'ppk_id',
+        'ppspm_verification_status',
+        'ppspm_rejection_reason',
+        'ppspm_id',
+        'treasurer_verification_status',
+        'treasurer_rejection_reason',
+        'treasurer_id',
+        'kpa_verification_status',
+        'kpa_rejection_reason',
+        'kpa_id',
+
     ];
 
     public function documents()
@@ -29,5 +44,10 @@ class PaymentRequest extends Model
     public function contract()
     {
         return $this->belongsTo(Contract::class, 'contract_number', 'contract_number');
+    }
+
+    public function service_provider()
+    {
+        return $this->belongsTo(ServiceProvider::class, 'service_provider_id', 'id');
     }
 }
