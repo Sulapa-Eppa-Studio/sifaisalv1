@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c84c097c75fa9a937b11563432994a6",
+    "content-hash": "ea2e083d474222074052b05a234ec765",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -2470,6 +2470,79 @@
                 }
             ],
             "time": "2024-09-16T10:22:56+00:00"
+        },
+        {
+            "name": "joaopaulolndev/filament-pdf-viewer",
+            "version": "v1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joaopaulolndev/filament-pdf-viewer.git",
+                "reference": "31f93c828ecefe54f16047453254b3cf7036183c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joaopaulolndev/filament-pdf-viewer/zipball/31f93c828ecefe54f16047453254b3cf7036183c",
+                "reference": "31f93c828ecefe54f16047453254b3cf7036183c",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "nunomaduro/collision": "^7.9",
+                "orchestra/testbench": "^8.0",
+                "pestphp/pest": "^2.1",
+                "pestphp/pest-plugin-arch": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Joaopaulolndev\\FilamentPdfViewer\\FilamentPdfViewerServiceProvider"
+                    ],
+                    "aliases": {
+                        "FilamentPdfViewer": "Joaopaulolndev\\FilamentPdfViewer\\Facades\\FilamentPdfViewer"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Joaopaulolndev\\FilamentPdfViewer\\": "src/",
+                    "Joaopaulolndev\\FilamentPdfViewer\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "João Paulo Leite Nascimento",
+                    "email": "joaopauloln7@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Filament package to show pdf document viewer",
+            "homepage": "https://github.com/joaopaulolndev/filament-pdf-viewer",
+            "keywords": [
+                "filament-pdf-viewer",
+                "joaopaulolndev",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/joaopaulolndev/filament-pdf-viewer/issues",
+                "source": "https://github.com/joaopaulolndev/filament-pdf-viewer"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/joaopaulolndev",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-09-05T20:47:47+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",

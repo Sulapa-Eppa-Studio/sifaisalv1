@@ -29,8 +29,8 @@ class UsersTableSeeder extends Seeder
             'kpa',
             'ppk',
             'spm',
-            'service_provider',
-            'treasurer',
+            'penyedia_jasa',
+            'bendahara',
         ];
 
         $count_role = 0;

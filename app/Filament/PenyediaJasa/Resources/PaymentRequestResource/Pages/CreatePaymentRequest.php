@@ -28,6 +28,7 @@ class CreatePaymentRequest extends CreateRecord
 
             $data['payment_stage']          =   $contract->payment_stages;
             $data['contract_number']        =   $contract->contract_number;
+            $data['service_provider_id']    =   get_auth_user()->services_provider->id;
 
             $record = new ($this->getModel())($data);
 
@@ -151,5 +152,13 @@ class CreatePaymentRequest extends CreateRecord
 
             $this->halt();
         }
+    }
+
+
+    protected function getRedirectUrl(): string
+    {
+        $resource = static::getResource();
+
+        return $resource::getUrl('index');
     }
 }

@@ -16,7 +16,6 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -2;
 
-
     /**
      * @var view-string
      */
@@ -24,9 +23,7 @@ class Dashboard extends Page
 
     public static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ??
-            static::$title ??
-            __('filament-panels::pages/dashboard.title');
+        return 'Dashboard';
     }
 
     public static function getNavigationIcon(): string | Htmlable | null
