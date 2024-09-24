@@ -2,14 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\PenyediaJasa\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
+use Hasnayeen\Themes\ThemesPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -17,6 +17,14 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
+use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
+use Swis\Filament\Backgrounds\ImageProviders\MyImages;
+
+use Filament\Pages;
+use Filament\Widgets;
+
 
 class PenyediaJasaPanelProvider extends PanelProvider
 {
@@ -29,15 +37,46 @@ class PenyediaJasaPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->brandLogo(asset('images/logo-app.png'))->brandLogoHeight('3rem')
+            ->darkModeBrandLogo(asset('images/logo-app-dark.png'))
             ->discoverResources(in: app_path('Filament/PenyediaJasa/Resources'), for: 'App\\Filament\\PenyediaJasa\\Resources')
             ->discoverPages(in: app_path('Filament/PenyediaJasa/Pages'), for: 'App\\Filament\\PenyediaJasa\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
             ->discoverWidgets(in: app_path('Filament/PenyediaJasa/Widgets'), for: 'App\\Filament\\PenyediaJasa\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
+            ->pages([
+                Dashboard::class,
             ])
+            ->navigationGroups([
+                "Menu Utama",
+                "Settings"
+            ])
+            ->plugins([
+                ThemesPlugin::make()->canViewThemesPage(fn() => true),
+
+                \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),
+
+                FilamentBackgroundsPlugin::make()->imageProvider(
+                    MyImages::make()
+                        ->directory('bg-images')
+                ),
+
+                FilamentApexChartsPlugin::make(),
+
+
+                FilamentEditProfilePlugin::make()
+                    ->slug('my-profile')
+                    ->setTitle('Profil Saya')
+                    ->setNavigationLabel('Profil Saya')
+                    ->setNavigationGroup('')
+                    ->setIcon('heroicon-o-user')
+                    ->setSort(10)
+                    ->shouldRegisterNavigation(true)
+                    ->shouldShowDeleteAccountForm(false)
+                    ->shouldShowSanctumTokens()
+                    ->shouldShowBrowserSessionsForm()
+                    ->shouldShowAvatarForm()
+
+            ])
+            ->spa()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -48,6 +87,7 @@ class PenyediaJasaPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
             ])
             ->authMiddleware([
                 Authenticate::class,

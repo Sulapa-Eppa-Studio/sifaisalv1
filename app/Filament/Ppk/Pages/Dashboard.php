@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Ppk\Pages;
 
-use App\Filament\Widgets\AccountWidget;
-use App\Filament\Widgets\AdminContractDashboard;
-use App\Filament\Widgets\AdminDashboardCharts;
+use App\Filament\Ppk\Widgets\AccountWidget;
+use App\Filament\Ppk\Widgets\AveragePaymentValueChart;
+use App\Filament\Ppk\Widgets\PaymentRequestsPerMonthChart;
+use App\Filament\Ppk\Widgets\PaymentStaticsCard;
+use App\Filament\Ppk\Widgets\PaymentVerificationStatusChart;
+use App\Filament\Ppk\Widgets\TermintStatusTrendChart;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Support\Facades\FilamentIcon;
@@ -16,10 +19,12 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -2;
 
+
     /**
      * @var view-string
      */
     protected static string $view = 'filament-panels::pages.dashboard';
+
 
     public static function getNavigationLabel(): string
     {
@@ -53,8 +58,9 @@ class Dashboard extends Page
     {
         return [
             AccountWidget::class,
-            AdminContractDashboard::class, // Widget kontrak yang baru ditambahkan
-            AdminDashboardCharts::class, // Widget pengguna yang sebelumnya sudah ada
+            PaymentStaticsCard::class,
+            PaymentRequestsPerMonthChart::class,
+            PaymentVerificationStatusChart::class,
         ];
     }
 

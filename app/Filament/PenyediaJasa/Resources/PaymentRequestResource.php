@@ -32,6 +32,9 @@ class PaymentRequestResource extends Resource
 
     protected static ?string $label = 'Permohonan Pembayaran';
 
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationGroup = 'Menu Utama';
 
     public static function getEloquentQuery(): Builder
     {

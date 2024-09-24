@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Ppk\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -34,16 +35,14 @@ class PpkPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->brandLogo(asset('images/logo-app.png'))->brandLogoHeight('3rem')
+            ->darkModeBrandLogo(asset('images/logo-app-dark.png'))
             ->discoverResources(in: app_path('Filament/Ppk/Resources'), for: 'App\\Filament\\Ppk\\Resources')
             ->discoverPages(in: app_path('Filament/Ppk/Pages'), for: 'App\\Filament\\Ppk\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Ppk/Widgets'), for: 'App\\Filament\\Ppk\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-            ])
             ->plugins([
                 ThemesPlugin::make()->canViewThemesPage(fn() => true),
 

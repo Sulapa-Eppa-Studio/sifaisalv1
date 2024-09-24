@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\PenyediaJasa\Pages;
 
-use App\Filament\Widgets\AccountWidget;
-use App\Filament\Widgets\AdminContractDashboard;
-use App\Filament\Widgets\AdminDashboardCharts;
+use App\Filament\PenyediaJasa\Widgets\AccountWidget;
+use App\Filament\PenyediaJasa\Widgets\PaymentHeatmapChart;
+use App\Filament\PenyediaJasa\Widgets\PaymentStageChart;
+use App\Filament\PenyediaJasa\Widgets\PaymentStatisticsCard;
+use App\Filament\PenyediaJasa\Widgets\PaymentValueLineChart;
+use App\Filament\PenyediaJasa\Widgets\VerificationStatusPieChart;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Support\Facades\FilamentIcon;
@@ -16,10 +19,12 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -2;
 
+
     /**
      * @var view-string
      */
     protected static string $view = 'filament-panels::pages.dashboard';
+
 
     public static function getNavigationLabel(): string
     {
@@ -53,8 +58,11 @@ class Dashboard extends Page
     {
         return [
             AccountWidget::class,
-            AdminContractDashboard::class, // Widget kontrak yang baru ditambahkan
-            AdminDashboardCharts::class, // Widget pengguna yang sebelumnya sudah ada
+            PaymentStatisticsCard::class,
+            PaymentStageChart::class,
+            VerificationStatusPieChart::class,
+            // PaymentValueLineChart::class,
+            // PaymentHeatmapChart::class,
         ];
     }
 
