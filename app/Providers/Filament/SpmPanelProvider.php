@@ -25,9 +25,12 @@ class SpmPanelProvider extends PanelProvider
         return $panel
             ->id('spm')
             ->path('spm')
+            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->brandLogo(asset('images/logo-app.png'))->brandLogoHeight('3rem')
+            ->darkModeBrandLogo(asset('images/logo-app-dark.png'))
             ->discoverResources(in: app_path('Filament/Spm/Resources'), for: 'App\\Filament\\Spm\\Resources')
             ->discoverPages(in: app_path('Filament/Spm/Pages'), for: 'App\\Filament\\Spm\\Pages')
             ->pages([
@@ -35,8 +38,8 @@ class SpmPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Spm/Widgets'), for: 'App\\Filament\\Spm\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

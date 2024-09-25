@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Ppk\Resources;
+namespace App\Filament\Spm\Resources;
 
-use App\Filament\Ppk\Resources\PaymentRequestResource\Pages;
-use App\Filament\Ppk\Resources\PaymentRequestResource\RelationManagers;
+use App\Filament\Ppk\Resources\PaymentRequestResource as ResourcesPaymentRequestResource;
+use App\Filament\Spm\Resources\PaymentRequestResource\Pages;
 use App\Models\Contract;
 use App\Models\Document;
 use App\Models\PaymentRequest;
@@ -64,10 +64,18 @@ class PaymentRequestResource extends Resource
         return false;
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        $user   =   get_auth_user();
+
+        $ppspm  =   $user->spm;
+
+        return parent::getModel()::query()->where('verification_progress', 'ppspm')->orWhere('ppspm_id', $ppspm->id);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
-            ->columns(2)
             ->schema([
 
                 TextInput::make('contract.contract_number')
@@ -314,26 +322,10 @@ class PaymentRequestResource extends Resource
 
                     ]),
 
-
-
-                self::getPDFs(),
+                ResourcesPaymentRequestResource::getPDFs(),
 
 
             ]);
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        $query = static::getModel()::query()->where('verification_progress', 'ppk')->orderBy('created_at', 'DESC');
-
-        if (
-            static::isScopedToTenant() &&
-            ($tenant = Filament::getTenant())
-        ) {
-            static::scopeEloquentQueryToTenant($query, $tenant);
-        }
-
-        return $query;
     }
 
     public static function table(Table $table): Table
@@ -364,8 +356,8 @@ class PaymentRequestResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->limit(50),
 
-                TextColumn::make('ppk_verification_status')
-                    ->label('Status Verifikasi PPK')
+                TextColumn::make('ppspm_verification_status')
+                    ->label('Status Verifikasi SPM')
                     ->colors([
                         'primary'   => 'in_progress',
                         'success'   => 'approved',
@@ -373,7 +365,7 @@ class PaymentRequestResource extends Resource
                     ])
                     ->sortable(),
 
-                TextColumn::make('ppk_rejection_reason')
+                TextColumn::make('ppspm_rejection_reason')
                     ->label('Alasan Penolakan')
                     ->limit(50)
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -398,9 +390,10 @@ class PaymentRequestResource extends Resource
                 Tables\Actions\Action::make('approve_btn')
                     ->label('Setujui')
                     ->requiresConfirmation()
+                    ->color('success')
                     ->disabled(function (PaymentRequest $record) {
 
-                        if ($record->ppk_verification_status == 'in_progress') {
+                        if ($record->ppspm_verification_status == 'in_progress') {
                             return false;
                         }
 
@@ -409,10 +402,10 @@ class PaymentRequestResource extends Resource
                     ->action(function (PaymentRequest $record, array $data) {
 
                         $record->update([
-                            'ppk_verification_status'   =>  'approved',
-                            'ppk_id'                    =>  get_auth_user()->ppk->id,
-                            'verification_progress'     =>  'ppspm',
-                            'ppspm_verification_status' =>  'in_progress',
+                            'ppspm_verification_status'     =>  'approved',
+                            'ppspm_id'                      =>  get_auth_user()->spm->id,
+                            'verification_progress'         =>  'treasurer',
+                            'treasurer_verification_status' =>  'in_progress',
                         ]);
 
                         Notification::make('x_not')
@@ -432,7 +425,7 @@ class PaymentRequestResource extends Resource
                     ->requiresConfirmation()
                     ->disabled(function (PaymentRequest $record) {
 
-                        if ($record->ppk_verification_status == 'in_progress') {
+                        if ($record->ppspm_verification_status == 'in_progress') {
                             return false;
                         }
 
@@ -449,9 +442,9 @@ class PaymentRequestResource extends Resource
                     ->action(function (PaymentRequest $record, array $data) {
 
                         $record->update([
-                            'ppk_verification_status'   => 'rejected',
-                            'ppk_rejection_reason'      =>  $data['reject_reason'],
-                            'ppk_id'                    =>  get_auth_user()->ppk->id,
+                            'ppspm_verification_status'   => 'rejected',
+                            'ppspm_rejection_reason'      =>  $data['reject_reason'],
+                            'ppspm_id'                    =>  get_auth_user()->spm->id,
                         ]);
 
                         Notification::make('x_not')
@@ -487,36 +480,10 @@ class PaymentRequestResource extends Resource
     public static function getPages(): array
     {
         return [
+            'view'  =>  Pages\ViewPaymentRequest::route('/{record}/view'),
             'index' => Pages\ListPaymentRequests::route('/'),
             'create' => Pages\CreatePaymentRequest::route('/create'),
-            'view' => Pages\PaymentRequestPayment::route('/{record}/view'),
             'edit' => Pages\EditPaymentRequest::route('/{record}/edit'),
         ];
-    }
-
-    public static function getPDFs()
-    {
-        return Repeater::make('documents')
-            ->relationship()
-            ->label('Daftar Dokumen Pendukung')
-            ->columnSpanFull()
-            ->grid(2)
-            ->schema([
-
-                TextInput::make('name')->label(''),
-
-                Actions::make([
-
-                    Action::make('View')
-                        ->icon('heroicon-o-eye')
-                        ->label('Tampilkan')
-                        ->url(function (Document $record) {
-
-                            return asset('/storage/' . $record->path);
-                        }, true),
-
-                ])->inlineLabel(),
-
-            ]);
     }
 }
