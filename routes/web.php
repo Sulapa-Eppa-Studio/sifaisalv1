@@ -7,7 +7,7 @@ Route::get('/', function () {
     // redirect to the admin panel
 
     if (Auth::guest()) {
-        return redirect('/admin/login');
+        return view('welcome');
     }
 
     switch (Auth::user()->role) {
@@ -34,7 +34,8 @@ Route::get('/', function () {
             return redirect('/treasurer');
             break;
         default:
-            return redirect('/login');
+            return view('welcome');
+
             break;
     }
 });
