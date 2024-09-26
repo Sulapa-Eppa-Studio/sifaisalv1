@@ -9,4 +9,6 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewPaymentRequest extends ViewRecord
 {
     protected static string $resource = PaymentRequestResource::class;
+
+    public static ?string $title  =    "Data Permohonan Pembayaran Penyedia Jasa";
 }

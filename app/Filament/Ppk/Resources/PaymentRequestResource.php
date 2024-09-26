@@ -411,6 +411,7 @@ class PaymentRequestResource extends Resource
                         $record->update([
                             'ppk_verification_status'   =>  'approved',
                             'ppk_id'                    =>  get_auth_user()->ppk->id,
+                            'verification_progress'     =>  'ppspm',
                             'ppspm_verification_status' =>  'in_progress',
                         ]);
 
