@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Filament\Spm\Resources\SPMRequestResource\Pages;
+
+use App\Filament\Spm\Resources\SPMRequestResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+
+class EditSPMRequest extends EditRecord
+{
+    protected static string $resource = SPMRequestResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
+}
