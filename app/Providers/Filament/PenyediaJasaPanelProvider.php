@@ -37,8 +37,8 @@ class PenyediaJasaPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->brandLogo(asset('images/logo-app.png'))->brandLogoHeight('3rem')
-            ->darkModeBrandLogo(asset('images/logo-app-dark.png'))
+            ->brandLogo(asset('images/logo-app-1.png'))->brandLogoHeight('3rem')
+            ->darkModeBrandLogo(asset('images/logo-app-dark-1.png'))
             ->discoverResources(in: app_path('Filament/PenyediaJasa/Resources'), for: 'App\\Filament\\PenyediaJasa\\Resources')
             ->discoverPages(in: app_path('Filament/PenyediaJasa/Pages'), for: 'App\\Filament\\PenyediaJasa\\Pages')
             ->discoverWidgets(in: app_path('Filament/PenyediaJasa/Widgets'), for: 'App\\Filament\\PenyediaJasa\\Widgets')

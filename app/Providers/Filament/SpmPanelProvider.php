@@ -35,8 +35,8 @@ class SpmPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->brandLogo(asset('images/logo-app.png'))->brandLogoHeight('3rem')
-            ->darkModeBrandLogo(asset('images/logo-app-dark.png'))
+            ->brandLogo(asset('images/logo-app-1.png'))->brandLogoHeight('3rem')
+            ->darkModeBrandLogo(asset('images/logo-app-dark-1.png'))
             ->discoverResources(in: app_path('Filament/Spm/Resources'), for: 'App\\Filament\\Spm\\Resources')
             ->discoverPages(in: app_path('Filament/Spm/Pages'), for: 'App\\Filament\\Spm\\Pages')
             ->pages([

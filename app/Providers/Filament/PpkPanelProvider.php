@@ -35,8 +35,8 @@ class PpkPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->brandLogo(asset('images/logo-app.png'))->brandLogoHeight('3rem')
-            ->darkModeBrandLogo(asset('images/logo-app-dark.png'))
+            ->brandLogo(asset('images/logo-app-1.png'))->brandLogoHeight('3rem')
+            ->darkModeBrandLogo(asset('images/logo-app-dark-1.png'))
             ->discoverResources(in: app_path('Filament/Ppk/Resources'), for: 'App\\Filament\\Ppk\\Resources')
             ->discoverPages(in: app_path('Filament/Ppk/Pages'), for: 'App\\Filament\\Ppk\\Pages')
             ->pages([
