@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('description');
             $table->string('payment_value');
             $table->boolean('has_advance_payment')->default(false);
+            $table->enum('ppspm_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('in_progress'); // Verification status (default: in progress)
+            $table->text('ppspm_rejection_reason')->nullable(); // Reason if rejected
+            $table->foreignId('ppspm_id')->nullable()->constrained('s_p_m_s')->onDelete('set null');
             $table->timestamps();
         });
     }

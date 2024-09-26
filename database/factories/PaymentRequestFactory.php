@@ -20,25 +20,47 @@ class PaymentRequestFactory extends Factory
     public function definition()
     {
         // Pastikan tabel terkait memiliki data. Jika belum, Anda perlu membuat seeder untuk tabel tersebut terlebih dahulu.
+
+        // Tahap verifikasi dimulai dari PPK
+        $ppk_verification_status = $this->faker->randomElement(['in_progress', 'approved', 'rejected']);
+        $ppspm_verification_status = 'not_available';
+        $treasurer_verification_status = 'not_available';
+        $kpa_verification_status = 'not_available';
+
+        // Jika PPK disetujui, lanjut ke PPSPM
+        if ($ppk_verification_status === 'approved') {
+            $ppspm_verification_status = $this->faker->randomElement(['in_progress', 'approved', 'rejected']);
+
+            // Jika PPSPM disetujui, lanjut ke Bendahara
+            if ($ppspm_verification_status === 'approved') {
+                $treasurer_verification_status = $this->faker->randomElement(['in_progress', 'approved', 'rejected']);
+
+                // Jika Bendahara disetujui, lanjut ke KPA
+                if ($treasurer_verification_status === 'approved') {
+                    $kpa_verification_status = $this->faker->randomElement(['in_progress', 'approved', 'rejected']);
+                }
+            }
+        }
+
         return [
             'contract_number' => Contract::inRandomOrder()->first()->contract_number ?? 'CONTRACT-' . $this->faker->unique()->numberBetween(1000, 9999),
             'request_number' => 'REQ-' . $this->faker->unique()->numberBetween(1000, 9999),
             'payment_stage' => $this->faker->randomElement(['Down Payment', 'Phase I', 'Phase II', 'Phase III']),
             'payment_value' => $this->faker->numberBetween(1000000, 100000000), // Nilai pembayaran antara 1.000.000 hingga 100.000.000
             'payment_description' => $this->faker->sentence(),
-            'verification_progress' => $this->faker->randomElement(['ppk', 'ppspm', 'treasurer', 'kpa']),
-            'ppk_verification_status' => $this->faker->randomElement(['in_progress', 'approved', 'rejected']),
-            'ppk_rejection_reason' => $this->faker->optional()->sentence(),
-            'ppk_id' => PPK::inRandomOrder()->first()->id ?? null,
-            'ppspm_verification_status' => $this->faker->randomElement(['not_available', 'in_progress', 'approved', 'rejected']),
-            'ppspm_rejection_reason' => $this->faker->optional()->sentence(),
-            'ppspm_id' => SPM::inRandomOrder()->first()->id ?? null,
-            'treasurer_verification_status' => $this->faker->randomElement(['not_available', 'in_progress', 'approved', 'rejected']),
-            'treasurer_rejection_reason' => $this->faker->optional()->sentence(),
-            'treasurer_id' => Treasurer::inRandomOrder()->first()->id ?? null,
-            'kpa_verification_status' => $this->faker->randomElement(['not_available', 'in_progress', 'approved', 'rejected']),
-            'kpa_rejection_reason' => $this->faker->optional()->sentence(),
-            'kpa_id' => KPA::inRandomOrder()->first()->id ?? null,
+            'verification_progress' => 'ppk',
+            'ppk_verification_status' => $ppk_verification_status,
+            'ppk_rejection_reason' => $ppk_verification_status === 'rejected' ? $this->faker->sentence() : null,
+            'ppk_id' => $ppk_verification_status === 'approved' ? PPK::inRandomOrder()->first()->id ?? null : null,
+            'ppspm_verification_status' => $ppspm_verification_status,
+            'ppspm_rejection_reason' => $ppspm_verification_status === 'rejected' ? $this->faker->sentence() : null,
+            'ppspm_id' => $ppspm_verification_status === 'approved' ? SPM::inRandomOrder()->first()->id ?? null : null,
+            'treasurer_verification_status' => $treasurer_verification_status,
+            'treasurer_rejection_reason' => $treasurer_verification_status === 'rejected' ? $this->faker->sentence() : null,
+            'treasurer_id' => $treasurer_verification_status === 'approved' ? Treasurer::inRandomOrder()->first()->id ?? null : null,
+            'kpa_verification_status' => $kpa_verification_status,
+            'kpa_rejection_reason' => $kpa_verification_status === 'rejected' ? $this->faker->sentence() : null,
+            'kpa_id' => $kpa_verification_status === 'approved' ? KPA::inRandomOrder()->first()->id ?? null : null,
             'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'updated_at' => now(),
         ];

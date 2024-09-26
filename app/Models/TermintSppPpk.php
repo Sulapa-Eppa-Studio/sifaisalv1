@@ -16,6 +16,9 @@ class TermintSppPpk extends Model
         'description',
         'payment_value',
         'has_advance_payment',
+        'ppspm_verification_status',
+        'ppspm_rejection_reason',
+        'ppspm_id'
     ];
 
     public function user()
