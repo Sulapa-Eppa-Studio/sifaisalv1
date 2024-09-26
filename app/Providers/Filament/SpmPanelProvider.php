@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Spm\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -10,6 +11,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Hasnayeen\Themes\ThemesPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -17,6 +19,10 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
+use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
+use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 
 class SpmPanelProvider extends PanelProvider
 {
@@ -34,12 +40,33 @@ class SpmPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Spm/Resources'), for: 'App\\Filament\\Spm\\Resources')
             ->discoverPages(in: app_path('Filament/Spm/Pages'), for: 'App\\Filament\\Spm\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Spm/Widgets'), for: 'App\\Filament\\Spm\\Widgets')
-            ->widgets([
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
+            ->plugins([
+                ThemesPlugin::make()->canViewThemesPage(fn() => true),
+
+                FilamentBackgroundsPlugin::make()->imageProvider(
+                    MyImages::make()
+                        ->directory('bg-images')
+                ),
+
+                FilamentApexChartsPlugin::make(),
+
+
+                FilamentEditProfilePlugin::make()
+                    ->slug('my-profile')
+                    ->setTitle('Profil Saya')
+                    ->setNavigationLabel('Profil Saya')
+                    ->setNavigationGroup('')
+                    ->setIcon('heroicon-o-user')
+                    ->setSort(10)
+                    ->shouldRegisterNavigation(true)
+                    ->shouldShowDeleteAccountForm(false)
+                    ->shouldShowSanctumTokens()
+                    ->shouldShowBrowserSessionsForm()
+                    ->shouldShowAvatarForm()
+
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -51,7 +78,9 @@ class SpmPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
             ])
+            ->spa()
             ->authMiddleware([
                 Authenticate::class,
             ]);

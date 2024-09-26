@@ -26,18 +26,25 @@ class PaymentRequestFactory extends Factory
         $ppspm_verification_status = 'not_available';
         $treasurer_verification_status = 'not_available';
         $kpa_verification_status = 'not_available';
+        $verification_progress = 'ppk';
 
         // Jika PPK disetujui, lanjut ke PPSPM
         if ($ppk_verification_status === 'approved') {
             $ppspm_verification_status = $this->faker->randomElement(['in_progress', 'approved', 'rejected']);
 
+            $verification_progress = 'ppspm';
+
             // Jika PPSPM disetujui, lanjut ke Bendahara
             if ($ppspm_verification_status === 'approved') {
                 $treasurer_verification_status = $this->faker->randomElement(['in_progress', 'approved', 'rejected']);
 
+                $verification_progress = 'treasurer';
+
                 // Jika Bendahara disetujui, lanjut ke KPA
                 if ($treasurer_verification_status === 'approved') {
                     $kpa_verification_status = $this->faker->randomElement(['in_progress', 'approved', 'rejected']);
+
+                    $verification_progress = 'kpa';
                 }
             }
         }
@@ -48,7 +55,7 @@ class PaymentRequestFactory extends Factory
             'payment_stage' => $this->faker->randomElement(['Down Payment', 'Phase I', 'Phase II', 'Phase III']),
             'payment_value' => $this->faker->numberBetween(1000000, 100000000), // Nilai pembayaran antara 1.000.000 hingga 100.000.000
             'payment_description' => $this->faker->sentence(),
-            'verification_progress' => 'ppk',
+            'verification_progress' => $verification_progress,
             'ppk_verification_status' => $ppk_verification_status,
             'ppk_rejection_reason' => $ppk_verification_status === 'rejected' ? $this->faker->sentence() : null,
             'ppk_id' => $ppk_verification_status === 'approved' ? PPK::inRandomOrder()->first()->id ?? null : null,
