@@ -20,7 +20,12 @@ class SPMRequest extends Model
         'spm_document',
         'ppk_request_id',
         'payment_request_id',
-        'ppk_id'
+        'ppk_id',
+        'treasurer_verification_status',
+        'treasurer_rejection_reason',
+        'treasurer_id',
+        'kpa_verification_status',
+        'kpa_rejection_reason'
     ];
 
     // Relasi dengan SPM

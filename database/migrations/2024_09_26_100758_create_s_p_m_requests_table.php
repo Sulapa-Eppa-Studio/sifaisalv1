@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('treasurer_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('in_progress'); // Verification status (default: in progress)
             $table->text('treasurer_rejection_reason')->nullable(); // Reason if rejected
             $table->foreignId('treasurer_id')->nullable()->constrained('treasurers')->onDelete('set null');
-            $table->enum('kpa_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('in_progress'); // Verification status (default: in progress)
+            $table->enum('kpa_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('not_available'); // Verification status (default: in progress)
             $table->text('kpa_rejection_reason')->nullable(); // Reason if rejected
             $table->timestamps(); // Timestamps for created_at and updated_at
 
