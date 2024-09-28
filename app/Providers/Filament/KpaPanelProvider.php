@@ -25,9 +25,12 @@ class KpaPanelProvider extends PanelProvider
         return $panel
             ->id('kpa')
             ->path('kpa')
+            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->brandLogo(asset('images/logo-app-1.png'))->brandLogoHeight('3rem')
+            ->darkModeBrandLogo(asset('images/logo-app-dark-1.png'))
             ->discoverResources(in: app_path('Filament/Kpa/Resources'), for: 'App\\Filament\\Kpa\\Resources')
             ->discoverPages(in: app_path('Filament/Kpa/Pages'), for: 'App\\Filament\\Kpa\\Pages')
             ->pages([
@@ -49,6 +52,7 @@ class KpaPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->spa()
             ->authMiddleware([
                 Authenticate::class,
             ]);

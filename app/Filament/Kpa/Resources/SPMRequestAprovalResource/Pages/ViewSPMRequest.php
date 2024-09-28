@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Treasurer\Resources\SPMRequestAprovalResource\Pages;
+namespace App\Filament\Kpa\Resources\SPMRequestAprovalResource\Pages;
 
-use App\Filament\Treasurer\Resources\SPMRequestAprovalResource;
+use App\Filament\Kpa\Resources\SPMRequestAprovalResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -24,7 +24,6 @@ class ViewSPMRequest extends ViewRecord
 
         $docs_ppk   =   $ppk_request->files;
         $docs_pymnt =   $payment_request->documents;
-
 
         $docs   =   [
             [
