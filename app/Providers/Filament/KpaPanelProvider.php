@@ -31,13 +31,11 @@ class KpaPanelProvider extends PanelProvider
             ->id('kpa')
             ->path('kpa')
             ->login()
-            ->brandLogo(asset('images/logo-app-1.png'))->brandLogoHeight('3rem')
-            ->darkModeBrandLogo(asset('images/logo-app-dark-1.png'))
-            ->spa()
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->login()
+            ->brandLogo(asset('images/logo-app-1.png'))->brandLogoHeight('3rem')
+            ->darkModeBrandLogo(asset('images/logo-app-dark-1.png'))
             ->discoverResources(in: app_path('Filament/Kpa/Resources'), for: 'App\\Filament\\Kpa\\Resources')
             ->discoverPages(in: app_path('Filament/Kpa/Pages'), for: 'App\\Filament\\Kpa\\Pages')
             ->pages([
@@ -85,6 +83,7 @@ class KpaPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 \Hasnayeen\Themes\Http\Middleware\SetTheme::class
             ])
+            ->spa()
             ->authMiddleware([
                 Authenticate::class,
             ]);
