@@ -39,8 +39,6 @@ class TreasurerPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->login()
-            ->brandLogo(asset('images/logo-app-1.png'))->brandLogoHeight('3rem')
-            ->darkModeBrandLogo(asset('images/logo-app-dark-1.png'))
             ->discoverResources(in: app_path('Filament/Treasurer/Resources'), for: 'App\\Filament\\Treasurer\\Resources')
             ->discoverPages(in: app_path('Filament/Treasurer/Pages'), for: 'App\\Filament\\Treasurer\\Pages')
             ->pages([
@@ -83,13 +81,6 @@ class TreasurerPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 \Hasnayeen\Themes\Http\Middleware\SetTheme::class
-            ])
-            ->plugins([
-                FilamentBackgroundsPlugin::make()->imageProvider(
-                    MyImages::make()
-                        ->directory('bg-images')
-                ),
-
             ])
             ->authMiddleware([
                 Authenticate::class,
