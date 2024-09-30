@@ -280,14 +280,9 @@ class UserResource extends Resource
                                 ->required(),
 
                             Select::make('job_package')
-                                ->multiple()
+                                ->required()
                                 ->label('Paket Pekerjaan')
-                                ->options([
-                                    'tailwind' => 'Tailwind CSS',
-                                    'alpine' => 'Alpine.js',
-                                    'laravel' => 'Laravel',
-                                    'livewire' => 'Laravel Livewire',
-                                ])
+                                ->options(WorkPackage::all()->pluck('name', 'name')->toArray()),
 
                         ]),
                     ]),
