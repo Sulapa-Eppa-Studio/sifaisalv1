@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Kpa\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -39,13 +40,10 @@ class KpaPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Kpa/Resources'), for: 'App\\Filament\\Kpa\\Resources')
             ->discoverPages(in: app_path('Filament/Kpa/Pages'), for: 'App\\Filament\\Kpa\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Kpa/Widgets'), for: 'App\\Filament\\Kpa\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-            ])
+
             ->plugins([
                 ThemesPlugin::make()->canViewThemesPage(fn() => true),
 
