@@ -80,9 +80,6 @@ class ContractResource extends Resource
 
                 Forms\Components\TextInput::make('payment_stages')
                     ->label('Tahapan Pembayaran')
-                    ->disabled(function (Get $get) {
-                        return $get('advance_payment') == true;
-                    })
                     ->suffix('Tahap')
                     ->numeric(),
 
