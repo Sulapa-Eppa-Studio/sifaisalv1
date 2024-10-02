@@ -25,7 +25,7 @@ class SPMRequestAprovalResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-right-end-on-rectangle';
 
-    protected static ?string $label = 'Approval Pengajuan SPM';
+    protected static ?string $label = 'Verifikasi Pengajuan SPM';
 
     protected static ?string $navigationGroup = 'Menu Utama';
 

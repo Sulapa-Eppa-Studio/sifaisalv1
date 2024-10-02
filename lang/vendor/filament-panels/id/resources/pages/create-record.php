@@ -4,7 +4,7 @@ return [
 
     'title' => 'Buat :label',
 
-    'breadcrumb' => 'Buat',
+    'breadcrumb' => 'Rekam',
 
     'form' => [
 
@@ -15,7 +15,7 @@ return [
             ],
 
             'create' => [
-                'label' => 'Buat',
+                'label' => 'Rekam',
             ],
 
             'create_another' => [

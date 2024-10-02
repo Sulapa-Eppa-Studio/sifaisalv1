@@ -19,7 +19,11 @@ class TermintSppPpkResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document';
 
-    protected static ?string $navigationLabel = 'Termint SPP PPK';
+    protected static ?string $navigationLabel = 'SPP';
+
+    protected static ?string $label = 'Surat Permohonan Pembayaran (SPP)';
+
+
 
     protected static ?int $navigationSort = 2;
 
@@ -31,9 +35,9 @@ class TermintSppPpkResource extends Resource
             ->schema([
                 Forms\Components\Select::make('contract_id')
                     ->relationship('contract', 'contract_number')
-                    ->required(),
+                    ->required()->label('Kontrak'),
                 Forms\Components\TextInput::make('no_termint')
-                    ->label('No Termint')
+                    ->label('Nomor SPP')
                     ->required(),
                 Forms\Components\TextInput::make('description')
                     ->label('Uraian Pembayaran SPPK-PPK')
@@ -42,7 +46,7 @@ class TermintSppPpkResource extends Resource
                     ->label('Nilai Permintaan Pembayaran')
                     ->required()->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)->prefix('Rp'),
                 Forms\Components\Toggle::make('has_advance_payment')
-                    ->label('Ada Uang Muka')
+                    ->label('Uang Muka')
                     ->reactive(),
                 Forms\Components\Fieldset::make('Pilih Dokumen Yang Akan Diunggah')
                     ->schema(function (Forms\Components\Component $component) {
@@ -156,11 +160,11 @@ class TermintSppPpkResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('contract.contract_number')->label('Contract'),
-                Tables\Columns\TextColumn::make('no_termint')->label('No Termint'),
+                Tables\Columns\TextColumn::make('contract.contract_number')->label('Kontrak'),
+                Tables\Columns\TextColumn::make('no_termint')->label('Nomor SPP'),
                 Tables\Columns\TextColumn::make('description')->label('Deskripsi'),
                 Tables\Columns\TextColumn::make('payment_value')->label('Nilai Pembayaran')->currency('IDR'),
-                Tables\Columns\BooleanColumn::make('has_advance_payment')->label('Ada Uang Muka'),
+                Tables\Columns\BooleanColumn::make('has_advance_payment')->label('Uang Muka'),
                 Tables\Columns\TextColumn::make('created_at')->label('Dibuat Pada')->dateTime(),
             ])
             ->filters([

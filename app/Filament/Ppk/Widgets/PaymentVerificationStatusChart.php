@@ -191,7 +191,7 @@ class PaymentVerificationStatusChart extends ApexChartWidget
                 'enabled' => false,
             ],
             'title' => [
-                'text' => 'Progres Approval Pengajuan Pembayaran',
+                'text' => 'Progres Verifikasi Pengajuan Pembayaran',
                 'align' => 'center',
                 'style' => [
                     'fontSize' => '16px',

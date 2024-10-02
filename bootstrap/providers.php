@@ -2,6 +2,7 @@
 
 return [
     App\Providers\AppServiceProvider::class,
+    App\Providers\FilamentAdminServiceProvider::class,
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\KpaPanelProvider::class,
     App\Providers\Filament\PenyediaJasaPanelProvider::class,

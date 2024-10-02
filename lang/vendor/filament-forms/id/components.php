@@ -358,12 +358,12 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Buat',
+                    'heading' => 'Rekam',
 
                     'actions' => [
 
                         'create' => [
-                            'label' => 'Buat',
+                            'label' => 'Rekam',
                         ],
 
                         'create_another' => [

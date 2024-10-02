@@ -43,7 +43,6 @@ class KpaPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Kpa/Widgets'), for: 'App\\Filament\\Kpa\\Widgets')
-
             ->plugins([
                 ThemesPlugin::make()->canViewThemesPage(fn() => true),
 

@@ -31,7 +31,7 @@ return [
     'token_section_title' => 'Token API',
     'token_section_description' => 'Kelola token API yang memungkinkan layanan pihak ketiga mengakses aplikasi ini melalui akun Anda.',
     'token_action_label' => 'Buat Token',
-    'token_modal_heading' => 'Buat',
+    'token_modal_heading' => 'Rekam',
     'token_create_notification' => 'Token berhasil dibuat!',
     'token_helper_text' => 'Token hanya ditampilkan sekali saat dibuat. Jika Anda kehilangan token, Anda harus menghapusnya dan membuat yang baru.',
     'token_modal_heading_2' => 'Salin Token Akses Persyaratan',
@@ -45,4 +45,3 @@ return [
     'browser_sessions_log_out' => 'Keluar dari Sesi Browser Lain',
     'browser_sessions_confirm_pass' => 'Silakan masukkan kata sandi Anda untuk mengonfirmasi bahwa Anda ingin keluar dari sesi browser lain di semua perangkat.',
 ];
-

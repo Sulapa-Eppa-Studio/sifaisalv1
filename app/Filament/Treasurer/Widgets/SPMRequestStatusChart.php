@@ -165,7 +165,7 @@ class SPMRequestStatusChart extends ApexChartWidget
                 'enabled' => false,
             ],
             'title' => [
-                'text' => 'Progres Approval Pengajuan SPM',
+                'text' => 'Progres Verifikasi Pengajuan SPM',
                 'align' => 'center',
                 'style' => [
                     'fontSize' => '16px',

@@ -78,7 +78,7 @@
                                 <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
                             </div>
                             <div class="post-text">
-                                <h4><a href="/admin">Admin Utama</a></h4>
+                                <h4><a href="/admin">Admin</a></h4>
                                 <p>
                                     Mengelola seluruh sistem dan memiliki kontrol penuh atas semua modul dan pengguna.
                                 </p>
@@ -92,7 +92,7 @@
                                 <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
                             </div>
                             <div class="post-text">
-                                <h4><a href="/penyedia-jasa">Admin Penyedia Jasa</a></h4>
+                                <h4><a href="/penyedia-jasa">Penyedia Jasa</a></h4>
                                 <p>
                                     Bertanggung jawab atas pengelolaan data dan informasi terkait penyedia jasa dalam
                                     sistem.
@@ -107,7 +107,7 @@
                                 <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
                             </div>
                             <div class="post-text">
-                                <h4><a href="/ppk">Admin Pejabat Pembuat Komitmen (PPK)</a></h4>
+                                <h4><a href="/ppk">Pejabat Pembuat Komitmen (PPK)</a></h4>
                                 <p>
                                     Mengelola komitmen dalam pelaksanaan proyek atau pengadaan barang/jasa.
                                 </p>
@@ -121,7 +121,7 @@
                                 <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
                             </div>
                             <div class="post-text">
-                                <h4><a href="/spm">Admin Pejabat Penandatangan SPM (PP-SPM)</a></h4>
+                                <h4><a href="/spm">Pejabat Penandatangan SPM (PP-SPM)</a></h4>
                                 <p>
                                     Bertanggung jawab atas penandatanganan Surat Perintah Membayar (SPM) dalam sistem.
                                 </p>

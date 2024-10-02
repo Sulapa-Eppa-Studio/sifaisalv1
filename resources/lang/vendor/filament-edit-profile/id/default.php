@@ -31,7 +31,7 @@ return [
     'token_section_title' => 'Token API',
     'token_section_description' => 'Kelola token API yang memungkinkan layanan pihak ketiga mengakses aplikasi ini atas nama Anda.',
     'token_action_label' => 'Buat Token',
-    'token_modal_heading' => 'Buat',
+    'token_modal_heading' => 'Rekam',
     'token_create_notification' => 'Token berhasil dibuat!',
     'token_helper_text' => 'Token Anda hanya ditampilkan sekali saat pembuatan. Jika Anda kehilangan token, Anda perlu menghapusnya dan membuat yang baru.',
     'token_modal_heading_2' => 'Salin Token Akses Pribadi',

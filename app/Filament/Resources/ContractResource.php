@@ -27,7 +27,7 @@ class ContractResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $label =   'Tabel Kontrak';
+    protected static ?string $label =   'Rekam Kontrak';
 
     protected static ?string $navigationLabel = 'Kontrak';
 
@@ -66,7 +66,6 @@ class ContractResource extends Resource
 
                 Forms\Components\DatePicker::make('contract_date')
                     ->label('Tanggal Kontrak')
-                    ->minDate(now())
                     ->required(),
 
                 Forms\Components\TextInput::make('can_number')
