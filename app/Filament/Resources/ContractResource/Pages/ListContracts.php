@@ -5,6 +5,10 @@ namespace App\Filament\Resources\ContractResource\Pages;
 use App\Filament\Resources\ContractResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Actions\Action;
+use Filament\Support\Enums\ActionSize;
+
+
 
 class ListContracts extends ListRecords
 {
@@ -14,6 +18,13 @@ class ListContracts extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Action::make('exp_pdf')
+                ->url(route('ds.report.export.pdf', ['report_model' => 'contract_report']), true)
+                ->label('Download PDF')
+                ->icon('heroicon-o-document')
+                ->size(ActionSize::Medium)
+                ->color('danger')
+                ->button()
         ];
     }
 }
