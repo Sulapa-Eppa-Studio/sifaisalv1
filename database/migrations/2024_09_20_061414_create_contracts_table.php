@@ -24,13 +24,16 @@ return new class extends Migration
             $table->string('npwp', 20); // NPWP
             $table->string('bank_account_number', 20); // No. Rekening
             $table->string('working_unit'); // Satuan Kerja
-            $table->integer('payment_value'); // Nilai Kontrak
+            $table->bigInteger('payment_value'); // Nilai Kontrak
+            $table->bigInteger('paid_value')->default(0); // Nilai Kontrak
             $table->foreignId('service_provider_id'); // Penyedia Jasa
-            $table->foreignId('admin_id');
+            $table->foreignId('admin_id')->nullable();
+            $table->foreignId('ppk_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('service_provider_id')->references('id')->on('service_providers');
-            $table->foreign('admin_id')->references('id')->on('users');
+            $table->foreign('service_provider_id')->references('id')->on('service_providers')->onDelete('cascade');
+            $table->foreign('admin_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('ppk_id')->references('id')->on('p_p_k_s')->onDelete('set null');
         });
     }
 

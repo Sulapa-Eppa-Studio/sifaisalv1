@@ -10,7 +10,7 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 class ApprovalProgressChart extends ApexChartWidget
 {
     protected static ?string $chartId = 'approvalProgressChart';
-    protected static ?string $heading = 'Progres Approval Pengajuan Pembayaran';
+    protected static ?string $heading = 'Progres Verifikasi Dokumen Pendukung Pembayaran';
 
     protected function getFormSchema(): array
     {

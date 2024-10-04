@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(\App\Filament\Auth\CustomLogin::class)
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -58,9 +58,9 @@ class AdminPanelProvider extends PanelProvider
                 \Hasnayeen\Themes\Http\Middleware\SetTheme::class
             ])
             ->plugins([
-                ThemesPlugin::make()->canViewThemesPage(fn() => true),
+                ThemesPlugin::make()->canViewThemesPage(fn() => false),
 
-                \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),
+                // \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),
 
                 FilamentBackgroundsPlugin::make()->imageProvider(
                     MyImages::make()
@@ -68,7 +68,6 @@ class AdminPanelProvider extends PanelProvider
                 ),
 
                 FilamentApexChartsPlugin::make(),
-
 
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')

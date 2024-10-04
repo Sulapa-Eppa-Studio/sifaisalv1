@@ -1,0 +1,121 @@
+/* Sidebar */
+body {
+    background-image: url('/bg-images/bg-nav.jpg') !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+}
+
+
+html main.fi-main, html body div.fi-main-ctn {
+    background-color: #fafafa;
+}
+
+html.dark main.fi-main, html.dark body div.fi-main-ctn {
+    background-color: #09090b;
+}
+
+aside {
+    position: relative;
+    background-color: transparent !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+}
+
+aside::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Lapisan hitam semi-transparan */
+}
+
+html.dark aside::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.612);
+    /* Lapisan hitam semi-transparan */
+}
+
+html aside span {
+    color: #101010e9 !important;
+    /* Lapisan hitam semi-transparan */
+}
+
+html aside span.fi-sidebar-group-label {
+    color: #1d1d1d !important;
+    font-weight: 600 !important;
+    /* Lapisan hitam semi-transparan */
+}
+
+html aside svg {
+    /* fill: #101010e9 !important; */
+    border-color: #101010e9 !important;
+    stroke: #101010e9 !important;
+    /* Border warna hitam */
+    /* Lapisan hitam semi-transparan */
+}
+
+html.dark aside span {
+    color: #ffffff !important;
+    /* Lapisan hitam semi-transparan */
+}
+
+html.dark aside span.fi-sidebar-group-label {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    /* Lapisan hitam semi-transparan */
+}
+
+html.dark aside svg {
+    /* fill: #ffffffe8 !important; */
+    border-color: #ffffffbd !important;
+    stroke: #ffffff9b !important;
+    /* Border warna hitam */
+    /* Lapisan hitam semi-transparan */
+}
+
+/* Navbar */
+aside header.fi-sidebar-header {
+    position: relative;
+    background-color: transparent !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+}
+
+aside header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.256);
+    /* Lapisan hitam semi-transparan */
+}
+
+html.dark aside header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.283);
+    /* Lapisan hitam semi-transparan */
+}
+
+/* Navbar Header */
+div.fi-topbar nav {
+    position: relative;
+    background-color: transparent !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+}

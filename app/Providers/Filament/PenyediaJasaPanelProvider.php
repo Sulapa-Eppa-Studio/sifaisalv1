@@ -33,7 +33,7 @@ class PenyediaJasaPanelProvider extends PanelProvider
         return $panel
             ->id('penyediaJasa')
             ->path('penyedia-jasa')
-            ->login()
+            ->login(\App\Filament\Auth\CustomLogin::class)
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -52,7 +52,7 @@ class PenyediaJasaPanelProvider extends PanelProvider
             ->plugins([
                 ThemesPlugin::make()->canViewThemesPage(fn() => true),
 
-                \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),
+                // \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),
 
                 FilamentBackgroundsPlugin::make()->imageProvider(
                     MyImages::make()
@@ -60,7 +60,6 @@ class PenyediaJasaPanelProvider extends PanelProvider
                 ),
 
                 FilamentApexChartsPlugin::make(),
-
 
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')

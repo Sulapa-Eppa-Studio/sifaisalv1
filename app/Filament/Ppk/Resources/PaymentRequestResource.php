@@ -324,7 +324,9 @@ class PaymentRequestResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $query = static::getModel()::query()->where('verification_progress', 'ppk')->orderBy('created_at', 'DESC');
+        $user   =   get_auth_user();
+
+        $query = static::getModel()::query()->where('ppk_id', $user->ppk->id)->orderBy('created_at', 'DESC');
 
         if (
             static::isScopedToTenant() &&
@@ -335,6 +337,7 @@ class PaymentRequestResource extends Resource
 
         return $query;
     }
+
 
     public static function table(Table $table): Table
     {
@@ -449,7 +452,8 @@ class PaymentRequestResource extends Resource
                     ->action(function (PaymentRequest $record, array $data) {
 
                         $record->update([
-                            'ppk_verification_status'   => 'rejected',
+                            'ppk_verification_status'   =>  'rejected',
+                            'verification_progress'     =>  'rejected',
                             'ppk_rejection_reason'      =>  $data['reject_reason'],
                             'ppk_id'                    =>  get_auth_user()->ppk->id,
                         ]);

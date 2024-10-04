@@ -5,6 +5,7 @@ namespace App\Filament\PenyediaJasa\Resources\PaymentRequestResource\Pages;
 use App\Filament\PenyediaJasa\Resources\PaymentRequestResource;
 use App\Models\Contract;
 use App\Models\Document;
+use App\Models\PaymentRequest;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -24,11 +25,26 @@ class CreatePaymentRequest extends CreateRecord
 
             DB::beginTransaction();
 
-            $contract   =   Contract::findOrFail($data['contract_number']);
+            $sp_id      =   get_auth_user()->services_provider->id;
 
-            $data['payment_stage']          =   $contract->payment_stages;
+            $contract   =   Contract::where('contract_number', $data['contract_number'])->firstOrFail();
+
+            $payment_lists  =   PaymentRequest::where('contract_number', $contract->contract_number)->get();
+
+            foreach ($payment_lists as $value) {
+                if ($value->verification_progress != 'done') {
+                    throw new \Exception('Terdapat pengajuan pembayaran yang belum selesai!');
+                }
+            }
+
+            if ($contract->payment_stages <= get_payment_stage($contract)) {
+                throw new \Exception('Tahap pembayaran melebihi kontrak ' . $contract->payment_stages . " Tahap Pembayaran : " . get_payment_stage($contract));
+            }
+
+            $data['payment_stage']          =   get_payment_stage($contract);
             $data['contract_number']        =   $contract->contract_number;
-            $data['service_provider_id']    =   get_auth_user()->services_provider->id;
+            $data['service_provider_id']    =   $sp_id;
+            $data['ppk_id']                 =   $contract->ppk_id;
 
             $record = new ($this->getModel())($data);
 

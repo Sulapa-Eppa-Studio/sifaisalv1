@@ -45,6 +45,7 @@ class UsersTableSeeder extends Seeder
                 $user = User::create([
                     'name' => $name,
                     'email' => $email,
+                    'username'  =>  strtolower($role) . $i,
                     'role' => $role_keys[$count_role],
                     'password' => bcrypt('password'),
                     'email_verified_at' => now(),

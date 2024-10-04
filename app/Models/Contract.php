@@ -9,7 +9,12 @@ class Contract extends Model
 {
     use HasFactory;
 
-    public $guarded = [];
+    protected $guarded = [];
+
+    protected $casts = [
+        'paid_value'    =>  'integer',
+        'payment_value' =>  'integer',
+    ];
 
     public function admin() {}
 
@@ -17,9 +22,14 @@ class Contract extends Model
     {
         return $this->belongsTo(ServiceProvider::class);
     }
-  
+
     public function termintSppPpks()
     {
         return $this->hasMany(TermintSppPpk::class);
+    }
+
+    public function payment_request()
+    {
+        return $this->hasMany(PaymentRequest::class, 'contract_number', 'contract_number');
     }
 }

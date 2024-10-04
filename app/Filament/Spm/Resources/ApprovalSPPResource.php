@@ -28,7 +28,7 @@ class ApprovalSPPResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-check-circle';
 
-    protected static ?string $label = 'Approval SPP - PPK';
+    protected static ?string $label = 'Verifikasi SPP';
 
     protected static ?string $navigationGroup = 'Menu Utama';
 
@@ -57,10 +57,11 @@ class ApprovalSPPResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('contract_id')
+                    ->label('No. Kontrak')
                     ->relationship('contract', 'contract_number')
                     ->required(),
                 Forms\Components\TextInput::make('no_termint')
-                    ->label('No Termint')
+                    ->label('No. SPP')
                     ->required(),
                 Forms\Components\TextInput::make('description')
                     ->label('Uraian Pembayaran SPPK-PPK')
@@ -69,7 +70,7 @@ class ApprovalSPPResource extends Resource
                     ->label('Nilai Permintaan Pembayaran')
                     ->required()->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)->prefix('Rp'),
                 Forms\Components\Toggle::make('has_advance_payment')
-                    ->label('Ada Uang Muka')
+                    ->label('Uang Muka')
                     ->reactive(),
                 Forms\Components\Fieldset::make('Pilih Dokumen Yang Akan Diunggah')
                     ->schema(function (Forms\Components\Component $component) {
@@ -184,15 +185,17 @@ class ApprovalSPPResource extends Resource
         return $table
             ->columns([
 
-                TextColumn::make('contract.contract_number')->label('Contract')->searchable(),
+                TextColumn::make('contract.contract_number')->label('Kontrak')->searchable(),
 
-                TextColumn::make('no_termint')->label('No Termint')->searchable(),
+                TextColumn::make('no_termint')->label('No. SPP')->searchable(),
 
                 TextColumn::make('description')->label('Deskripsi')->searchable(),
 
                 TextColumn::make('payment_value')->label('Nilai Pembayaran')->currency('IDR'),
 
-                BooleanColumn::make('has_advance_payment')->label('Ada Uang Muka'),
+                TextColumn::make('ppspm_verification_status')->label('Status Verifikasi'),
+
+                BooleanColumn::make('has_advance_payment')->label('Uang Muka'),
 
                 TextColumn::make('ppspm_verification_status')
                     ->label('Status Verifikasi SPM')

@@ -12,6 +12,7 @@ use Filament\Tables;
 use App\Enums\FileType;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ButtonAction;
+use Illuminate\Database\Eloquent\Model;
 
 class TermintSppPpkResource extends Resource
 {
@@ -23,11 +24,14 @@ class TermintSppPpkResource extends Resource
 
     protected static ?string $label = 'Surat Permohonan Pembayaran (SPP)';
 
-
-
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationGroup = 'Menu Utama';
+
+    public static function canEdit(Model $record): bool
+    {
+        return $record->ppspm_verification_status == 'rejected';
+    }
 
     public static function form(Form $form): Form
     {
@@ -47,6 +51,7 @@ class TermintSppPpkResource extends Resource
                     ->required()->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)->prefix('Rp'),
                 Forms\Components\Toggle::make('has_advance_payment')
                     ->label('Uang Muka')
+                    ->disabledOn('edit')
                     ->reactive(),
                 Forms\Components\Fieldset::make('Pilih Dokumen Yang Akan Diunggah')
                     ->schema(function (Forms\Components\Component $component) {
@@ -160,12 +165,32 @@ class TermintSppPpkResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('contract.contract_number')->label('Kontrak'),
-                Tables\Columns\TextColumn::make('no_termint')->label('Nomor SPP'),
-                Tables\Columns\TextColumn::make('description')->label('Deskripsi'),
-                Tables\Columns\TextColumn::make('payment_value')->label('Nilai Pembayaran')->currency('IDR'),
-                Tables\Columns\BooleanColumn::make('has_advance_payment')->label('Uang Muka'),
-                Tables\Columns\TextColumn::make('created_at')->label('Dibuat Pada')->dateTime(),
+                Tables\Columns\TextColumn::make('contract.contract_number')
+                    ->label('Kontrak'),
+
+                Tables\Columns\TextColumn::make('no_termint')
+                    ->label('Nomor SPP'),
+
+                Tables\Columns\TextColumn::make('description')
+                    ->label('Deskripsi')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('ppspm_verification_status')
+                    ->label('Status Verifikasi')
+                    ->color('primary'),
+
+                Tables\Columns\TextColumn::make('payment_value')
+                    ->label('Nilai Pembayaran')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->currency('IDR'),
+
+                Tables\Columns\BooleanColumn::make('has_advance_payment')
+                    ->label('Uang Muka'),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

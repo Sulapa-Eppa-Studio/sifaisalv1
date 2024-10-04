@@ -27,7 +27,7 @@ class ContractResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $label =   'Rekam Kontrak';
+    protected static ?string $label =   'Kontrak';
 
     protected static ?string $navigationLabel = 'Kontrak';
 
@@ -85,13 +85,31 @@ class ContractResource extends Resource
 
                 Forms\Components\Select::make('work_package')
                     ->label('Paket Pekerjaan')
+                    ->searchable()
+                    ->placeholder('Pilih Paket Pekerjaan')
                     ->options(WorkPackage::pluck('name', 'name')->toArray())
+                    ->required(),
+
+                Forms\Components\Select::make('ppk_id')
+                    ->label('Petugas PPK ( Pejabat Pembuat Komitmen )')
+                    ->searchable()
+                    ->options(function () {
+                        $ppks = PPK::get();
+
+                        $options = [];
+
+                        foreach ($ppks as $ppk) {
+                            $options[$ppk->id] = $ppk->full_name . " ( " . $ppk->nip . " ) ";
+                        }
+
+                        return $options;
+                    })
+                    ->placeholder('Pilih NIP Petugas PPK')
                     ->required(),
 
                 Forms\Components\TextInput::make('working_unit')
                     ->label('Unit Kerja')
                     ->required()
-                    ->columnSpanFull()
                     ->maxLength(255),
 
                 Fieldset::make('Informasi Pembayaran')
@@ -172,6 +190,7 @@ class ContractResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
+
                 Tables\Columns\TextColumn::make('work_package')
                     ->label('Paket Pekerjaan')
                     ->searchable()
@@ -193,6 +212,16 @@ class ContractResource extends Resource
                     ->numeric()
                     ->suffix(' Tahap')
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('payment_value')
+                    ->label('Nilai Kontrak')
+                    ->searchable()
+                    ->money('idr', true),
+
+                Tables\Columns\TextColumn::make('paid_value')
+                    ->label('Sudah Terbayar')
+                    ->searchable()
+                    ->money('idr', true),
 
                 Tables\Columns\TextColumn::make('service_provider')
                     ->label('Penyedia Jasa')
@@ -223,7 +252,7 @@ class ContractResource extends Resource
                     ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diubah Pada')

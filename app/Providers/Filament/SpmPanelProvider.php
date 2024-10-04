@@ -31,7 +31,7 @@ class SpmPanelProvider extends PanelProvider
         return $panel
             ->id('spm')
             ->path('spm')
-            ->login()
+            ->login(\App\Filament\Auth\CustomLogin::class)
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -52,7 +52,6 @@ class SpmPanelProvider extends PanelProvider
                 ),
 
                 FilamentApexChartsPlugin::make(),
-
 
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')

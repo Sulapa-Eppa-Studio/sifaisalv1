@@ -33,7 +33,12 @@ class PaymentRequest extends Model
         'kpa_verification_status',
         'kpa_rejection_reason',
         'kpa_id',
+    ];
 
+    protected $with = ['ppk', 'spm', 'treasurer', 'kpa', 'contract'];
+
+    protected $casts = [
+        'payment_value' =>  'integer',
     ];
 
     public function documents()
@@ -49,5 +54,25 @@ class PaymentRequest extends Model
     public function service_provider()
     {
         return $this->belongsTo(ServiceProvider::class, 'service_provider_id', 'id');
+    }
+
+    public function ppk()
+    {
+        return $this->belongsTo(PPK::class, 'ppk_id', 'id');
+    }
+
+    public function spm()
+    {
+        return $this->belongsTo(SPM::class, 'ppspm_id', 'id');
+    }
+
+    public function treasurer()
+    {
+        return $this->belongsTo(Treasurer::class, 'treasurer_id', 'id');
+    }
+
+    public function kpa()
+    {
+        return $this->belongsTo(KPA::class, 'kpa_id', 'id');
     }
 }

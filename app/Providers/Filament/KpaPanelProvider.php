@@ -31,7 +31,7 @@ class KpaPanelProvider extends PanelProvider
         return $panel
             ->id('kpa')
             ->path('kpa')
-            ->login()
+            ->login(\App\Filament\Auth\CustomLogin::class)
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -52,7 +52,6 @@ class KpaPanelProvider extends PanelProvider
                 ),
 
                 FilamentApexChartsPlugin::make(),
-
 
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')

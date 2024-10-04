@@ -52,7 +52,7 @@ class PaymentRequestResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        return false;
+        return $record->verification_progress == 'rejected';
     }
 
     public static function form(Form $form): Form
@@ -79,22 +79,30 @@ class PaymentRequestResource extends Resource
                     ->stripCharacters(',')
                     ->columnSpanFull()
                     ->label('Nilai Pembayaran')
+                    ->reactive()
+                    ->maxValue(function (Get $get) {
+                        // dump($get('contract_number'));
+                    })
                     ->mask(RawJs::make('$money($input)')),
 
                 Textarea::make('payment_description')
-                    ->required()
                     ->columnSpanFull()
+                    ->maxLength(199)
+                    ->minLength(3)
                     ->label('Deskripsi Pembayaran'),
 
+
                 Fieldset::make('Dokumen Pendukung Untuk Pembayaran Uang Muka')
-                    ->label('Dokumen')
+                    ->label('Dokumen Pendukung Untuk Pembayaran Uang Muka')
                     ->hidden(function (Get $get) {
 
                         $number = $get('contract_number');
 
-                        $ctx = Contract::find($number);
+                        $ctx = Contract::where('contract_number', $number)->first();
 
-                        return $ctx?->advance_payment == true ? false : true;
+                        if (!$ctx) return true;
+
+                        return cek_pembayaran_pertama($ctx) ? false : true;
                     })
                     ->visibleOn(['create', 'edit'])
                     ->columns(3)
@@ -144,16 +152,18 @@ class PaymentRequestResource extends Resource
 
 
                 Fieldset::make('Dokumen Pendukung')
-                    ->label('Dokumen')
+                    ->label('Dokumen Pendukung')
                     ->columns(3)
                     ->hidden(function (Get $get) {
                         $number = $get('contract_number');
 
                         if (!$number) return true;
 
-                        $ctx = Contract::find($number);
+                        $ctx = Contract::where('contract_number', $number)->first();
 
-                        return $ctx?->advance_payment == true ? true : false;
+                        if (!$ctx) return true;
+
+                        return cek_pembayaran_pertama($ctx) ? true : false;
                     })
                     ->visibleOn(['create', 'edit'])
                     ->schema([
@@ -315,6 +325,147 @@ class PaymentRequestResource extends Resource
 
                     ]),
 
+                Fieldset::make('Progres Verifikasi Petugas PPK')
+                    ->visibleOn(['view', 'edit'])
+                    ->schema([
+
+                        TextInput::make('ppk.full_name')
+                            ->label('Petugas PPK')
+                            ->formatStateUsing(function ($record) {
+                                return $record?->ppk?->full_name ?? 'Belum Tersedia';
+                            })
+                            ->disabled(),
+
+                        TextInput::make('ppk_verification_status')
+                            ->label('Status Verifikasi Petugas PPK')
+                            ->formatStateUsing(function ($state) {
+                                return match ($state) {
+                                    'not_available' => 'Belum Tersedia',
+                                    'in_progress' => 'Dalam Proses',
+                                    'approved' => 'Disetujui',
+                                    'rejected' => 'Ditolak',
+                                    default => $state,
+                                };
+                            })
+                            ->disabled(),
+
+                        Textarea::make('ppk_rejection_reason')
+                            ->label('Alasan Penolkan PPK')
+                            ->columnSpanFull()
+                            ->hidden(function ($state) {
+                                return !$state ? true : false;
+                            })
+                            ->disabled(),
+                    ]),
+
+                Fieldset::make('Progres Verifikasi Petugas PPSPM')
+                    ->visibleOn(['view', 'edit'])
+                    ->hidden(function ($record) {
+                        return $record?->ppspm_verification_status === 'not_available';
+                    })
+                    ->schema([
+
+                        TextInput::make('spm.full_name')
+                            ->label('Petugas PPSPM')
+                            ->formatStateUsing(function ($record) {
+                                return $record?->spm?->full_name ?? 'Belum Tersedia';
+                            })
+                            ->disabled(),
+
+                        TextInput::make('ppspm_verification_status')
+                            ->label('Status Verifikasi Petugas PPSPM')
+                            ->formatStateUsing(function ($state, $record) {
+                                return match ($state) {
+                                    'not_available' => 'Belum Tersedia',
+                                    'in_progress' => 'Dalam Proses',
+                                    'approved' => 'Disetujui',
+                                    'rejected' => 'Ditolak',
+                                    default => $state,
+                                };
+                            })
+                            ->disabled(),
+
+                        Textarea::make('ppspm_rejection_reason')
+                            ->label('Alasan Penolkan PPSPM')
+                            ->columnSpanFull()
+                            ->hidden(function ($state) {
+                                return !$state ? true : false;
+                            })
+                            ->disabled(),
+                    ]),
+
+                Fieldset::make('Progres Verifikasi Petugas Bendahara')
+                    ->visibleOn(['view', 'edit'])
+                    ->hidden(function ($record) {
+                        return $record?->treasurer_verification_status === 'not_available';
+                    })
+                    ->schema([
+
+                        TextInput::make('treasurer.full_name')
+                            ->label('Petugas Bendahara')
+                            ->formatStateUsing(function ($record) {
+                                return $record?->treasurer?->full_name ?? 'Belum Tersedia';
+                            })
+                            ->disabled(),
+
+                        TextInput::make('treasurer_verification_status')
+                            ->label('Status Verifikasi Petugas Bendahara')
+                            ->formatStateUsing(function ($state) {
+                                return match ($state) {
+                                    'not_available' => 'Belum Tersedia',
+                                    'in_progress' => 'Dalam Proses',
+                                    'approved' => 'Disetujui',
+                                    'rejected' => 'Ditolak',
+                                    default => $state,
+                                };
+                            })
+                            ->disabled(),
+
+                        Textarea::make('treasurer_rejection_reason')
+                            ->label('Alasan Penolkan Bendahara')
+                            ->columnSpanFull()
+                            ->hidden(function ($state) {
+                                return !$state ? true : false;
+                            })
+                            ->disabled(),
+                    ]),
+
+                Fieldset::make('Progres Verifikasi KPA')
+                    ->visibleOn(['view', 'edit'])
+                    ->hidden(function ($record) {
+                        return $record?->kpa_verification_status === 'not_available';
+                    })
+                    ->schema([
+
+                        TextInput::make('kpa.full_name')
+                            ->label('Petugas KPA')
+                            ->formatStateUsing(function ($record) {
+                                return $record?->kpa?->full_name ?? 'Belum Tersedia';
+                            })
+                            ->disabled(),
+
+                        TextInput::make('kpa_verification_status')
+                            ->label('Status Verifikasi KPA')
+                            ->formatStateUsing(function ($state) {
+                                return match ($state) {
+                                    'not_available' => 'Belum Tersedia',
+                                    'in_progress' => 'Dalam Proses',
+                                    'approved' => 'Disetujui',
+                                    'rejected' => 'Ditolak',
+                                    default => $state,
+                                };
+                            })
+                            ->disabled(),
+
+                        Textarea::make('kpa_rejection_reason')
+                            ->label('Alasan Penolkan KPA')
+                            ->columnSpanFull()
+                            ->hidden(function ($state) {
+                                return !$state ? true : false;
+                            })
+                            ->disabled(),
+                    ]),
+
 
                 // Select::make('verification_status')
                 //     ->columnSpanFull()
@@ -362,13 +513,63 @@ class PaymentRequestResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->limit(50),
 
+                TextColumn::make('verification_progress')
+                    ->label('Progres Verifikasi')
+                    ->colors([
+                        'primary'   => 'ppk',
+                        'success'   => 'done',
+                        'danger'    => 'rejected',
+                        'warning'   => 'ppspm',
+                        'secondary' => 'treasurer',
+                    ])
+                    ->formatStateUsing(function ($state) {
+                        return strtoupper($state);
+                    })
+                    ->sortable(),
+
                 TextColumn::make('ppk_verification_status')
                     ->label('Status Verifikasi PPK')
                     ->colors([
+                        'warning'   => 'not_available',
                         'primary'   => 'in_progress',
                         'success'   => 'approved',
                         'danger'    => 'rejected',
                     ])
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+
+
+                TextColumn::make('ppspm_verification_status')
+                    ->label('Status Verifikasi PP-SPM')
+                    ->colors([
+                        'warning'   => 'not_available',
+                        'primary'   => 'in_progress',
+                        'success'   => 'approved',
+                        'danger'    => 'rejected',
+                    ])
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+
+                TextColumn::make('treasurer_verification_status')
+                    ->label('Status Verifikasi Bendahara')
+                    ->colors([
+                        'warning'   => 'not_available',
+                        'primary'   => 'in_progress',
+                        'success'   => 'approved',
+                        'danger'    => 'rejected',
+                    ])
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+
+                TextColumn::make('kpa_verification_status')
+                    ->label('Status Verifikasi KPA')
+                    ->colors([
+                        'warning'   => 'not_available',
+                        'primary'   => 'in_progress',
+                        'success'   => 'approved',
+                        'danger'    => 'rejected',
+                    ])
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
 
                 TextColumn::make('created_at')
