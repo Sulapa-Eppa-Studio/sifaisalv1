@@ -22,7 +22,7 @@ class EditPaymentRequest extends EditRecord
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    protected function mutateFormDataBeforeFill(array $data): array
+    protected function mutateFormDataBeforeSave(array $data): array
     {
         $data['verification_progress']      = 'ppk';
         $data['ppk_verification_status']    = 'in_progress';
