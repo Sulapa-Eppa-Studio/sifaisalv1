@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Contract;
+use App\Models\PPK;
 use App\Models\ServiceProvider;
 use App\Models\User;
 use App\Models\WorkPackage;
@@ -23,11 +24,11 @@ class ContractSeeder extends Seeder
         // Ambil semua Service Providers
         $serviceProviders = ServiceProvider::all();
 
-        // Ambil Admin atau User tertentu sebagai admin_id
-        $admins = User::whereIn('role', ['KPA', 'PPK', 'Admin'])->get();
+        $ppks = PPK::all();
+
 
         // Jika tidak ada data, tampilkan pesan error
-        if ($admins->isEmpty() || $serviceProviders->isEmpty() || empty($workPackages)) {
+        if ($ppks->isEmpty() || $serviceProviders->isEmpty() || empty($workPackages)) {
             $this->command->error('Seeder gagal dijalankan. Pastikan tabel users, service_providers, dan work_packages telah terisi.');
             return;
         }
@@ -48,8 +49,8 @@ class ContractSeeder extends Seeder
             // Pilih Service Provider secara acak
             $serviceProvider = $serviceProviders->random();
 
-            // Pilih Admin secara acak
-            $admin = $admins->random();
+
+            $ppk = $ppks->random();
 
             // Generate data lainnya
             $executionTime  = rand(30, 180); // Masa pelaksanaan antara 30 - 180 hari
@@ -73,7 +74,9 @@ class ContractSeeder extends Seeder
                 'bank_account_number' => $serviceProvider->account_number,
                 'working_unit' => $workingUnit,
                 'service_provider_id' => $serviceProvider->id,
-                'admin_id' => $admin->id,
+                'admin_id' => 1,
+                'ppk_id' => $ppk->id,
+
             ]);
         }
     }

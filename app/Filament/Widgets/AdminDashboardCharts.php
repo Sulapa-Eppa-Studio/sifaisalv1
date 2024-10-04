@@ -32,7 +32,7 @@ class AdminDashboardCharts extends ApexChartWidget
     {
         // Mengambil data pengguna berdasarkan role
         $roles = ['Penyedia Jasa', 'KPA', 'PPK', 'SPM', 'Bendahara'];
-        $role_key = ['service_provider', 'kpa', 'ppk', 'spm', 'treasurer'];
+        $role_key = ['penyedia_jasa', 'kpa', 'ppk', 'spm', 'bendahara'];
         $userCounts = [];
 
         foreach ($role_key as $role) {
