@@ -44,6 +44,7 @@ class CreatePaymentRequest extends CreateRecord
             $data['payment_stage']          =   get_payment_stage($contract);
             $data['contract_number']        =   $contract->contract_number;
             $data['service_provider_id']    =   $sp_id;
+            $data['ppk_id']                 =   $contract->ppk_id;
 
             $record = new ($this->getModel())($data);
 

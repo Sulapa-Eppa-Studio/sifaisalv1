@@ -1,8 +1,6 @@
 <!doctype html>
 <html lang="en">
 
-<!-- Mirrored from aminurislam.com/labartisan/halci-demo/halci/index-agency.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 05 May 2024 20:08:50 GMT -->
-
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -78,7 +76,7 @@
                                 <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
                             </div>
                             <div class="post-text">
-                                <h4><a href="/admin">Admin</a></h4>
+                                <h4><a href="{{ get_admin_panel_url() }}/admin" target="get_admin_panel_url">Admin</a></h4>
                                 <p>
                                     Mengelola seluruh sistem dan memiliki kontrol penuh atas semua modul dan pengguna.
                                 </p>
@@ -92,7 +90,7 @@
                                 <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
                             </div>
                             <div class="post-text">
-                                <h4><a href="/penyedia-jasa">Penyedia Jasa</a></h4>
+                                <h4><a href="{{ get_sp_panel_url() }}/penyedia-jasa" target="get_sp_panel_url">Penyedia Jasa</a></h4>
                                 <p>
                                     Bertanggung jawab atas pengelolaan data dan informasi terkait penyedia jasa dalam
                                     sistem.
@@ -107,7 +105,7 @@
                                 <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
                             </div>
                             <div class="post-text">
-                                <h4><a href="/ppk">Pejabat Pembuat Komitmen (PPK)</a></h4>
+                                <h4><a href="{{ get_ppk_panel_url() }}/ppk" target="get_ppk_panel_url">Pejabat Pembuat Komitmen (PPK)</a></h4>
                                 <p>
                                     Mengelola komitmen dalam pelaksanaan proyek atau pengadaan barang/jasa.
                                 </p>
@@ -121,7 +119,7 @@
                                 <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
                             </div>
                             <div class="post-text">
-                                <h4><a href="/spm">Pejabat Penandatangan SPM (PP-SPM)</a></h4>
+                                <h4><a href="{{ get_spm_panel_url() }}/spm" target="get_spm_panel_url">Pejabat Penandatangan SPM (PP-SPM)</a></h4>
                                 <p>
                                     Bertanggung jawab atas penandatanganan Surat Perintah Membayar (SPM) dalam sistem.
                                 </p>
@@ -135,7 +133,7 @@
                                 <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
                             </div>
                             <div class="post-text">
-                                <h4><a href="/treasurer">Bendahara Pengeluaran</a></h4>
+                                <h4><a href="{{ get_treasurer_panel_url() }}/treasurer" target="get_treasurer_panel_url">Bendahara Pengeluaran</a></h4>
                                 <p>
                                     Mengelola pengeluaran anggaran dan bertanggung jawab atas pencatatan serta pelaporan
                                     keuangan.
@@ -150,7 +148,7 @@
                                 <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
                             </div>
                             <div class="post-text">
-                                <h4><a href="/kpa">Kuasa Pengguna Anggaran (KPA)</a></h4>
+                                <h4><a href="{{ get_kpa_panel_url() }}/kpa" target="get_kpa_panel_url">Kuasa Pengguna Anggaran (KPA)</a></h4>
                                 <p>
                                     Memiliki kewenangan dalam penggunaan anggaran sesuai dengan tujuan dan peraturan
                                     yang berlaku.
@@ -177,7 +175,6 @@
     <!--scroll up-->
 
     <!-- Optional JavaScript -->
-    <!-- jQuery first, then Bootstrap JS, then font-awosame, then lightcase Js, then image loaded & isotope Js, than swiper js -->
     <script src="{{ asset('modern') }}/assets/js/jquery.js"></script>
     <script src="{{ asset('modern') }}/assets/js/bootstrap.min.js"></script>
     <script src="{{ asset('modern') }}/assets/js/fontawesome.min.js"></script>
@@ -193,7 +190,5 @@
     <script src="{{ asset('modern') }}/assets/js/active.js"></script>
 
 </body>
-
-<!-- Mirrored from aminurislam.com/labartisan/halci-demo/halci/index-agency.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 05 May 2024 20:08:58 GMT -->
 
 </html>

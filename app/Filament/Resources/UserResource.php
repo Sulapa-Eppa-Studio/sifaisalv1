@@ -41,7 +41,7 @@ class UserResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()->role == 'admin';
+        return get_auth_user()->role == 'admin';
     }
 
 
@@ -64,15 +64,23 @@ class UserResource extends Resource
 
 
                 TextInput::make('name')
-                    ->label('Username')
+                    ->label('Nama Pengguna')
                     ->required()
                     ->minLength(3)
                     ->maxLength(199),
+
+                TextInput::make('username')
+                    ->label('Username')
+                    ->required()
+                    ->unique(User::class, 'username', fn($record) => $record)
+                    ->minLength(3)
+                    ->maxLength(90),
 
                 TextInput::make('email')
                     ->label('Alamat Email')
                     ->required()
                     ->email()
+                    ->columnSpanFull()
                     ->unique(User::class, 'email', fn($record) => $record)
                     ->minLength(3)
                     ->maxLength(199),
@@ -303,6 +311,12 @@ class UserResource extends Resource
                     ->label('Nama')
                     ->searchable()
                     ->formatStateUsing(fn(User $record): string => ucwords($record->name))
+                    ->sortable(),
+
+                TextColumn::make('username')
+                    ->label('Username')
+                    ->searchable()
+                    ->placeholder('Tidak Tersedia')
                     ->sortable(),
 
                 TextColumn::make('email')

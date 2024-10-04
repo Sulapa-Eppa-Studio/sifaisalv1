@@ -190,6 +190,7 @@ class ContractResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
+
                 Tables\Columns\TextColumn::make('work_package')
                     ->label('Paket Pekerjaan')
                     ->searchable()
@@ -211,6 +212,16 @@ class ContractResource extends Resource
                     ->numeric()
                     ->suffix(' Tahap')
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('payment_value')
+                    ->label('Nilai Kontrak')
+                    ->searchable()
+                    ->money('idr', true),
+
+                Tables\Columns\TextColumn::make('paid_value')
+                    ->label('Sudah Terbayar')
+                    ->searchable()
+                    ->money('idr', true),
 
                 Tables\Columns\TextColumn::make('service_provider')
                     ->label('Penyedia Jasa')

@@ -36,7 +36,7 @@ function get_list_request_payment($status = null)
 }
 
 
-function cek_pembayaran_pertama(Contract $contract) : bool
+function cek_pembayaran_pertama(Contract $contract): bool
 {
     $payment_requests = PaymentRequest::where('contract_number', $contract->contract_number)
         ->where('verification_progress', 'done')
@@ -52,11 +52,40 @@ function cek_pembayaran_pertama(Contract $contract) : bool
 }
 
 
-function get_payment_stage(Contract $contract) : int
+function get_payment_stage(Contract $contract): int
 {
     $payment_requests = PaymentRequest::where('contract_number', $contract->contract_number)
         ->where('verification_progress', 'done')
         ->count();
 
     return $payment_requests + 1;
+}
+function get_admin_panel_url()
+{
+    return env('DOMAIN_ADMIN') ?? env('APP_URL');
+}
+
+function get_sp_panel_url()
+{
+    return env('DOMAIN_SP') ?? env('APP_URL');
+}
+
+function get_ppk_panel_url()
+{
+    return env('DOMAIN_PPK') ?? env('APP_URL');
+}
+
+function get_spm_panel_url()
+{
+    return env('DOMAIN_SPM') ?? env('APP_URL');
+}
+
+function get_treasurer_panel_url()
+{
+    return env('DOMAIN_TREASURER') ?? env('APP_URL');
+}
+
+function get_kpa_panel_url()
+{
+    return env('DOMAIN_KPA') ?? env('APP_URL');
 }

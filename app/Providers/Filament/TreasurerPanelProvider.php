@@ -31,14 +31,13 @@ class TreasurerPanelProvider extends PanelProvider
         return $panel
             ->id('treasurer')
             ->path('treasurer')
-            ->login()
+            ->login(\App\Filament\Auth\CustomLogin::class)
             ->brandLogo(asset('images/logo-app-1.png'))->brandLogoHeight('3rem')
             ->darkModeBrandLogo(asset('images/logo-app-dark-1.png'))
             ->spa()
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->login()
             ->discoverResources(in: app_path('Filament/Treasurer/Resources'), for: 'App\\Filament\\Treasurer\\Resources')
             ->discoverPages(in: app_path('Filament/Treasurer/Pages'), for: 'App\\Filament\\Treasurer\\Pages')
             ->pages([

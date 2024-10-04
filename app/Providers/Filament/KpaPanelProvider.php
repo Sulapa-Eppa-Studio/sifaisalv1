@@ -31,7 +31,7 @@ class KpaPanelProvider extends PanelProvider
         return $panel
             ->id('kpa')
             ->path('kpa')
-            ->login()
+            ->login(\App\Filament\Auth\CustomLogin::class)
             ->colors([
                 'primary' => Color::Amber,
             ])

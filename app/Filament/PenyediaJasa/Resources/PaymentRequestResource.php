@@ -332,7 +332,7 @@ class PaymentRequestResource extends Resource
                         TextInput::make('ppk.full_name')
                             ->label('Petugas PPK')
                             ->formatStateUsing(function ($record) {
-                                return $record->ppk?->full_name ?? 'Belum Tersedia';
+                                return $record?->ppk?->full_name ?? 'Belum Tersedia';
                             })
                             ->disabled(),
 
@@ -361,14 +361,14 @@ class PaymentRequestResource extends Resource
                 Fieldset::make('Progres Verifikasi Petugas PPSPM')
                     ->visibleOn(['view', 'edit'])
                     ->hidden(function ($record) {
-                        return $record->ppspm_verification_status === 'not_available';
+                        return $record?->ppspm_verification_status === 'not_available';
                     })
                     ->schema([
 
                         TextInput::make('spm.full_name')
                             ->label('Petugas PPSPM')
                             ->formatStateUsing(function ($record) {
-                                return $record->spm?->full_name ?? 'Belum Tersedia';
+                                return $record?->spm?->full_name ?? 'Belum Tersedia';
                             })
                             ->disabled(),
 
@@ -397,14 +397,14 @@ class PaymentRequestResource extends Resource
                 Fieldset::make('Progres Verifikasi Petugas Bendahara')
                     ->visibleOn(['view', 'edit'])
                     ->hidden(function ($record) {
-                        return $record->treasurer_verification_status === 'not_available';
+                        return $record?->treasurer_verification_status === 'not_available';
                     })
                     ->schema([
 
                         TextInput::make('treasurer.full_name')
                             ->label('Petugas Bendahara')
                             ->formatStateUsing(function ($record) {
-                                return $record->treasurer?->full_name ?? 'Belum Tersedia';
+                                return $record?->treasurer?->full_name ?? 'Belum Tersedia';
                             })
                             ->disabled(),
 
@@ -433,14 +433,14 @@ class PaymentRequestResource extends Resource
                 Fieldset::make('Progres Verifikasi KPA')
                     ->visibleOn(['view', 'edit'])
                     ->hidden(function ($record) {
-                        return $record->kpa_verification_status === 'not_available';
+                        return $record?->kpa_verification_status === 'not_available';
                     })
                     ->schema([
 
                         TextInput::make('kpa.full_name')
                             ->label('Petugas KPA')
                             ->formatStateUsing(function ($record) {
-                                return $record->kpa?->full_name ?? 'Belum Tersedia';
+                                return $record?->kpa?->full_name ?? 'Belum Tersedia';
                             })
                             ->disabled(),
 

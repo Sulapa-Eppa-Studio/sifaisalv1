@@ -31,7 +31,7 @@ class PpkPanelProvider extends PanelProvider
         return $panel
             ->id('ppk')
             ->path('ppk')
-            ->login()
+            ->login(\App\Filament\Auth\CustomLogin::class)
             ->colors([
                 'primary' => Color::Amber,
             ])

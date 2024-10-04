@@ -33,7 +33,7 @@ class PenyediaJasaPanelProvider extends PanelProvider
         return $panel
             ->id('penyediaJasa')
             ->path('penyedia-jasa')
-            ->login()
+            ->login(\App\Filament\Auth\CustomLogin::class)
             ->colors([
                 'primary' => Color::Amber,
             ])
