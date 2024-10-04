@@ -16,22 +16,22 @@ return new class extends Migration
             $table->string('contract_number');
             $table->string('request_number'); // Request number
             $table->string('payment_stage'); // Payment stage (e.g., "Down Payment", "Phase I", etc.)
-            $table->integer('payment_value'); // Payment value (physical progress)
-            $table->text('payment_description'); // Brief description of the payment request
-            $table->enum('verification_progress', ['ppk', 'ppspm', 'treasurer', 'kpa'])->default('ppk'); // Verification progress
+            $table->bigInteger('payment_value'); // Payment value (physical progress)
+            $table->text('payment_description')->nullable(); // Brief description of the payment request
+            $table->enum('verification_progress', ['ppk', 'ppspm', 'treasurer', 'kpa', 'done', 'rejected'])->default('ppk'); // Verification progress
 
             $table->foreignId('service_provider_id')->nullable()->constrained('service_providers')->cascadeOnDelete();
 
             $table->enum('ppk_verification_status', ['in_progress', 'approved', 'rejected'])->default('in_progress'); // Verification status (default: in progress)
             $table->text('ppk_rejection_reason')->nullable(); // Reason if rejected
             $table->foreignId('ppk_id')->nullable()->constrained('p_p_k_s')->onDelete('set null');
-            $table->enum('ppspm_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('in_progress'); // Verification status (default: in progress)
+            $table->enum('ppspm_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('not_available'); // Verification status (default: in progress)
             $table->text('ppspm_rejection_reason')->nullable(); // Reason if rejected
             $table->foreignId('ppspm_id')->nullable()->constrained('s_p_m_s')->onDelete('set null');
-            $table->enum('treasurer_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('in_progress'); // Verification status (default: in progress)
+            $table->enum('treasurer_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('not_available'); // Verification status (default: in progress)
             $table->text('treasurer_rejection_reason')->nullable(); // Reason if rejected
             $table->foreignId('treasurer_id')->nullable()->constrained('treasurers')->onDelete('set null');
-            $table->enum('kpa_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('in_progress'); // Verification status (default: in progress)
+            $table->enum('kpa_verification_status', ['not_available', 'in_progress', 'approved', 'rejected'])->default('not_available'); // Verification status (default: in progress)
             $table->text('kpa_rejection_reason')->nullable(); // Reason if rejected
             $table->foreignId('kpa_id')->nullable()->constrained('k_p_a_s')->onDelete('set null');
 

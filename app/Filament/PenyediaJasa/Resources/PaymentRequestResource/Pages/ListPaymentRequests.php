@@ -34,6 +34,10 @@ class ListPaymentRequests extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('verification_progress', 'treasurer')),
             'Verifikasi KPA' => Tab::make()
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('verification_progress', 'kpa')),
+            'Proses Selesai' => Tab::make()
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('verification_progress', 'done')),
+            'Verifikasi Ditolak' => Tab::make()
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('verification_progress', 'rejected')),
         ];
     }
 }

@@ -85,13 +85,31 @@ class ContractResource extends Resource
 
                 Forms\Components\Select::make('work_package')
                     ->label('Paket Pekerjaan')
+                    ->searchable()
+                    ->placeholder('Pilih Paket Pekerjaan')
                     ->options(WorkPackage::pluck('name', 'name')->toArray())
+                    ->required(),
+
+                Forms\Components\Select::make('ppk_id')
+                    ->label('Petugas PPK ( Pejabat Pembuat Komitmen )')
+                    ->searchable()
+                    ->options(function () {
+                        $ppks = PPK::get();
+
+                        $options = [];
+
+                        foreach ($ppks as $ppk) {
+                            $options[$ppk->id] = $ppk->full_name . " ( " . $ppk->nip . " ) ";
+                        }
+
+                        return $options;
+                    })
+                    ->placeholder('Pilih NIP Petugas PPK')
                     ->required(),
 
                 Forms\Components\TextInput::make('working_unit')
                     ->label('Unit Kerja')
                     ->required()
-                    ->columnSpanFull()
                     ->maxLength(255),
 
                 Fieldset::make('Informasi Pembayaran')
@@ -223,7 +241,7 @@ class ContractResource extends Resource
                     ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diubah Pada')

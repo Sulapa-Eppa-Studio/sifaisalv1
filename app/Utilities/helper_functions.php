@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Contract;
 use App\Models\PaymentRequest;
 use App\Models\TermintSppPpk;
 use App\Models\User;
@@ -10,9 +11,8 @@ function get_my_contracts_for_options()
 
     $contracts = $user->services_provider->contracts();
 
-    return $contracts->get()->pluck('contract_number', 'id');
+    return $contracts->get()->pluck('contract_number', 'contract_number');
 }
-
 
 function get_auth_user(): User
 {
@@ -33,4 +33,30 @@ function get_list_request_payment($status = null)
     }
 
     return $query->get()->pluck('request_number', 'id')->toArray();
+}
+
+
+function cek_pembayaran_pertama(Contract $contract) : bool
+{
+    $payment_requests = PaymentRequest::where('contract_number', $contract->contract_number)
+        ->where('verification_progress', 'done')
+        ->count();
+
+    // if ($contract->advance_payment == true) {
+    //     return $payment_requests == 0;
+    // }
+
+    // $contract->advance_payment == true ? false : true;
+
+    return $payment_requests == 0 && $contract->advance_payment == true;
+}
+
+
+function get_payment_stage(Contract $contract) : int
+{
+    $payment_requests = PaymentRequest::where('contract_number', $contract->contract_number)
+        ->where('verification_progress', 'done')
+        ->count();
+
+    return $payment_requests + 1;
 }

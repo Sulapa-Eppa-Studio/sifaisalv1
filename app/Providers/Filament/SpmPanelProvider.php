@@ -53,7 +53,6 @@ class SpmPanelProvider extends PanelProvider
 
                 FilamentApexChartsPlugin::make(),
 
-
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')
                     ->setTitle('Profil Saya')
