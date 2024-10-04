@@ -42,7 +42,7 @@
         x-on:click="toggle"
         {{ $trigger->attributes->class(['fi-dropdown-trigger flex cursor-pointer']) }}
     >
-        <span style="line-height: 8; padding-right: 8px">{{ get_auth_user()->name }}</span>
+        <span class="name-navbar" style="line-height: 8; padding-right: 8px">{{ get_auth_user()->name }}</span>
         {{ $trigger }}
     </div>
 

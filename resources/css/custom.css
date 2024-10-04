@@ -119,3 +119,11 @@ div.fi-topbar nav {
     background-size: cover !important;
     background-repeat: no-repeat !important;
 }
+
+.name-navbar {
+    display: none;
+}
+
+nav span.name-navbar {
+    display: inline-block;
+}
