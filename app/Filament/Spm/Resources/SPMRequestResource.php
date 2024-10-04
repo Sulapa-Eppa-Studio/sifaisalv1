@@ -24,7 +24,9 @@ class SPMRequestResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-right-end-on-rectangle';
 
-    protected static ?string $label = 'Input Pengajuan SPM';
+    protected static ?string $label = 'Surat Perintah Membayar (SPM)';
+
+    protected static ?string $navigationLabel = 'SPM';
 
     protected static ?string $navigationGroup = 'Menu Utama';
 
