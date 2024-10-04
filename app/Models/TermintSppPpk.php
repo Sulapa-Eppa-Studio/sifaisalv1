@@ -26,6 +26,11 @@ class TermintSppPpk extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function spm()
+    {
+        return $this->belongsTo(SPM::class);
+    }
+
     public function contract()
     {
         return $this->belongsTo(Contract::class);

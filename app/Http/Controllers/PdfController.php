@@ -6,7 +6,9 @@ use App\Models\Contract;
 use App\Models\PaymentRequest;
 use App\Models\PPK;
 use App\Models\ServiceProvider;
+use App\Models\TermintSppPpk;
 use App\Models\User;
+use App\Models\WorkPackage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,6 +25,8 @@ class PdfController extends Controller
                 "user_report" => $this->handle_user_report($request),
                 "contract_report" => $this->handle_contract_report($request),
                 "payment_request_report" => $this->handle_payment_request_report($request),
+                "spp_report" => $this->handle_termint_spp_ppks_report($request),
+                "workpackage_report" => $this->handle_work_package_report($request),
             };
         } catch (\Throwable $th) {
 
@@ -182,46 +186,34 @@ class PdfController extends Controller
         $period_dates = [$start_date, $end_date];
 
         // Mengambil data permintaan pembayaran berdasarkan periode
-        $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'ppspm', 'treasurer', 'kpa', 'contract'])->get();
+        $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->get();
 
         // Menyusun data tabel untuk laporan PDF
         $payment_request_table_data = $payment_requests->map(function ($payment_request) {
             return [
-                'ID' => $payment_request->id,
                 'No. Kontrak' => $payment_request->contract_number,
                 'No. Permintaan' => $payment_request->request_number,
                 'Tahap Pembayaran' => $payment_request->payment_stage,
                 'Nilai Pembayaran' => number_format($payment_request->payment_value, 0, ',', '.'),
                 'Penyedia Jasa' => $payment_request->service_provider->full_name ?? 'Tidak Ada',
-                'PPK' => $payment_request->ppk->full_name ?? 'Tidak Ada',
-                'PPSPM' => $payment_request->ppspm->full_name ?? 'Tidak Ada',
-                'Bendahara' => $payment_request->treasurer->full_name ?? 'Tidak Ada',
-                'KPA' => $payment_request->kpa->full_name ?? 'Tidak Ada',
                 'Status Verifikasi PPK' => ucfirst($payment_request->ppk_verification_status),
-                'Status Verifikasi PPSPM' => ucfirst($payment_request->ppspm_verification_status),
-                'Status Verifikasi Bendahara' => ucfirst($payment_request->treasurer_verification_status),
                 'Status Verifikasi KPA' => ucfirst($payment_request->kpa_verification_status),
+                'Tanggal Dibuat' => Carbon::parse($payment_request->created_at)->format('d M Y'),
             ];
         })->toArray();
 
         // Data tabel untuk laporan PDF
         $tables = [
-            'Laporan Permintaan Pembayaran' => [
+            'Laporan Permintaan Pembayaran (Ringkasan)' => [
                 "kolom" => [
-                    'ID',
                     'No. Kontrak',
                     'No. Permintaan',
                     'Tahap Pembayaran',
                     'Nilai Pembayaran',
                     'Penyedia Jasa',
-                    'PPK',
-                    'PPSPM',
-                    'Bendahara',
-                    'KPA',
                     'Status Verifikasi PPK',
-                    'Status Verifikasi PPSPM',
-                    'Status Verifikasi Bendahara',
-                    'Status Verifikasi KPA'
+                    'Status Verifikasi KPA',
+                    'Tanggal Dibuat'
                 ],
                 "data"  => $payment_request_table_data,
             ],
@@ -237,5 +229,112 @@ class PdfController extends Controller
         $pdf = Pdf::loadView("components.reports.report-layout", $data);
 
         return $pdf->download("payment_request_report.pdf");
+    }
+
+
+    public function handle_termint_spp_ppks_report(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'nullable|date|date_format:Y-m-d',
+            'end_date'   => 'nullable|date|date_format:Y-m-d|after:start_date',
+        ]);
+
+        $start_date = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
+        $end_date = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
+
+        $period_dates = [$start_date, $end_date];
+
+        // Mengambil data dari termint_spp_ppks berdasarkan periode
+        $termint_spp_ppks = TermintSppPpk::with(['contract', 'spm', 'user'])->get();
+
+        // Menyusun data tabel dengan informasi penting saja
+        $termint_table_data = $termint_spp_ppks->map(function ($termint) {
+            return [
+                'No. Termint' => $termint->no_termint,
+                'Deskripsi' => $termint->description,
+                'Nilai Pembayaran' => number_format($termint->payment_value, 0, ',', '.'),
+                'Pembayaran Uang Muka' => $termint->has_advance_payment ? 'Ya' : 'Tidak',
+                'No. Kontrak' => $termint->contract->contract_number ?? 'Tidak Ada',
+                'Pengguna' => $termint->user->name ?? 'Tidak Ada',
+                'Status Verifikasi PPSPM' => ucfirst($termint->ppspm_verification_status),
+                'Tanggal Dibuat' => Carbon::parse($termint->created_at)->format('d M Y'),
+            ];
+        })->toArray();
+
+        // Data tabel untuk laporan PDF
+        $tables = [
+            'Laporan Surat Permohonan Pembayaran (Ringkasan)' => [
+                "kolom" => [
+                    'No. Termint',
+                    'Deskripsi',
+                    'Nilai Pembayaran',
+                    'Pembayaran Uang Muka',
+                    'No. Kontrak',
+                    'Pengguna',
+                    'Status Verifikasi PPSPM',
+                    'Tanggal Dibuat'
+                ],
+                "data"  => $termint_table_data,
+            ],
+        ];
+
+        // Menyusun data laporan yang akan dipassing ke view PDF
+        $data = [
+            'title'     => 'Laporan Termint SPP PPK Periode ' . Carbon::parse($start_date)->format('d M Y') . ' - ' . Carbon::parse($end_date)->format('d M Y'),
+            'content'   => [],
+            'tables'    => $tables
+        ];
+
+        $pdf = Pdf::loadView("components.reports.report-layout", $data);
+
+        return $pdf->download("termint_spp_ppk_report.pdf");
+    }
+
+    public function handle_work_package_report(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'nullable|date|date_format:Y-m-d',
+            'end_date'   => 'nullable|date|date_format:Y-m-d|after:start_date',
+        ]);
+
+        $start_date = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
+        $end_date = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
+
+        $period_dates = [$start_date, $end_date];
+
+        // Mengambil data paket pekerjaan (work packages)
+        $work_packages = WorkPackage::all();
+
+        // Menyusun data tabel dengan informasi penting saja
+        $work_package_table_data = $work_packages->map(function ($work_package) {
+            return [
+                'ID' => $work_package->id,
+                'Nama Paket' => $work_package->name,
+                'Tanggal Dibuat' => Carbon::parse($work_package->created_at)->format('d M Y'),
+            ];
+        })->toArray();
+
+        // Data tabel untuk laporan PDF
+        $tables = [
+            'Laporan Paket Pekerjaan (Ringkasan)' => [
+                "kolom" => [
+                    'ID',
+                    'Nama Paket',
+                    'Tanggal Dibuat'
+                ],
+                "data"  => $work_package_table_data,
+            ],
+        ];
+
+        // Menyusun data laporan yang akan dipassing ke view PDF
+        $data = [
+            'title'     => 'Laporan Paket Pekerjaan Periode ' . Carbon::parse($start_date)->format('d M Y') . ' - ' . Carbon::parse($end_date)->format('d M Y'),
+            'content'   => [],
+            'tables'    => $tables
+        ];
+
+        $pdf = Pdf::loadView("components.reports.report-layout", $data);
+
+        return $pdf->download("work_package_report.pdf");
     }
 }

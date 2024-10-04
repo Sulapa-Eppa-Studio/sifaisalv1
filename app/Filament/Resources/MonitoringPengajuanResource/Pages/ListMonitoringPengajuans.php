@@ -7,7 +7,9 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
-
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\ActionSize;
 
 class ListMonitoringPengajuans extends ListRecords
 {
@@ -17,6 +19,13 @@ class ListMonitoringPengajuans extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Action::make('exp_pdf')
+                ->url(route('ds.report.export.pdf', ['report_model' => 'payment_request_report']), true)
+                ->label('Download PDF')
+                ->icon('heroicon-o-document')
+                ->size(ActionSize::Medium)
+                ->color('danger')
+                ->button()
         ];
     }
 
