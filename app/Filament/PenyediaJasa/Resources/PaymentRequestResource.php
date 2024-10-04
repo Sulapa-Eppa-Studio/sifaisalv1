@@ -437,13 +437,6 @@ class PaymentRequestResource extends Resource
                     })
                     ->schema([
 
-                        TextInput::make('kpa.full_name')
-                            ->label('Petugas KPA')
-                            ->formatStateUsing(function ($record) {
-                                return $record?->kpa?->full_name ?? 'Belum Tersedia';
-                            })
-                            ->disabled(),
-
                         TextInput::make('kpa_verification_status')
                             ->label('Status Verifikasi KPA')
                             ->formatStateUsing(function ($state) {

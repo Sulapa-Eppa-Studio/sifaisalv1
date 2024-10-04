@@ -16,6 +16,9 @@ use App\Filament\Spm\Resources\SPMRequestResource\RelationManagers;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Support\RawJs;
 
 class SPMRequestResource extends Resource
@@ -30,6 +33,11 @@ class SPMRequestResource extends Resource
 
     protected static ?string $navigationGroup = 'Menu Utama';
 
+    /**
+     * Whether the user can create a new SPM request.
+     *
+     * @return bool
+     */
     public static function canCreate(): bool
     {
         return true;
@@ -37,7 +45,7 @@ class SPMRequestResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        return true;
+        return $record->treasurer_verification_status == 'rejected' || $record->kpa_verification_status == 'rejected';
     }
 
     public static function canDelete(Model $record): bool
@@ -99,7 +107,80 @@ class SPMRequestResource extends Resource
                             ->required()
                             ->searchable()
                             ->options(get_list_request_payment('done')),
-                    ])
+                    ]),
+
+
+                Fieldset::make('Progres Verifikasi Petugas Bendahara')
+                    ->visibleOn(['view', 'edit'])
+                    ->hidden(function ($record) {
+                        return $record?->treasurer_verification_status === 'not_available';
+                    })
+                    ->schema([
+
+                        TextInput::make('treasurer.full_name')
+                            ->label('Petugas Bendahara')
+                            ->formatStateUsing(function ($record) {
+                                return $record?->treasurer?->full_name ?? 'Belum Tersedia';
+                            })
+                            ->disabled(),
+
+                        TextInput::make('treasurer_verification_status')
+                            ->label('Status Verifikasi Petugas Bendahara')
+                            ->formatStateUsing(function ($state) {
+                                return match ($state) {
+                                    'not_available' => 'Belum Tersedia',
+                                    'in_progress' => 'Dalam Proses',
+                                    'approved' => 'Disetujui',
+                                    'rejected' => 'Ditolak',
+                                    default => $state,
+                                };
+                            })
+                            ->disabled(),
+
+                        Textarea::make('treasurer_rejection_reason')
+                            ->label('Alasan Penolkan Bendahara')
+                            ->columnSpanFull()
+                            ->hidden(function ($state) {
+                                return !$state ? true : false;
+                            })
+                            ->disabled(),
+                    ]),
+
+                Fieldset::make('Progres Verifikasi KPA')
+                    ->visibleOn(['view', 'edit'])
+                    ->hidden(function ($record) {
+                        return $record?->kpa_verification_status === 'not_available';
+                    })
+                    ->schema([
+
+                        TextInput::make('kpa.full_name')
+                            ->label('Petugas KPA')
+                            ->formatStateUsing(function ($record) {
+                                return $record?->kpa?->full_name ?? 'Belum Tersedia';
+                            })
+                            ->disabled(),
+
+                        TextInput::make('kpa_verification_status')
+                            ->label('Status Verifikasi KPA')
+                            ->formatStateUsing(function ($state) {
+                                return match ($state) {
+                                    'not_available' => 'Belum Tersedia',
+                                    'in_progress' => 'Dalam Proses',
+                                    'approved' => 'Disetujui',
+                                    'rejected' => 'Ditolak',
+                                    default => $state,
+                                };
+                            })
+                            ->disabled(),
+
+                        Textarea::make('kpa_rejection_reason')
+                            ->label('Alasan Penolkan KPA')
+                            ->columnSpanFull()
+                            ->hidden(function ($state) {
+                                return !$state ? true : false;
+                            })
+                            ->disabled(),
+                    ]),
             ]);
     }
 
@@ -128,6 +209,16 @@ class SPMRequestResource extends Resource
                     ])
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('kpa_verification_status')
+                    ->label('Status Verifikasi KPA')
+                    ->colors([
+                        'warning'   => 'not_available',
+                        'primary'   => 'in_progress',
+                        'success'   => 'approved',
+                        'danger'    => 'rejected',
+                    ])
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime()
@@ -144,7 +235,27 @@ class SPMRequestResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('next_kpa')
+                    ->label('Ajukan Ke KPA')
+                    ->icon('heroicon-o-arrow-right')
+                    ->action(function ($record) {
+
+                        $record?->update([
+                            'kpa_verification_status'           =>  'in_progress',
+                        ]);
+
+                        Notification::make()
+                            ->title('Pengajuan Berhasil')
+                            ->body('SPM berhasil di ajukan ke KPA')
+                            ->send();
+                    })
+                    ->disabled(function ($record) {
+                        return $record->treasurer_verification_status == 'approved' && $record->kpa_verification_status == 'not_available' ?  false : true;
+                        // return false;
+                    }),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

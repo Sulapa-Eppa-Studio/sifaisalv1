@@ -164,7 +164,6 @@ class SPMRequestAprovalResource extends Resource
                         $record->update([
                             'treasurer_verification_status'     =>  'approved',
                             'treasurer_id'                      =>  get_auth_user()->treasurer->id,
-                            'kpa_verification_status'           =>  'in_progress',
                         ]);
 
                         Notification::make('x_not')
