@@ -27,7 +27,7 @@ class ContractResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $label =   'Rekam Kontrak';
+    protected static ?string $label =   'Kontrak';
 
     protected static ?string $navigationLabel = 'Kontrak';
 
