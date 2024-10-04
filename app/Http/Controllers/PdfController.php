@@ -12,6 +12,7 @@ use App\Models\WorkPackage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PdfController extends Controller
 {
@@ -186,7 +187,16 @@ class PdfController extends Controller
         $period_dates = [$start_date, $end_date];
 
         // Mengambil data permintaan pembayaran berdasarkan periode
-        $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->get();
+
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+
+            $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->get();
+        } else {
+            $providerId = ServiceProvider::where('user_id', $user->id)->first()->id;
+
+            $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('service_provider_id', $providerId)->get();
+        }
 
         // Menyusun data tabel untuk laporan PDF
         $payment_request_table_data = $payment_requests->map(function ($payment_request) {
