@@ -25,6 +25,17 @@ class EditTermintSppPpk extends EditRecord
         return $data;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['ppspm_verification_status']      = 'in_progress';
+
+        return $data;
+    }
+
 
     protected function afterSave(): void
     {

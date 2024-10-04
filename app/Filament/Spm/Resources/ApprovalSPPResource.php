@@ -57,10 +57,11 @@ class ApprovalSPPResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('contract_id')
+                    ->label('No. Kontrak')
                     ->relationship('contract', 'contract_number')
                     ->required(),
                 Forms\Components\TextInput::make('no_termint')
-                    ->label('No Termint')
+                    ->label('No. SPP')
                     ->required(),
                 Forms\Components\TextInput::make('description')
                     ->label('Uraian Pembayaran SPPK-PPK')
@@ -191,6 +192,8 @@ class ApprovalSPPResource extends Resource
                 TextColumn::make('description')->label('Deskripsi')->searchable(),
 
                 TextColumn::make('payment_value')->label('Nilai Pembayaran')->currency('IDR'),
+
+                TextColumn::make('ppspm_verification_status')->label('Status Verifikasi'),
 
                 BooleanColumn::make('has_advance_payment')->label('Uang Muka'),
 

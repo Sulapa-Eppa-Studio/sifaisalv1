@@ -1,9 +1,9 @@
 /* Sidebar */
-
 body {
     background-image: url('/bg-images/bg-nav.jpg') !important;
-    background-size: cover !important;
+    background-size: contain !important;
     background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
 }
 
 

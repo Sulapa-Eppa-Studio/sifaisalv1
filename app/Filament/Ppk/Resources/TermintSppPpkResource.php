@@ -160,12 +160,32 @@ class TermintSppPpkResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('contract.contract_number')->label('Kontrak'),
-                Tables\Columns\TextColumn::make('no_termint')->label('Nomor SPP'),
-                Tables\Columns\TextColumn::make('description')->label('Deskripsi'),
-                Tables\Columns\TextColumn::make('payment_value')->label('Nilai Pembayaran')->currency('IDR'),
-                Tables\Columns\BooleanColumn::make('has_advance_payment')->label('Uang Muka'),
-                Tables\Columns\TextColumn::make('created_at')->label('Dibuat Pada')->dateTime(),
+                Tables\Columns\TextColumn::make('contract.contract_number')
+                    ->label('Kontrak'),
+
+                Tables\Columns\TextColumn::make('no_termint')
+                    ->label('Nomor SPP'),
+
+                Tables\Columns\TextColumn::make('description')
+                    ->label('Deskripsi')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('ppspm_verification_status')
+                    ->label('Status Verifikasi')
+                    ->color('primary'),
+
+                Tables\Columns\TextColumn::make('payment_value')
+                    ->label('Nilai Pembayaran')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->currency('IDR'),
+
+                Tables\Columns\BooleanColumn::make('has_advance_payment')
+                    ->label('Uang Muka'),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
