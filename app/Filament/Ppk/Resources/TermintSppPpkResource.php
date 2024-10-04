@@ -12,6 +12,7 @@ use Filament\Tables;
 use App\Enums\FileType;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ButtonAction;
+use Illuminate\Database\Eloquent\Model;
 
 class TermintSppPpkResource extends Resource
 {
@@ -23,11 +24,14 @@ class TermintSppPpkResource extends Resource
 
     protected static ?string $label = 'Surat Permohonan Pembayaran (SPP)';
 
-
-
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationGroup = 'Menu Utama';
+
+    public static function canEdit(Model $record): bool
+    {
+        return $record->ppspm_verification_status == 'rejected';
+    }
 
     public static function form(Form $form): Form
     {
@@ -47,6 +51,7 @@ class TermintSppPpkResource extends Resource
                     ->required()->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)->prefix('Rp'),
                 Forms\Components\Toggle::make('has_advance_payment')
                     ->label('Uang Muka')
+                    ->disabledOn('edit')
                     ->reactive(),
                 Forms\Components\Fieldset::make('Pilih Dokumen Yang Akan Diunggah')
                     ->schema(function (Forms\Components\Component $component) {
