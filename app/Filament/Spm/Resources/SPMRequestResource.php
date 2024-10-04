@@ -96,7 +96,7 @@ class SPMRequestResource extends Resource
                             ->placeholder('Pilih Nomor Pengajuan')
                             ->required()
                             ->searchable()
-                            ->options(get_list_request_payment('ppspm')),
+                            ->options(get_list_request_payment('done')),
                     ])
             ]);
     }

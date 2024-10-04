@@ -432,7 +432,7 @@ class PaymentRequestResource extends Resource
                         $record->update([
                             'ppspm_verification_status'     =>  'approved',
                             'ppspm_id'                      =>  get_auth_user()->spm->id,
-                            'verification_progress'         =>  'treasurer',
+                            'verification_progress'         =>  'done',
                             'treasurer_verification_status' =>  'in_progress',
                         ]);
 
