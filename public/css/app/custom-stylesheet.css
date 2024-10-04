@@ -50,13 +50,13 @@ html aside span {
 }
 
 html aside span.fi-sidebar-group-label {
-    color: #000000 !important;
+    color: #1d1d1d !important;
     font-weight: 600 !important;
     /* Lapisan hitam semi-transparan */
 }
 
 html aside svg {
-    fill: #101010e9 !important;
+    /* fill: #101010e9 !important; */
     border-color: #101010e9 !important;
     stroke: #101010e9 !important;
     /* Border warna hitam */
@@ -75,7 +75,7 @@ html.dark aside span.fi-sidebar-group-label {
 }
 
 html.dark aside svg {
-    fill: #ffffffe8 !important;
+    /* fill: #ffffffe8 !important; */
     border-color: #ffffffbd !important;
     stroke: #ffffff9b !important;
     /* Border warna hitam */
