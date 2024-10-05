@@ -64,97 +64,112 @@
             <div class="post-heading text-center">
                 <h3>Selamat Datang</h3>
                 <p>
-                    Di Aplikasi SiFaisal (Sistem Informasi veriFikasi Anggaran yang dIlaksanakan Secara kontraktuAL).
+                    Di Aplikasi SiFaisal ( Sistem Informasi Verifikasi Pertanggungjawaban Anggaran Kegiatan Yang
+                    Dilaksanakan Secara Kontraktual )
                 </p>
             </div>
             <div class="section-wrapper">
                 <div class="row justify-content-center">
 
                     <div class="col-xl-4 col-lg-4 col-md-6 col-12">
-                        <div class="post-content text-center service-content wow">
-                            <div class="post-thumb">
-                                <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
+                        <a href="{{ get_ppk_panel_url() }}/admin" target="get_ppk_panel_url">
+
+                            <div class="post-content text-center service-content wow">
+                                <div class="post-thumb">
+                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
+                                        alt="service-image">
+                                </div>
+                                <div class="post-text">
+                                    <h4><a href="{{ get_admin_panel_url() }}/admin"
+                                            target="get_admin_panel_url">Admin</a>
+                                    </h4>
+
+                                </div>
                             </div>
-                            <div class="post-text">
-                                <h4><a href="{{ get_admin_panel_url() }}/admin" target="get_admin_panel_url">Admin</a></h4>
-                                <p>
-                                    Mengelola seluruh sistem dan memiliki kontrol penuh atas semua modul dan pengguna.
-                                </p>
-                            </div>
-                        </div>
+                        </a>
                     </div>
 
                     <div class="col-xl-4 col-lg-4 col-md-6 col-12">
-                        <div class="post-content text-center service-content wow">
-                            <div class="post-thumb">
-                                <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
+                        <a href="{{ get_ppk_panel_url() }}/penyedia-jasa" target="get_ppk_panel_url">
+                            <div class="post-content text-center service-content wow">
+                                <div class="post-thumb">
+                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
+                                        alt="service-image">
+                                </div>
+                                <div class="post-text">
+                                    <h4><a href="{{ get_sp_panel_url() }}/penyedia-jasa"
+                                            target="get_sp_panel_url">Penyedia
+                                            Jasa</a></h4>
+
+                                </div>
                             </div>
-                            <div class="post-text">
-                                <h4><a href="{{ get_sp_panel_url() }}/penyedia-jasa" target="get_sp_panel_url">Penyedia Jasa</a></h4>
-                                <p>
-                                    Bertanggung jawab atas pengelolaan data dan informasi terkait penyedia jasa dalam
-                                    sistem.
-                                </p>
-                            </div>
-                        </div>
+                        </a>
                     </div>
 
                     <div class="col-xl-4 col-lg-4 col-md-6 col-12">
-                        <div class="post-content text-center service-content wow">
-                            <div class="post-thumb">
-                                <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
+                        <a href="{{ get_ppk_panel_url() }}/ppk" target="get_ppk_panel_url">
+                            <div class="post-content text-center service-content wow">
+
+                                <div class="post-thumb">
+                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
+                                        alt="service-image">
+                                </div>
+                                <div class="post-text">
+                                    <h4><a href="{{ get_ppk_panel_url() }}/ppk" target="get_ppk_panel_url">Pejabat
+                                            Pembuat
+                                            Komitmen (PPK)</a></h4>
+
+                                </div>
                             </div>
-                            <div class="post-text">
-                                <h4><a href="{{ get_ppk_panel_url() }}/ppk" target="get_ppk_panel_url">Pejabat Pembuat Komitmen (PPK)</a></h4>
-                                <p>
-                                    Mengelola komitmen dalam pelaksanaan proyek atau pengadaan barang/jasa.
-                                </p>
-                            </div>
-                        </div>
+                        </a>
                     </div>
 
                     <div class="col-xl-4 col-lg-4 col-md-6 col-12">
-                        <div class="post-content text-center service-content wow">
-                            <div class="post-thumb">
-                                <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
+                        <a href="{{ get_spm_panel_url() }}/spm" target="get_spm_panel_url">
+                            <div class="post-content text-center service-content wow">
+                                <div class="post-thumb">
+                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
+                                        alt="service-image">
+                                </div>
+                                <div class="post-text">
+                                    <h4><a href="{{ get_spm_panel_url() }}/spm" target="get_spm_panel_url">Pejabat
+                                            Penandatangan SPM (PP-SPM)</a></h4>
+
+                                </div>
                             </div>
-                            <div class="post-text">
-                                <h4><a href="{{ get_spm_panel_url() }}/spm" target="get_spm_panel_url">Pejabat Penandatangan SPM (PP-SPM)</a></h4>
-                                <p>
-                                    Bertanggung jawab atas penandatanganan Surat Perintah Membayar (SPM) dalam sistem.
-                                </p>
-                            </div>
-                        </div>
+                        </a>
                     </div>
 
                     <div class="col-xl-4 col-lg-4 col-md-6 col-12">
-                        <div class="post-content text-center service-content wow">
-                            <div class="post-thumb">
-                                <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
+                        <a href="{{ get_treasurer_panel_url() }}/treasurer" target="get_treasurer_panel_url">
+                            <div class="post-content text-center service-content wow">
+                                <div class="post-thumb">
+                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
+                                        alt="service-image">
+                                </div>
+                                <div class="post-text">
+                                    <h4><a href="{{ get_treasurer_panel_url() }}/treasurer"
+                                            target="get_treasurer_panel_url">Bendahara Pengeluaran</a></h4>
+
+                                </div>
                             </div>
-                            <div class="post-text">
-                                <h4><a href="{{ get_treasurer_panel_url() }}/treasurer" target="get_treasurer_panel_url">Bendahara Pengeluaran</a></h4>
-                                <p>
-                                    Mengelola pengeluaran anggaran dan bertanggung jawab atas pencatatan serta pelaporan
-                                    keuangan.
-                                </p>
-                            </div>
-                        </div>
+                        </a>
                     </div>
 
                     <div class="col-xl-4 col-lg-4 col-md-6 col-12">
-                        <div class="post-content text-center service-content wow">
-                            <div class="post-thumb">
-                                <img src="{{ asset('modern') }}/assets/images/service/icon/13.png" alt="service-image">
+                        <a href="{{ get_kpa_panel_url() }}/kpa" target="get_admin_panel_url">
+                            <div class="post-content text-center service-content wow">
+                                <div class="post-thumb">
+                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
+                                        alt="service-image">
+                                </div>
+                                <div class="post-text">
+                                    <h4><a href="{{ get_kpa_panel_url() }}/kpa" target="get_kpa_panel_url">Kuasa
+                                            Pengguna
+                                            Anggaran (KPA)</a></h4>
+                                </div>
                             </div>
-                            <div class="post-text">
-                                <h4><a href="{{ get_kpa_panel_url() }}/kpa" target="get_kpa_panel_url">Kuasa Pengguna Anggaran (KPA)</a></h4>
-                                <p>
-                                    Memiliki kewenangan dalam penggunaan anggaran sesuai dengan tujuan dan peraturan
-                                    yang berlaku.
-                                </p>
-                            </div>
-                        </div>
+                        </a>
                     </div>
 
                 </div>

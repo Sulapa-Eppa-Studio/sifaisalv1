@@ -13,11 +13,11 @@ return [
             'actions' => [
 
                 'create' => [
-                    'label' => 'Rekam',
+                    'label' => 'Simpan',
                 ],
 
                 'create_another' => [
-                    'label' => 'Rekam & Rekam lainnya',
+                    'label' => 'Simpan & Rekam lainnya',
                 ],
 
             ],

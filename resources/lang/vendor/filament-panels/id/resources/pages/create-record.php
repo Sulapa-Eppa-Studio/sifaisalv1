@@ -15,11 +15,11 @@ return [
             ],
 
             'create' => [
-                'label' => 'Rekam',
+                'label' => 'Simpan',
             ],
 
             'create_another' => [
-                'label' => 'Rekam & rekam lainnya',
+                'label' => 'Simpan & Rekam lainnya',
             ],
 
         ],

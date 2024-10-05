@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contract;
+use App\Models\KPA;
 use App\Models\PaymentRequest;
 use App\Models\PPK;
 use App\Models\ServiceProvider;
+use App\Models\SPM;
+use App\Models\SPMRequest;
 use App\Models\TermintSppPpk;
 use App\Models\User;
 use App\Models\WorkPackage;
@@ -28,6 +31,7 @@ class PdfController extends Controller
                 "payment_request_report" => $this->handle_payment_request_report($request),
                 "spp_report" => $this->handle_termint_spp_ppks_report($request),
                 "workpackage_report" => $this->handle_work_package_report($request),
+                "spm_report" => $this->handle_spm_request_report($request),
             };
         } catch (\Throwable $th) {
 
@@ -189,14 +193,36 @@ class PdfController extends Controller
         // Mengambil data permintaan pembayaran berdasarkan periode
 
         $user = Auth::user();
-        if ($user->role === 'admin') {
 
-            $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->get();
-        } else {
-            $providerId = ServiceProvider::where('user_id', $user->id)->first()->id;
-
-            $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('service_provider_id', $providerId)->get();
+        switch ($user->role) {
+            case 'admin':
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->get();
+                break;
+            case 'penyedia_jasa':
+                $providerId = ServiceProvider::where('user_id', $user->id)->first()->id;
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('service_provider_id', $providerId)->get();
+                break;
+            case 'ppk':
+                $ppkId = PPK::where('user_id', $user->id)->first()->id;
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('ppk_id', $ppkId)->get();
+                break;
+            case 'kpa':
+                $kpaId = KPA::where('user_id', $user->id)->first()->id;
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('kpa_id', $kpaId)->get();
+                break;
+            case 'spm':
+                $spmId = SPM::where('user_id', $user->id)->first()->id;
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('spm_id', $spmId)->get();
+                break;
+            case 'bendahara':
+                $treasurerId = User::where('id', $user->id)->first()->id;
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('treasurer_id', $treasurerId)->get();
+                break;
+            default:
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->get();
+                break;
         }
+
 
         // Menyusun data tabel untuk laporan PDF
         $payment_request_table_data = $payment_requests->map(function ($payment_request) {
@@ -253,6 +279,14 @@ class PdfController extends Controller
         $end_date = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
 
         $period_dates = [$start_date, $end_date];
+
+        $user = Auth::user();
+
+        if ($user->role == 'admin') {
+            $termint_spp_ppks = TermintSppPpk::with(['contract', 'spm', 'user'])->get();
+        } else {
+            $termint_spp_ppks = TermintSppPpk::with(['contract', 'spm', 'user'])->where('user_id', $user->id)->get();
+        }
 
         // Mengambil data dari termint_spp_ppks berdasarkan periode
         $termint_spp_ppks = TermintSppPpk::with(['contract', 'spm', 'user'])->get();
@@ -346,5 +380,64 @@ class PdfController extends Controller
         $pdf = Pdf::loadView("components.reports.report-layout", $data);
 
         return $pdf->download("work_package_report.pdf");
+    }
+
+
+    public function handle_spm_request_report(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'nullable|date|date_format:Y-m-d',
+            'end_date'   => 'nullable|date|date_format:Y-m-d|after:start_date',
+        ]);
+
+        $start_date = $request->start_date ?? now()->startOfMonth()->format('Y-m-d');
+        $end_date = $request->end_date ?? now()->endOfMonth()->format('Y-m-d');
+
+        $period_dates = [$start_date, $end_date];
+
+        // Mengambil data SPM requests berdasarkan periode
+        $spm_requests = SPMRequest::with(['treasurer', 'payment_request', 'ppk_request'])->get();
+
+        // Menyusun data tabel dengan informasi penting saja
+        $spm_request_table_data = $spm_requests->map(function ($spm_request) {
+            return [
+                'No. SPM' => $spm_request->spm_number,
+                'Uraian SPM' => $spm_request->spm_description,
+                'Nilai SPM' => number_format($spm_request->spm_value, 0, ',', '.'),
+                'Status Verifikasi Bendahara' => ucfirst($spm_request->treasurer_verification_status),
+                'Status Verifikasi KPA' => ucfirst($spm_request->kpa_verification_status),
+                'No. Permintaan Pembayaran' => $spm_request->payment_request->request_number ?? 'Tidak Ada',
+                'No. Termint' => $spm_request->ppk_request->no_termint ?? 'Tidak Ada',
+                'Tanggal Dibuat' => Carbon::parse($spm_request->created_at)->format('d M Y'),
+            ];
+        })->toArray();
+
+        // Data tabel untuk laporan PDF
+        $tables = [
+            'Laporan Permintaan SPM (Ringkasan)' => [
+                "kolom" => [
+                    'No. SPM',
+                    'Uraian SPM',
+                    'Nilai SPM',
+                    'Status Verifikasi Bendahara',
+                    'Status Verifikasi KPA',
+                    'No. Permintaan Pembayaran',
+                    'No. Termint',
+                    'Tanggal Dibuat'
+                ],
+                "data"  => $spm_request_table_data,
+            ],
+        ];
+
+        // Menyusun data laporan yang akan dipassing ke view PDF
+        $data = [
+            'title'     => 'Laporan Permintaan SPM Periode ' . Carbon::parse($start_date)->format('d M Y') . ' - ' . Carbon::parse($end_date)->format('d M Y'),
+            'content'   => [],
+            'tables'    => $tables
+        ];
+
+        $pdf = Pdf::loadView("components.reports.report-layout", $data);
+
+        return $pdf->download("spm_request_report.pdf");
     }
 }
