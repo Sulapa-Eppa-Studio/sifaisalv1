@@ -141,6 +141,14 @@ class PaymentRequestResource extends Resource
                             ->required()
                             ->maxSize(1024 * 12),
 
+                        FileUpload::make('jaminan_uang_muka')
+                            ->directory('documents')
+                            ->uploadingMessage('Upload dokumen...')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->minSize(12)
+                            ->required()
+                            ->maxSize(1024 * 12),
+
                         FileUpload::make('Surat Keabsahan Dan Kebenaran Jaminan Uang Muka')
                             ->directory('documents')
                             ->uploadingMessage('Upload dokumen...')

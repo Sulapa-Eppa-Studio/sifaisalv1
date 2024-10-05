@@ -74,9 +74,18 @@ class CreatePaymentRequest extends CreateRecord
                     'payment_request_id'    =>  $record->id,
                 ]);
 
+
+
                 Document::create([
                     'name'  =>  'E-Faktur',
                     'path'  =>  $data['E-Faktur'],
+                    'type'  =>  'document_by_penyedia_jasa',
+                    'payment_request_id'    =>  $record->id,
+                ]);
+
+                Document::create([
+                    'name'  =>  'Jaminan Uang Muka',
+                    'path'  =>  $data['jaminan_uang_muka'],
                     'type'  =>  'document_by_penyedia_jasa',
                     'payment_request_id'    =>  $record->id,
                 ]);

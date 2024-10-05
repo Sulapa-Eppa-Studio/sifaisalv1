@@ -19,6 +19,7 @@ class CreateContract extends CreateRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+
         $admin   =  get_auth_user();
 
         $data['admin_id']   =   $admin->id;

@@ -23,6 +23,7 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\CreateAction::make(),
             Action::make('exp_pdf')
                 ->url(route('ds.report.export.pdf', ['report_model' => 'user_report']), true)
                 ->label('Download PDF')

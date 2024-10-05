@@ -29,6 +29,8 @@ return new class extends Migration
             $table->foreignId('service_provider_id'); // Penyedia Jasa
             $table->foreignId('admin_id')->nullable();
             $table->foreignId('ppk_id')->nullable();
+            // In your contracts migration file
+
             $table->timestamps();
 
             $table->foreign('service_provider_id')->references('id')->on('service_providers')->onDelete('cascade');
