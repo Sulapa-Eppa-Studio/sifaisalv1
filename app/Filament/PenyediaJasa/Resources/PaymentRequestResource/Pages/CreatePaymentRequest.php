@@ -50,7 +50,7 @@ class CreatePaymentRequest extends CreateRecord
 
             $record->save();
 
-            if ($contract->advance_payment) {
+            if (cek_pembayaran_pertama($contract)) {
 
                 // insert documents
                 Document::create([
