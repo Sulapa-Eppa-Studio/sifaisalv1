@@ -1,65 +1,53 @@
 <?php
 
-namespace App\Filament\Ppk\Resources;
+namespace App\Filament\Resources;
 
-use App\Filament\Ppk\Resources\TermintSppPpkResource\Pages;
-use App\Filament\Ppk\Resources\TermintSppPpkResource\RelationManagers;
+use App\Enums\FileType;
+use App\Filament\Resources\MonitoringSppResource\Pages;
 use App\Models\TermintSppPpk;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use App\Enums\FileType;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Blade;
 
-class TermintSppPpkResource extends Resource
+class MonitoringSppResource extends Resource
 {
     protected static ?string $model = TermintSppPpk::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
 
-    protected static ?string $navigationLabel = 'SPP';
+    protected static ?string $navigationLabel = 'Monitoring SPP';
 
-    protected static ?string $label = 'Surat Permohonan Pembayaran (SPP)';
+    protected static ?string $label = 'Monitoring Surat Permohonan Pembayaran (SPP)';
 
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationGroup = 'Menu Utama';
 
-    public static function canEdit(Model $record): bool
+    public static function canCreate(): bool
     {
-        return $record->ppspm_verification_status == 'rejected';
+        return false;
     }
 
-    public static function form(Form $form): Form
+    public static function canEdit($record): bool
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('contract_id')
-                    ->relationship('contract', 'contract_number')
-                    ->required()->label('Kontrak'),
-                Forms\Components\TextInput::make('no_termint')
-                    ->label('Nomor SPP')
-                    ->required(),
-                Forms\Components\TextInput::make('description')
-                    ->label('Uraian Pembayaran SPPK-PPK')
-                    ->required(),
-                Forms\Components\TextInput::make('payment_value')
-                    ->label('Nilai Permintaan Pembayaran')
-                    ->required()->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)->prefix('Rp'),
-                Forms\Components\Toggle::make('has_advance_payment')
-                    ->label('Uang Muka')
-                    ->disabledOn('edit')
-                    ->reactive(),
-                Forms\Components\Fieldset::make('Pilih Dokumen Yang Akan Diunggah')
-                    ->schema(function (Forms\Components\Component $component) {
-                        return self::getDocumentFields($component->getState()['has_advance_payment'] ?? false);
-                    })
-                    ->columns(2),
-            ]);
+        return false;
     }
+
+    public static function canDelete($record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
+
 
     protected static function getDocumentFields(bool $hasAdvancePayment): array
     {
@@ -209,9 +197,6 @@ class TermintSppPpkResource extends Resource
                             ->label('Tutup')
                             ->close(),
                     ]),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -228,9 +213,9 @@ class TermintSppPpkResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTermintSppPpks::route('/'),
-            'create' => Pages\CreateTermintSppPpk::route('/create'),
-            'edit' => Pages\EditTermintSppPpk::route('/{record}/edit'),
+            'index' => Pages\ListMonitoringSpps::route('/'),
+            'create' => Pages\CreateMonitoringSpp::route('/create'),
+            'edit' => Pages\EditMonitoringSpp::route('/{record}/edit'),
         ];
     }
 }

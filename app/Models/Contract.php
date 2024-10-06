@@ -16,7 +16,15 @@ class Contract extends Model
         'payment_value' =>  'integer',
     ];
 
-    public function admin() {}
+    public function admin()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function ppk()
+    {
+        return $this->belongsTo(PPK::class);
+    }
 
     public function service_provider()
     {

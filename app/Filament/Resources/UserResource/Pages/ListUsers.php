@@ -9,25 +9,28 @@ use Filament\Actions\ExportAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\ActionSize;
 
 class ListUsers extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
+    /**
+     * @return array<Action | ActionGroup>
+     */
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
-            ExportAction::make()
-                ->label('Export Data Pengguna')
-                ->exporter(UserExporter::class)
-        ];
-    }
-
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            //
+            Action::make('exp_pdf')
+                ->url(route('ds.report.export.pdf', ['report_model' => 'user_report']), true)
+                ->label('Download PDF')
+                ->icon('heroicon-o-document')
+                ->size(ActionSize::Medium)
+                ->color('danger')
+                ->button()
         ];
     }
 

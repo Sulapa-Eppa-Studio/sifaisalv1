@@ -3,10 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use App\Models\WorkPackage;
-use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
@@ -14,7 +12,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
@@ -22,7 +19,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\ActionSize;
+
 
 class UserResource extends Resource
 {
@@ -30,13 +30,15 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $label =   'Tabel Pengguna';
+    protected static ?string $label =   'Daftar Pengguna';
 
     protected static ?string $navigationLabel = 'Pengguna';
 
     protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationGroup = 'Menu Utama';
+
+
 
 
     public static function canAccess(): bool

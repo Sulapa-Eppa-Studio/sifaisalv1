@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PdfController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +14,7 @@ Route::get('/', function () {
         return redirect('/');
     }
 
-    return redirect('/ds');
+    return redirect('/');
 
     // switch (Auth::user()->role) {
     //     case 'admin':
@@ -44,3 +45,6 @@ Route::get('/', function () {
     //         break;
     // }
 });
+
+//  Export PDF
+Route::get('report/{report_model}/export/pdf', [PdfController::class, 'export'])->name('ds.report.export.pdf');

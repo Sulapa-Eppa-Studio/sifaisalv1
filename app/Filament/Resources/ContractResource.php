@@ -87,8 +87,28 @@ class ContractResource extends Resource
                     ->label('Paket Pekerjaan')
                     ->searchable()
                     ->placeholder('Pilih Paket Pekerjaan')
-                    ->options(WorkPackage::pluck('name', 'name')->toArray())
-                    ->required(),
+                    ->options(function () {
+                        // Mengambil semua nama paket pekerjaan dan menggunakannya sebagai opsi
+                        return WorkPackage::all()->pluck('name', 'name')->toArray();
+                    })
+                    ->required()
+                    ->preload()
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nama Paket Pekerjaan')
+                            ->required()
+                            ->unique(WorkPackage::class, 'name'), // Menambahkan validasi unik
+                    ])
+                    ->createOptionUsing(function (array $data) {
+                        // Membuat entri baru di WorkPackage dan mengembalikan nama untuk disimpan
+                        $workPackage = WorkPackage::create([
+                            'name' => $data['name'],
+                        ]);
+
+                        return $workPackage->name;
+                    }),
+
+
 
                 Forms\Components\Select::make('ppk_id')
                     ->label('Petugas PPK ( Pejabat Pembuat Komitmen )')
@@ -116,7 +136,7 @@ class ContractResource extends Resource
                     ->schema([
 
                         Forms\Components\TextInput::make('payment_value')
-                            ->label('Nilai Pembayaran')
+                            ->label('Nilai Kontrak')
                             ->required()
                             ->prefix('Rp. ')
                             ->inlineLabel()

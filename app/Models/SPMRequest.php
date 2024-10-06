@@ -49,4 +49,9 @@ class SPMRequest extends Model
     {
         return $this->belongsTo(TermintSppPpk::class, 'ppk_request_id');
     }
+
+    public function treasurer()
+    {
+        return $this->belongsTo(Treasurer::class, 'treasurer_id');
+    }
 }

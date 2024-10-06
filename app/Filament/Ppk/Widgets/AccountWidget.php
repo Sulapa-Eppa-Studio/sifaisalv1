@@ -21,7 +21,7 @@ class AccountWidget extends Widget
 
     protected function getSubheading(): string
     {
-        return 'siFaisal: (Sistem Informasi veriFikasi Anggaran yang dIlaksanakan Secara kontraktuAL)';
+        return 'SiFaisal ( Sistem Informasi Verifikasi Pertanggungjawaban Anggaran Kegiatan Yang Dilaksanakan Secara Kontraktual )';
     }
 
     public $notifications;

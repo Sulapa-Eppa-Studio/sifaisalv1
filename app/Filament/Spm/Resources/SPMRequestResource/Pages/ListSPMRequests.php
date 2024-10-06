@@ -7,6 +7,8 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Actions\Action;
+use Filament\Support\Enums\ActionSize;
 
 class ListSPMRequests extends ListRecords
 {
@@ -16,6 +18,13 @@ class ListSPMRequests extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Action::make('exp_pdf')
+                ->url(route('ds.report.export.pdf', ['report_model' => 'spm_report']), true)
+                ->label('Download PDF')
+                ->icon('heroicon-o-document')
+                ->size(ActionSize::Medium)
+                ->color('danger')
+                ->button()
         ];
     }
 
@@ -27,9 +36,9 @@ class ListSPMRequests extends ListRecords
         return [
             'Semua Permohonan' => Tab::make(),
             'Verifikasi Pendahara' => Tab::make()
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('treasurer_verification_status', ['in_progress', 'approved', 'rejected'])->where('kpa_verification_status', 'not_available') ),
+                ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('treasurer_verification_status', ['in_progress', 'approved', 'rejected'])->where('kpa_verification_status', 'not_available')),
             'Verifikasi KPA' => Tab::make()
-            ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('kpa_verification_status', ['in_progress', 'approved', 'rejected']) ),
+                ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('kpa_verification_status', ['in_progress', 'approved', 'rejected'])),
         ];
     }
 }

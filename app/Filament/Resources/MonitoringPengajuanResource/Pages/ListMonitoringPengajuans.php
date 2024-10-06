@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Filament\PenyediaJasa\Resources\PaymentRequestResource\Pages;
+namespace App\Filament\Resources\MonitoringPengajuanResource\Pages;
 
-use App\Filament\PenyediaJasa\Resources\PaymentRequestResource;
+use App\Filament\Resources\MonitoringPengajuanResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\ActionSize;
 
-class ListPaymentRequests extends ListRecords
+class ListMonitoringPengajuans extends ListRecords
 {
-    protected static string $resource = PaymentRequestResource::class;
+    protected static string $resource = MonitoringPengajuanResource::class;
 
     protected function getHeaderActions(): array
     {

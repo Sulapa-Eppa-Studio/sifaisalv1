@@ -7,6 +7,7 @@ use App\Models\ServiceProvider;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
+
 class CreateContract extends CreateRecord
 {
     protected static string $resource = ContractResource::class;
@@ -18,6 +19,7 @@ class CreateContract extends CreateRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+
         $admin   =  get_auth_user();
 
         $data['admin_id']   =   $admin->id;
