@@ -62,7 +62,6 @@ class UserResource extends Resource
                     ->columnSpanFull()
                     ->maxSize(1024 * 4),
 
-
                 TextInput::make('name')
                     ->label('Nama Pengguna')
                     ->required()
@@ -72,6 +71,7 @@ class UserResource extends Resource
                 TextInput::make('username')
                     ->label('Username')
                     ->required()
+                    ->alphaNum()
                     ->unique(User::class, 'username', fn($record) => $record)
                     ->minLength(3)
                     ->maxLength(90),
@@ -278,18 +278,19 @@ class UserResource extends Resource
 
                             TextInput::make('account_number')
                                 ->label('Nomor Rekening')
-                                ->maxLength(16)
+                                ->maxLength(199)
                                 ->type('number')
                                 ->required(),
 
                             TextInput::make('address')
                                 ->label('Alamat')
-                                ->maxLength(16)
+                                ->maxLength(199)
                                 ->required(),
 
                             Select::make('job_package')
                                 ->required()
                                 ->label('Paket Pekerjaan')
+                                ->multiple()
                                 ->options(WorkPackage::all()->pluck('name', 'name')->toArray()),
 
                         ]),
