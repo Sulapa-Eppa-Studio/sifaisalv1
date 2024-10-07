@@ -32,4 +32,19 @@ class EditPaymentRequest extends EditRecord
 
         return $data;
     }
+
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $record = $this->getRecord();
+
+        $data = array_merge($data, $record->documents()->get()->pluck('path', 'name')->toArray());
+
+        return $data;
+    }
+
 }

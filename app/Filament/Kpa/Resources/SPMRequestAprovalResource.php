@@ -11,6 +11,7 @@ use App\Models\SPMRequest;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Kpa\Resources\SPMRequestAprovalResource\Pages;
+use App\Models\Contract;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -154,7 +155,6 @@ class SPMRequestAprovalResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
 
-
                 Tables\Actions\Action::make('approve_btn')
                     ->label('Setujui')
                     ->requiresConfirmation()
@@ -167,6 +167,42 @@ class SPMRequestAprovalResource extends Resource
                         return true;
                     })
                     ->action(function (SPMRequest $record, array $data) {
+
+                        $contract   =   $record->payment_request->contract;
+
+                        if ($contract instanceof Contract) {
+
+                            if ($contract->paid_value >= $contract->payment_value) {
+
+                                Notification::make('x_not')
+                                    ->title('Gagal menyetujui')
+                                    ->body('Kontrak #' . $record->contract_number . ' sudah terbayarkan!')
+                                    ->send();
+
+                                return;
+                            }
+
+                            $contract->update([
+                                'paid_value' => $record->payment_request->payment_value + $contract->paid_value,
+                            ]);
+
+                        } else {
+
+                            Notification::make('x_not')
+                                ->title('Gagal menyetujui')
+                                ->body('Kontrak #' . $record->contract_number . ' tidak ditemukan!')
+                                ->send();
+
+                            return;
+                        }
+
+                        $payment_request   =   $record->payment_request;
+
+                        $payment_request->update([
+                            'treasurer_id'                      =>  get_auth_user()->kpa->id,
+                            'verification_progress'             =>  'done',
+                            'kpa_verification_status'           =>  'approved',
+                        ]);
 
                         $record->update([
                             'kpa_verification_status'     =>  'approved',

@@ -49,4 +49,12 @@ class ListPaymentRequests extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('verification_progress', 'rejected')),
         ];
     }
+
+
+    protected function getRedirectUrl(): string
+    {
+        $resource = static::getResource();
+
+        return $resource::getUrl('index');
+    }
 }

@@ -21,7 +21,7 @@ function get_auth_user(): User
 
 function get_list_ppk_request($status = null)
 {
-    return TermintSppPpk::get()->pluck('no_termint', 'id')->toArray();
+    return TermintSppPpk::where('ppspm_verification_status', 'approved')->get()->pluck('no_termint', 'id')->toArray();
 }
 
 function get_list_request_payment($status = null)

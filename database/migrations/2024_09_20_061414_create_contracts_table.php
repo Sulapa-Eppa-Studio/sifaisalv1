@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('advance_payment')->default(false); // Pemberian Uang Muka (Ya/Tidak)
             $table->integer('payment_stages')->nullable(); // Jumlah Tahap Pembayaran
             $table->string('npwp', 20); // NPWP
-            $table->string('bank_account_number', 20); // No. Rekening
+            $table->string('bank_account_number', 255); // No. Rekening
             $table->string('working_unit'); // Satuan Kerja
             $table->bigInteger('payment_value'); // Nilai Kontrak
             $table->bigInteger('paid_value')->default(0); // Nilai Kontrak

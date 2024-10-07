@@ -297,7 +297,7 @@ class PaymentRequestResource extends Resource
 
                         TextInput::make('bank_account_number')
                             ->label('Nomor Rekening')
-                            ->maxLength(20)
+                            ->maxLength(199)
                             ->required(),
 
                         TextInput::make('working_unit')
@@ -314,11 +314,7 @@ class PaymentRequestResource extends Resource
 
                     ]),
 
-
-
                 self::getPDFs(),
-
-
             ]);
     }
 
@@ -360,6 +356,15 @@ class PaymentRequestResource extends Resource
                 TextColumn::make('payment_value')
                     ->label('Nilai Pembayaran')
                     ->money('IDR', true)
+                    ->sortable(),
+
+                TextColumn::make('id')
+                    ->label('Sisa Kontrak')
+                    ->money('IDR', true)
+                    ->formatStateUsing(function ($record) {
+                        $contract = $record->contract;
+                        return 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.');
+                    })
                     ->sortable(),
 
                 TextColumn::make('payment_description')

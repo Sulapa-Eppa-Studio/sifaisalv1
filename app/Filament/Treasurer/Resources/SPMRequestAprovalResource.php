@@ -9,6 +9,7 @@ use App\Models\SPMRequest;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Treasurer\Resources\SPMRequestAprovalResource\Pages;
+use App\Models\Contract;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -160,6 +161,15 @@ class SPMRequestAprovalResource extends Resource
                         return true;
                     })
                     ->action(function (SPMRequest $record, array $data) {
+
+                        $payment_request   =   $record->payment_request;
+
+                        $payment_request->update([
+                            'treasurer_verification_status'     =>  'approved',
+                            'treasurer_id'                      =>  get_auth_user()->treasurer->id,
+                            'verification_progress'             =>  'kpa',
+                            'kpa_verification_status'           =>  'in_progress',
+                        ]);
 
                         $record->update([
                             'treasurer_verification_status'     =>  'approved',
