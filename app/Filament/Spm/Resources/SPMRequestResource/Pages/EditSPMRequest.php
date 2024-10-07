@@ -35,10 +35,18 @@ class EditSPMRequest extends EditRecord
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $record = $this->getRecord();
+        // $record = $this->getRecord();
 
-        $data = array_merge($data, $record->documents()->get()->pluck('path', 'name')->toArray());
+        // $data = array_merge($data, $record->documents()->get()->pluck('path', 'name')->toArray());
 
         return $data;
+    }
+
+
+    protected function getRedirectUrl(): string
+    {
+        $resource = static::getResource();
+
+        return $resource::getUrl('index');
     }
 }
