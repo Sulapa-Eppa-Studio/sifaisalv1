@@ -135,7 +135,7 @@ class UserResource extends Resource
                     ->schema([
 
                         TextInput::make('full_name')
-                            ->label('Nama Lenkap')
+                            ->label('Nama Lengkap')
                             ->minLength(3)
                             ->columnSpanFull()
                             ->maxLength(199)
@@ -195,7 +195,7 @@ class UserResource extends Resource
                     ->schema([
 
                         TextInput::make('full_name')
-                            ->label('Nama Lenkap')
+                            ->label('Nama Lengkap')
                             ->minLength(3)
                             ->maxLength(199)
                             ->required(),
@@ -227,7 +227,7 @@ class UserResource extends Resource
                     ->schema([
 
                         TextInput::make('full_name')
-                            ->label('Nama Lenkap')
+                            ->label('Nama Lengkap')
                             ->minLength(3)
                             ->maxLength(199)
                             ->required(),
