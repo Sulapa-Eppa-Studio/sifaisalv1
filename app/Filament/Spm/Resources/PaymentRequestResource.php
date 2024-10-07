@@ -324,7 +324,6 @@ class PaymentRequestResource extends Resource
 
                 ResourcesPaymentRequestResource::getPDFs(),
 
-
             ]);
     }
 
@@ -350,6 +349,15 @@ class PaymentRequestResource extends Resource
                 TextColumn::make('payment_value')
                     ->label('Nilai Pembayaran')
                     ->money('IDR', true)
+                    ->sortable(),
+
+                TextColumn::make('id')
+                    ->label('Sisa Kontrak')
+                    ->money('IDR', true)
+                    ->formatStateUsing(function ($record) {
+                        $contract = $record->contract;
+                        return 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.');
+                    })
                     ->sortable(),
 
                 TextColumn::make('payment_description')
@@ -402,37 +410,37 @@ class PaymentRequestResource extends Resource
                     })
                     ->action(function (PaymentRequest $record, array $data) {
 
-                        $contract   =   $record->contract;
+                        // $contract   =   $record->contract;
 
-                        if ($contract instanceof Contract) {
+                        // if ($contract instanceof Contract) {
 
-                            if ($contract->paid_value >= $contract->payment_value) {
+                        //     if ($contract->paid_value >= $contract->payment_value) {
 
-                                Notification::make('x_not')
-                                    ->title('Gagal menyetujui')
-                                    ->body('Kontrak #' . $record->contract_number . ' sudah terbayarkan!')
-                                    ->send();
+                        //         Notification::make('x_not')
+                        //             ->title('Gagal menyetujui')
+                        //             ->body('Kontrak #' . $record->contract_number . ' sudah terbayarkan!')
+                        //             ->send();
 
-                                return;
-                            }
+                        //         return;
+                        //     }
 
-                            $contract->update([
-                                'paid_value' => $record->payment_value,
-                            ]);
-                        } else {
+                        //     $contract->update([
+                        //         'paid_value' => $record->payment_value,
+                        //     ]);
+                        // } else {
 
-                            Notification::make('x_not')
-                                ->title('Gagal menyetujui')
-                                ->body('Kontrak #' . $record->contract_number . ' tidak ditemukan!')
-                                ->send();
+                        //     Notification::make('x_not')
+                        //         ->title('Gagal menyetujui')
+                        //         ->body('Kontrak #' . $record->contract_number . ' tidak ditemukan!')
+                        //         ->send();
 
-                            return;
-                        }
+                        //     return;
+                        // }
 
                         $record->update([
                             'ppspm_verification_status'     =>  'approved',
                             'ppspm_id'                      =>  get_auth_user()->spm->id,
-                            'verification_progress'         =>  'done',
+                            'verification_progress'         =>  'treasurer',
                             'treasurer_verification_status' =>  'in_progress',
                         ]);
 

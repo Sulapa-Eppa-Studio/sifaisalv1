@@ -2,6 +2,7 @@
 
 namespace App\Filament\Ppk\Resources\TermintSppPpkResource\Pages;
 
+use App\Enums\FileType;
 use App\Filament\Ppk\Resources\TermintSppPpkResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -18,12 +19,13 @@ class EditTermintSppPpk extends EditRecord
         // Hapus 'files' dari data untuk mencegah masalah mass assignment
         unset($data['files']);
 
-
         // Tambahkan 'user_id' dari pengguna yang sedang login
         $data['user_id'] = Auth::user()->id;
 
         return $data;
     }
+
+
 
     /**
      * @param  array<string, mixed>  $data
@@ -31,9 +33,18 @@ class EditTermintSppPpk extends EditRecord
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
+        $record = $this->getRecord();
+
+        $files = $record->files()->get()->pluck('file_path', 'file_type')->toArray();
+
+        foreach ($files as $key => $value) {
+            $data['files'][$key]  =  $value;
+        }
+
+        // dd('files.' . FileType::KARWAS->value, $data);
+
         return $data;
     }
-
 
     /**
      * @param  array<string, mixed>  $data

@@ -48,7 +48,9 @@ class TermintSppPpkResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('payment_value')
                     ->label('Nilai Permintaan Pembayaran')
-                    ->required()->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)->prefix('Rp'),
+                    ->required()
+                    ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
+                    ->prefix('Rp'),
                 Forms\Components\Toggle::make('has_advance_payment')
                     ->label('Uang Muka')
                     ->disabledOn('edit')
