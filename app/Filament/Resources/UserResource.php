@@ -143,7 +143,7 @@ class UserResource extends Resource
 
                         TextInput::make('nip')
                             ->label('NIP')
-                            ->maxLength(16)
+                            ->maxLength(18)
                             ->required(),
 
                         TextInput::make('position')
@@ -170,7 +170,7 @@ class UserResource extends Resource
 
                         TextInput::make('nip')
                             ->label('NIP')
-                            ->maxLength(16)
+                            ->maxLength(18)
                             ->required(),
 
                         TextInput::make('position')
@@ -202,7 +202,7 @@ class UserResource extends Resource
 
                         TextInput::make('nip')
                             ->label('NIP')
-                            ->maxLength(16)
+                            ->maxLength(18)
                             ->required(),
 
                         TextInput::make('position')
@@ -234,7 +234,7 @@ class UserResource extends Resource
 
                         TextInput::make('nip')
                             ->label('NIP')
-                            ->maxLength(16)
+                            ->maxLength(18)
                             ->required(),
 
                         TextInput::make('position')
