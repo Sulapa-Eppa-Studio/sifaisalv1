@@ -444,7 +444,7 @@ class PaymentRequestResource extends Resource
 
                         TextInput::make('bank_account_number')
                             ->label('Nomor Rekening')
-                            ->maxLength(20)
+                            ->maxLength(199)
                             ->required(),
 
                         TextInput::make('working_unit')

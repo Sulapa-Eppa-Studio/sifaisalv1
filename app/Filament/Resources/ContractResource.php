@@ -185,6 +185,7 @@ class ContractResource extends Resource
                         Forms\Components\TextInput::make('bank_account_number')
                             ->label('Nomor Rekening Bank')
                             ->required()
+                            ->maxLength(199)
                             ->readOnly()
                             ->dehydrated(),
                     ]),
