@@ -73,7 +73,7 @@ class UserResource extends Resource
                 TextInput::make('username')
                     ->label('Username')
                     ->required()
-                    ->alphaNum()
+                    ->alphaDash()
                     ->unique(User::class, 'username', fn($record) => $record)
                     ->minLength(3)
                     ->maxLength(90),
