@@ -44,7 +44,7 @@ enum FileType: string
             self::BA_SERAH_TERIMA => 'BA Serah Terima',
             self::SURAT_PERMOHONAN_PENYEDIA_JASA => 'Surat Permohonan Penyedia Jasa',
             self::BAP => 'BAP',
-            self::BUKTI_PEMBAYARAN => 'Bukti Pembayaran',
+            self::BUKTI_PEMBAYARAN => 'Surat Setoran Pajak (SSP)',
         };
     }
 
@@ -57,7 +57,7 @@ enum FileType: string
             self::BA_SERAH_TERIMA_SAKTI => 'Berita Acara Serah Terima yang terkait dengan sistem SAKTI.',
             self::KUITANSI => 'Bukti penerimaan pembayaran dalam bentuk kuitansi.',
             self::BERITA_ACARA_PEMBAYARAN => 'Dokumen resmi yang mencatat proses pembayaran yang telah dilakukan.',
-            self::BUKTI_PAJAK => 'Dokumen yang menunjukkan bukti pembayaran pajak.',
+            self::BUKTI_PAJAK => 'Dokumen yang menunjukkan Surat Setoran Pajak (SSP)',
             self::JAMINAN_UANG_MUKA => 'Dokumen yang menjamin pengembalian uang muka jika syarat tidak terpenuhi.',
             self::KARWAS_SAKTI => 'Kartu Pengawasan proyek yang terkait dengan SAKTI.',
             self::SPP => 'Surat Perintah Pembayaran.',

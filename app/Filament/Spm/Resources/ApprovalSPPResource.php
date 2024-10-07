@@ -169,7 +169,7 @@ class ApprovalSPPResource extends Resource
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
                 Forms\Components\FileUpload::make('files.' . FileType::BUKTI_PEMBAYARAN->value)
-                    ->label('Bukti Pembayaran')
+                    ->label('Surat Setoran Pajak (SSP)')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
                 Forms\Components\FileUpload::make('files.' . FileType::SPTJB->value)
@@ -191,7 +191,8 @@ class ApprovalSPPResource extends Resource
 
                 TextColumn::make('description')->label('Deskripsi')->searchable(),
 
-                TextColumn::make('payment_value')->label('Nilai Pembayaran')->currency('IDR'),
+                TextColumn::make('payment_value')->label('Nilai Pembayaran')->money('IDR', true)
+                    ->sortable(),
 
                 TextColumn::make('ppspm_verification_status')->label('Status Verifikasi'),
 

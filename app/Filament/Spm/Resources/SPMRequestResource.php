@@ -65,8 +65,7 @@ class SPMRequestResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('spm_number')
                     ->label('No SPM')
-                    ->required()
-                    ->numeric(),
+                    ->required(),
 
                 Forms\Components\TextInput::make('spm_value')
                     ->label('Nilai SPM')

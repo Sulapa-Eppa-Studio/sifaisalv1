@@ -40,7 +40,12 @@ class PaymentRequestResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $label = 'Verifikasi Pengajuan';
+    protected static ?string $label = 'Verifikasi Dokumen Pendukung';
+
+    protected static ?string $navigationLabel = 'Verifikasi Dok. Pendukung';
+
+
+
 
     protected static ?string $navigationGroup = 'Menu Utama';
 

@@ -150,7 +150,7 @@ class TermintSppPpkResource extends Resource
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
                 Forms\Components\FileUpload::make('files.' . FileType::BUKTI_PEMBAYARAN->value)
-                    ->label('Bukti Pembayaran')
+                    ->label('Surat Setoran Pajak (SSP)')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
                 Forms\Components\FileUpload::make('files.' . FileType::SPTJB->value)
@@ -182,7 +182,8 @@ class TermintSppPpkResource extends Resource
                 Tables\Columns\TextColumn::make('payment_value')
                     ->label('Nilai Pembayaran')
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->currency('IDR'),
+                    ->money('IDR', true)
+                    ->sortable(),
 
                 Tables\Columns\BooleanColumn::make('has_advance_payment')
                     ->label('Uang Muka'),

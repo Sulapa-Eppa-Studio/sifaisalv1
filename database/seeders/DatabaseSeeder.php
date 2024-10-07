@@ -34,8 +34,8 @@ class DatabaseSeeder extends Seeder
 
 
         // if (config('app.debug')) {
-        //     $this->call(UsersTableSeeder::class);
-        //     $this->call(WorkPackagesSeeder::class);
+        $this->call(UsersTableSeeder::class);
+        $this->call(WorkPackagesSeeder::class);
 
         //     $this->call(ContractSeeder::class);
         //     $this->call(PaymentRequestSeeder::class);
