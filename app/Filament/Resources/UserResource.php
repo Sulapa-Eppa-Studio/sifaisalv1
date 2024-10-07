@@ -277,7 +277,6 @@ class UserResource extends Resource
                             TextInput::make('account_number')
                                 ->label('Nomor Rekening')
                                 ->maxLength(20)
-                                ->type('number')
                                 ->required(),
 
                             TextInput::make('address')
