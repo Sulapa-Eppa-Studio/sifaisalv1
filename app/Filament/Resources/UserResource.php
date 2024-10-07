@@ -288,7 +288,6 @@ class UserResource extends Resource
                             Select::make('job_package')
                                 ->required()
                                 ->label('Paket Pekerjaan')
-                                ->multiple()
                                 ->options(WorkPackage::all()->pluck('name', 'name')->toArray()),
 
                         ]),
