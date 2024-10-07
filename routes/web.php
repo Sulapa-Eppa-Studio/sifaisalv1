@@ -27,17 +27,13 @@ Route::get('/', function () {
         case 'ppk':
             return redirect('/ppk');
             break;
-
         case 'kpa':
             return redirect('/kpa');
             break;
         case 'spm':
             return redirect('/spm');
             break;
-        case 'service_provider':
-            return redirect('/penyedia-jasa');
-            break;
-        case 'treasurer':
+        case 'bendahara':
             return redirect('/treasurer');
             break;
         default:
