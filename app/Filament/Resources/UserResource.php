@@ -98,7 +98,7 @@ class UserResource extends Resource
                             'kpa' => 'KPA',
                             'penyedia_jasa' => 'Penyedia Jasa',
                             'ppk' => 'PPK',
-                            'spm' => 'SPM',
+                            'spm' => 'PP-SPM',
                             'bendahara' => 'Bendahara'
                         ]
                     ),
@@ -148,12 +148,11 @@ class UserResource extends Resource
 
                         TextInput::make('position')
                             ->label('Jabatan')
-                            ->maxLength(16)
                             ->required(),
                     ]),
 
 
-                Section::make('Data SPM')
+                Section::make('Data PP-SPM')
                     ->disabled(function (Get $get) {
                         return $get('role') !== 'spm';
                     })
@@ -176,7 +175,6 @@ class UserResource extends Resource
 
                         TextInput::make('position')
                             ->label('Jabatan')
-                            ->maxLength(16)
                             ->required(),
 
                         TextInput::make('working_unit')
@@ -209,7 +207,6 @@ class UserResource extends Resource
 
                         TextInput::make('position')
                             ->label('Jabatan')
-                            ->maxLength(16)
                             ->required(),
 
                         Select::make('working_package')
@@ -221,10 +218,10 @@ class UserResource extends Resource
 
                 Section::make('Data Bendahara')
                     ->disabled(function (Get $get) {
-                        return $get('role') !== 'treasurer';
+                        return $get('role') !== 'bendahara';
                     })
                     ->visible(function (Get $get) {
-                        return $get('role') == 'treasurer';
+                        return $get('role') == 'bendahara';
                     })->relationship('treasurer')
                     ->columns(2)
                     ->schema([
@@ -242,7 +239,6 @@ class UserResource extends Resource
 
                         TextInput::make('position')
                             ->label('Jabatan')
-                            ->maxLength(16)
                             ->required(),
 
                         TextInput::make('working_unit')
