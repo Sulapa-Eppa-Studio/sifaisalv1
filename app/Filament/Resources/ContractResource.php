@@ -210,7 +210,6 @@ class ContractResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-
                 Tables\Columns\TextColumn::make('work_package')
                     ->label('Paket Pekerjaan')
                     ->searchable()
@@ -242,6 +241,13 @@ class ContractResource extends Resource
                     ->label('Sudah Terbayar')
                     ->searchable()
                     ->money('idr', true),
+
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Sisa Kontrak')
+                    ->money('IDR', true)
+                    ->formatStateUsing(function ($record) {
+                        return 'Rp. ' . number_format($record->payment_value - $record->paid_value, 0, ',', '.');
+                    }),
 
                 Tables\Columns\TextColumn::make('service_provider')
                     ->label('Penyedia Jasa')

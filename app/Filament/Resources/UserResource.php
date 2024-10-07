@@ -163,7 +163,7 @@ class UserResource extends Resource
                     ->schema([
 
                         TextInput::make('full_name')
-                            ->label('Nama Penyedia')
+                            ->label('Nama Lengkap')
                             ->minLength(3)
                             ->maxLength(199)
                             ->required(),
