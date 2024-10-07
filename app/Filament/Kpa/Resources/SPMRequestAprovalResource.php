@@ -155,7 +155,6 @@ class SPMRequestAprovalResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
 
-
                 Tables\Actions\Action::make('approve_btn')
                     ->label('Setujui')
                     ->requiresConfirmation()
@@ -184,7 +183,7 @@ class SPMRequestAprovalResource extends Resource
                             }
 
                             $contract->update([
-                                'paid_value' => $record->payment_request->payment_value,
+                                'paid_value' => $record->payment_request->payment_value + $contract->paid_value,
                             ]);
 
                         } else {
