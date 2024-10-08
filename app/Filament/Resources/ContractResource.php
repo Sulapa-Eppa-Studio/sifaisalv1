@@ -27,7 +27,7 @@ class ContractResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $label =   'Kontrak';
+    protected static ?string $label = 'Kontrak';
 
     protected static ?string $navigationLabel = 'Kontrak';
 
@@ -42,12 +42,12 @@ class ContractResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $user   =   get_auth_user();
+        $user = get_auth_user();
 
         $query = static::getModel()::query();
 
         if ($user->role == 'penyedia_jasa') {
-            $query  =   static::getModel()::query()->where('service_provider_id', $user->services_provider->id);
+            $query = static::getModel()::query()->where('service_provider_id', $user->services_provider->id);
         }
 
         return $query->orderBy('created_at', 'DESC');
@@ -57,6 +57,7 @@ class ContractResource extends Resource
     {
         return $form
             ->schema([
+
                 Forms\Components\TextInput::make('contract_number')
                     ->label('Nomor Kontrak')
                     ->unique('contracts', 'contract_number', fn($record) => $record)
@@ -72,11 +73,31 @@ class ContractResource extends Resource
                     ->label('Nomor CAN')
                     ->maxLength(255),
 
-                Forms\Components\TextInput::make('execution_time')
-                    ->label('Durasi Pekerjaan')
+                Forms\Components\DatePicker::make('start_date')
+                    ->label('Tanggal Mulai')
                     ->required()
+                    ->reactive(),
+
+                Forms\Components\DatePicker::make('end_date')
+                    ->label('Tanggal Selesai')
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(function (callable $set, $state, Get $get) {
+                        $startDate = $get('start_date');
+                        if ($startDate && $state) {
+                            $duration = \Carbon\Carbon::parse($startDate)->diffInDays(\Carbon\Carbon::parse($state));
+                            $set('execution_time', $duration);
+                        }
+                    }),
+
+                Forms\Components\TextInput::make('execution_time')
+                    ->label('Durasi Pekerjaan (Hari)')
+                    ->numeric()
                     ->suffix('Hari')
-                    ->numeric(),
+                    ->readOnly() // Tidak bisa diedit secara manual
+                    ->required()
+                    ->disabled(fn($record) => $record != null) // Disable saat form edit
+                    ->dehydrated(), // Tetap simpan data
 
                 Forms\Components\TextInput::make('payment_stages')
                     ->label('Tahapan Pembayaran')
@@ -88,7 +109,6 @@ class ContractResource extends Resource
                     ->searchable()
                     ->placeholder('Pilih Paket Pekerjaan')
                     ->options(function () {
-                        // Mengambil semua nama paket pekerjaan dan menggunakannya sebagai opsi
                         return WorkPackage::all()->pluck('name', 'name')->toArray();
                     })
                     ->required()
@@ -97,10 +117,9 @@ class ContractResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->label('Nama Paket Pekerjaan')
                             ->required()
-                            ->unique(WorkPackage::class, 'name'), // Menambahkan validasi unik
+                            ->unique(WorkPackage::class, 'name'),
                     ])
                     ->createOptionUsing(function (array $data) {
-                        // Membuat entri baru di WorkPackage dan mengembalikan nama untuk disimpan
                         $workPackage = WorkPackage::create([
                             'name' => $data['name'],
                         ]);
@@ -108,10 +127,8 @@ class ContractResource extends Resource
                         return $workPackage->name;
                     }),
 
-
-
                 Forms\Components\Select::make('ppk_id')
-                    ->label('Petugas PPK ( Pejabat Pembuat Komitmen )')
+                    ->label('Petugas PPK (Pejabat Pembuat Komitmen)')
                     ->searchable()
                     ->options(function () {
                         $ppks = PPK::get();
@@ -153,6 +170,7 @@ class ContractResource extends Resource
 
                 Fieldset::make('Penyedia Jasa')
                     ->schema([
+
                         Forms\Components\Select::make('service_provider_id')
                             ->label('Penyedia Jasa')
                             ->required()
@@ -166,13 +184,16 @@ class ContractResource extends Resource
                                     if ($serviceProvider) {
                                         $set('npwp', $serviceProvider->npwp);
                                         $set('bank_account_number', $serviceProvider->account_number);
+                                        $set('bank_name', $serviceProvider->bank_name);
                                     } else {
                                         $set('npwp', null);
                                         $set('bank_account_number', null);
+                                        $set('bank_name', null);
                                     }
                                 } else {
                                     $set('npwp', null);
                                     $set('bank_account_number', null);
+                                    $set('bank_name', null);
                                 }
                             }),
 
@@ -188,6 +209,14 @@ class ContractResource extends Resource
                             ->maxLength(199)
                             ->readOnly()
                             ->dehydrated(),
+
+                        Forms\Components\TextInput::make('bank_name')
+                            ->label('Nama Bank')
+                            ->required()
+                            ->maxLength(199)
+                            ->readOnly()
+                            ->dehydrated(),
+
                     ]),
             ]);
     }

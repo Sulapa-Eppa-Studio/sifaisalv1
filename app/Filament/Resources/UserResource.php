@@ -209,9 +209,38 @@ class UserResource extends Resource
                             ->label('Jabatan')
                             ->required(),
 
-                        Select::make('working_package')
+                        Select::make('work_packages')
                             ->label('Paket Pekerjaan')
-                            ->options(WorkPackage::all()->pluck('name', 'name')->toArray()),
+                            ->multiple() // Memungkinkan pilihan multiple work packages
+                            ->relationship('workPackages', 'name') // Relasi polymorphic ke work_packages
+                            ->options(WorkPackage::all()->pluck('name', 'id')->toArray())
+                            ->preload(),
+                    ]),
+
+                Section::make('Data Admin')
+                    ->disabled(function (Get $get) {
+                        return $get('role') !== 'admin';
+                    })
+                    ->visible(function (Get $get) {
+                        return $get('role') == 'admin';
+                    })->relationship('admin')
+                    ->columns(2)
+                    ->schema([
+
+                        TextInput::make('full_name')
+                            ->label('Nama Lengkap')
+                            ->minLength(3)
+                            ->maxLength(199)
+                            ->required(),
+
+                        TextInput::make('nip')
+                            ->label('NIP')
+                            ->maxLength(18)
+                            ->required(),
+
+                        TextInput::make('position')
+                            ->label('Jabatan')
+                            ->required(),
                     ]),
 
 
@@ -274,6 +303,11 @@ class UserResource extends Resource
                                 ->maxLength(16)
                                 ->required(),
 
+                            TextInput::make('bank_name')
+                                ->label('Nama Bank')
+                                ->maxLength(199)
+                                ->required(),
+
                             TextInput::make('account_number')
                                 ->label('Nomor Rekening')
                                 ->maxLength(199)
@@ -284,10 +318,13 @@ class UserResource extends Resource
                                 ->maxLength(199)
                                 ->required(),
 
-                            Select::make('job_package')
-                                ->required()
+                            Select::make('work_packages')
                                 ->label('Paket Pekerjaan')
-                                ->options(WorkPackage::all()->pluck('name', 'name')->toArray()),
+                                ->multiple() // Memungkinkan pilihan multiple work packages
+                                ->relationship('workPackages', 'name') // Relasi polymorphic ke work_packages
+                                ->options(WorkPackage::all()->pluck('name', 'id')->toArray())
+                                ->preload(),
+
 
                         ]),
                     ]),

@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class WorkPackage extends Model
+class Admin extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    public function relatedModels()
+    public function user()
     {
-        return $this->morphToMany(WorkPackage::class, 'role', 'role_has_work_packages');
+        return $this->belongsTo(User::class);
     }
 }

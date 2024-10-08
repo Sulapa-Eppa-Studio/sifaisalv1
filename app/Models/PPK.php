@@ -11,8 +11,15 @@ class PPK extends Model
 
     protected $guarded = ['id'];
 
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Di model PPK
     public function workPackages()
     {
-        return $this->morphToMany(WorkPackage::class, 'model', 'role_has_work_packages', 'model_id', 'work_package');
+        return $this->morphToMany(WorkPackage::class, 'role', 'role_has_work_packages');
     }
 }

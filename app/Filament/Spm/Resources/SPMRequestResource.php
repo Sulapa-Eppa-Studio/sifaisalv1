@@ -88,10 +88,9 @@ class SPMRequestResource extends Resource
                             ->label('Surat Perintah Membayar')
                             ->uploadingMessage('Upload dokumen...')
                             ->acceptedFileTypes(['application/pdf'])
-                            ->minSize(12)
                             ->required()
                             ->columnSpanFull()
-                            ->maxSize(1024 * 12),
+                            ->maxSize(1024 * 25),
 
                         Select::make('ppk_request_id')
                             ->label('Pilih SPP-PPK')

@@ -21,7 +21,10 @@ return new class extends Migration
             $table->integer('execution_time'); // Masa Pelaksanaan (Hari Kalender)
             $table->boolean('advance_payment')->default(false); // Pemberian Uang Muka (Ya/Tidak)
             $table->integer('payment_stages')->nullable(); // Jumlah Tahap Pembayaran
-            $table->string('npwp', 20); // NPWP
+            $table->string('npwp'); // NPWP
+            $table->string('bank_name');
+            $table->string('start_date');
+            $table->string('end_date');
             $table->string('bank_account_number', 255); // No. Rekening
             $table->string('working_unit'); // Satuan Kerja
             $table->bigInteger('payment_value'); // Nilai Kontrak
@@ -29,6 +32,7 @@ return new class extends Migration
             $table->foreignId('service_provider_id'); // Penyedia Jasa
             $table->foreignId('admin_id')->nullable();
             $table->foreignId('ppk_id')->nullable();
+
             // In your contracts migration file
 
             $table->timestamps();

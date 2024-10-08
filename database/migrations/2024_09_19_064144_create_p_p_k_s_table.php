@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('full_name');
             $table->string('nip')->unique();
             $table->string('position');
-            $table->string('working_package');
             $table->timestamps();
         });
     }

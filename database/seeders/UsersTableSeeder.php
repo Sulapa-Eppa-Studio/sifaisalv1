@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Admin;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use App\Models\User;
@@ -22,6 +23,7 @@ class UsersTableSeeder extends Seeder
             'SPM' => SPM::class,
             'ServiceProvider' => ServiceProvider::class,
             'Treasurer' => Treasurer::class,
+            'Admin' => Admin::class,
         ];
 
         // roles key
@@ -31,6 +33,7 @@ class UsersTableSeeder extends Seeder
             'spm',
             'penyedia_jasa',
             'bendahara',
+            'admin'
         ];
 
         $count_role = 0;
@@ -69,7 +72,6 @@ class UsersTableSeeder extends Seeder
                             'full_name'        => $name,
                             'nip'              => str_pad($i, 8, '0', STR_PAD_LEFT),
                             'position'         => 'Pejabat ' . $i,
-                            'working_package'  => 'Paket ' . $i,
                         ]);
                         break;
 
@@ -89,6 +91,7 @@ class UsersTableSeeder extends Seeder
                             'full_name'           => $name,
                             'registration_number' => str_pad($i, 6, '0', STR_PAD_LEFT),
                             'npwp'                => str_pad($i, 15, '0', STR_PAD_LEFT),
+                            'bank_name'           => 'Bank ' . $i,
                             'address'             => 'Alamat ' . $i,
                             'account_number'      =>  str_pad($i, 10, '0', STR_PAD_LEFT),
                         ]);
@@ -101,6 +104,15 @@ class UsersTableSeeder extends Seeder
                             'nip'          => str_pad($i, 8, '0', STR_PAD_LEFT),
                             'position'     => 'Bendahara ' . $i,
                             'working_unit' => 'Unit ' . $i,
+                        ]);
+                        break;
+
+                    case 'Admin':
+                        $model::create([
+                            'user_id'   => $user->id,
+                            'full_name' => $name,
+                            'nip'       => str_pad($i, 8, '0', STR_PAD_LEFT),
+                            'position'  => 'Admin ' . $i,
                         ]);
                         break;
                 }

@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('role_has_work_packages', function (Blueprint $table) {
             $table->id();
-            $table->string('role_id');
-            $table->string('work_package_id');
+            $table->unsignedBigInteger('work_package_id');
+            $table->unsignedBigInteger('role_id'); // ID dari model yang terkait
+            $table->string('role_type'); // Nama model (PPK, ServicesProvider, dll)
             $table->timestamps();
+
+            $table->foreign('work_package_id')->references('id')->on('work_packages')->onDelete('cascade');
         });
     }
 

@@ -98,6 +98,11 @@ class User extends Authenticatable implements HasAvatar, FilamentUser
         return $this->hasOne(Treasurer::class);
     }
 
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
+    }
+
     public function termintSppPpks()
     {
         return $this->hasMany(TermintSppPpk::class);

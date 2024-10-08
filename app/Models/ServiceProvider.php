@@ -22,4 +22,10 @@ class ServiceProvider extends Model
     {
         return $this->hasMany(Contract::class);
     }
+
+    // Di model ServicesProvider
+    public function workPackages()
+    {
+        return $this->morphToMany(WorkPackage::class, 'role', 'role_has_work_packages');
+    }
 }
