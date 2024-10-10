@@ -1,6 +1,6 @@
 /* Sidebar */
 body {
-    background-image: url('/bg-images/bg-nav.jpg') !important;
+    background-image: url('/images/bg-nav.jpg') !important;
     background-size: contain !important;
     background-repeat: no-repeat !important;
     background-attachment: fixed !important;
@@ -117,7 +117,7 @@ html.dark aside header::before {
 /* Navbar Header */
 div.fi-topbar nav {
     position: relative;
-    background-image: url('/bg-images/bg-nav-batik.jpg') !important;
+    background-image: url('/images/bg-nav-batik.jpg') !important;
     /* Ganti dengan URL gambar batik Anda */
     background-size: 300px !important;
     /* Atur ukuran pengulangan gambar batik */
