@@ -117,26 +117,26 @@ html.dark aside header::before {
 /* Navbar Header */
 div.fi-topbar nav {
     position: relative;
-    background-image: url('/bg-images/bg-nav-batik.jpg');
+    background-image: url('/bg-images/bg-nav-batik.jpg') !important;
     /* Ganti dengan URL gambar batik Anda */
-    background-size: 300px;
+    background-size: 300px !important;
     /* Atur ukuran pengulangan gambar batik */
-    background-position: top left;
+    background-position: top left !important;
     /* Mulai dari sudut kiri atas */
-    background-repeat: repeat;
+    background-repeat: repeat !important;
     /* Gambar akan diulang baik secara horizontal maupun vertikal */
-    width: 100%;
+    width: 100% !important;
     /* Atur tinggi navbar agar konsisten */
-    padding: 10px 20px;
+    padding: 10px 20px !important;
     /* Beri padding agar konten navbar terlihat rapi */
-    display: flex;
-    justify-content: space-between;
+    display: flex !important;
+    justify-content: space-between !important;
     /* Sebar konten ke kiri dan kanan */
-    align-items: center;
+    align-items: center !important;
     /* Konten di tengah secara vertikal */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
     /* Beri shadow agar navbar terlihat menonjol */
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1) !important;
     /* Garis bawah yang halus */
 }
 
