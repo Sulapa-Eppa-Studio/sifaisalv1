@@ -13,6 +13,9 @@ use App\Enums\FileType;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Facades\Filament;
+
 
 class TermintSppPpkResource extends Resource
 {
@@ -168,6 +171,21 @@ class TermintSppPpkResource extends Resource
         }
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        $user   =   get_auth_user();
+
+        $query = static::getModel()::query()->where('user_id', $user->id)->orderBy('created_at', 'DESC');
+
+        if (
+            static::isScopedToTenant() &&
+            ($tenant = Filament::getTenant())
+        ) {
+            static::scopeEloquentQueryToTenant($query, $tenant);
+        }
+
+        return $query;
+    }
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
