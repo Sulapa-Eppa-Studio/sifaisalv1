@@ -45,6 +45,7 @@ class TermintSppPpkResource extends Resource
                 Forms\Components\Select::make('contract_id')
                     ->required()
                     ->searchable()
+                    ->live()
                     ->label('Nomor Kontrak')
                     ->options(get_my_contracts_for_options_by_ppk()),
                 Forms\Components\TextInput::make('no_termint')
