@@ -44,7 +44,7 @@ class TermintSppPpkResource extends Resource
                     ->label('Nomor SPP')
                     ->required(),
                 Forms\Components\TextInput::make('description')
-                    ->label('Uraian Pembayaran SPPK-PPK')
+                    ->label('Uraian Pembayaran SPP-PPK')
                     ->required(),
                 Forms\Components\TextInput::make('payment_value')
                     ->label('Nilai Permintaan Pembayaran')
@@ -175,7 +175,7 @@ class TermintSppPpkResource extends Resource
 
                 Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)->wrap(),
 
                 Tables\Columns\TextColumn::make('ppspm_verification_status')
                     ->label('Status Verifikasi')

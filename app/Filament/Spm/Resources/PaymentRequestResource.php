@@ -363,7 +363,7 @@ class PaymentRequestResource extends Resource
                 TextColumn::make('payment_description')
                     ->label('Deskripsi')
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->limit(50),
+                    ->wrap(),
 
                 TextColumn::make('ppspm_verification_status')
                     ->label('Status Verifikasi SPM')

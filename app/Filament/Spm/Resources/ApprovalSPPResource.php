@@ -64,7 +64,7 @@ class ApprovalSPPResource extends Resource
                     ->label('No. SPP')
                     ->required(),
                 Forms\Components\TextInput::make('description')
-                    ->label('Uraian Pembayaran SPPK-PPK')
+                    ->label('Uraian Pembayaran SPP-PPK')
                     ->required(),
                 Forms\Components\TextInput::make('payment_value')
                     ->label('Nilai Permintaan Pembayaran')
@@ -189,7 +189,7 @@ class ApprovalSPPResource extends Resource
 
                 TextColumn::make('no_termint')->label('No. SPP')->searchable(),
 
-                TextColumn::make('description')->label('Deskripsi')->searchable(),
+                TextColumn::make('description')->label('Deskripsi')->searchable()->wrap(),
 
                 TextColumn::make('payment_value')->label('Nilai Pembayaran')->money('IDR', true)
                     ->sortable(),

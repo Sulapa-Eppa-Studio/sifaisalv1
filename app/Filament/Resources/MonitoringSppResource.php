@@ -161,7 +161,7 @@ class MonitoringSppResource extends Resource
 
                 Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)->wrap(),
 
                 Tables\Columns\TextColumn::make('ppspm_verification_status')
                     ->label('Status Verifikasi')
