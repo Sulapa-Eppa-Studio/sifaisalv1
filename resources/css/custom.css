@@ -7,11 +7,13 @@ body {
 }
 
 
-html main.fi-main, html body div.fi-main-ctn {
+html main.fi-main,
+html body div.fi-main-ctn {
     background-color: #fafafa;
 }
 
-html.dark main.fi-main, html.dark body div.fi-main-ctn {
+html.dark main.fi-main,
+html.dark body div.fi-main-ctn {
     background-color: #09090b;
 }
 
@@ -115,10 +117,25 @@ html.dark aside header::before {
 /* Navbar Header */
 div.fi-topbar nav {
     position: relative;
-    background-color: transparent !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
+    background-image: url('/bg-images/bg-nav-batik.jpg');
+    /* Ganti dengan URL gambar batik Anda */
+    background-size: auto;
+    /* Gambar akan ditampilkan dalam ukuran aslinya */
+    background-position: top left;
+    /* Mulai dari sudut kiri atas */
+    background-repeat: repeat;
+    /* Gambar akan diulang baik secara horizontal maupun vertikal */
+    width: 100%;
+    height: auto;
+    /* Sesuaikan tinggi navbar sesuai kebutuhan */
 }
+
+/* Jika Anda ingin mengatur tinggi spesifik untuk navbar */
+div.fi-topbar nav {
+    min-height: 30px;
+    /* Sesuaikan tinggi navbar */
+}
+
 
 .name-navbar {
     display: none;

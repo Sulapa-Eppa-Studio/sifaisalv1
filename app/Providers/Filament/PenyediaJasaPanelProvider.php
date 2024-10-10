@@ -70,7 +70,7 @@ class PenyediaJasaPanelProvider extends PanelProvider
                     ->setSort(10)
                     ->shouldRegisterNavigation(true)
                     ->shouldShowDeleteAccountForm(false)
-                    ->shouldShowSanctumTokens()
+
                     ->shouldShowBrowserSessionsForm()
                     ->shouldShowAvatarForm()
 
