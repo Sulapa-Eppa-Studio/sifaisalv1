@@ -33,20 +33,20 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        // if (config('app.debug')) {
-        // $this->call(UsersTableSeeder::class);
-        // $this->call(WorkPackagesSeeder::class);
+        if (config('app.debug')) {
+        $this->call(UsersTableSeeder::class);
+        $this->call(WorkPackagesSeeder::class);
 
-        // $this->call(ContractSeeder::class);
-        // $this->call(PaymentRequestSeeder::class);
+        $this->call(ContractSeeder::class);
+        $this->call(PaymentRequestSeeder::class);
 
-        // Document::factory()->count(250)->create();
+        Document::factory()->count(250)->create();
 
-        // TermintSppPpk::factory()->count(10)->create();
+        TermintSppPpk::factory()->count(10)->create();
 
-        // TermintSppPpkFile::factory()->count(150)->create();
+        TermintSppPpkFile::factory()->count(150)->create();
 
-        // SPMRequest::factory()->count(50)->create();
-        // }
+        SPMRequest::factory()->count(50)->create();
+        }
     }
 }

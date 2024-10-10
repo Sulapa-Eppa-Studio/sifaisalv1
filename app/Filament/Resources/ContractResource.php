@@ -6,6 +6,7 @@ use App\Filament\Resources\ContractResource\Pages;
 use App\Filament\Resources\ContractResource\RelationManagers;
 use App\Models\Contract;
 use App\Models\PPK;
+use App\Models\RoleHasWorkPackage;
 use App\Models\ServiceProvider;
 use App\Models\WorkPackage;
 use Filament\Facades\Filament;
@@ -102,30 +103,33 @@ class ContractResource extends Resource
                 Forms\Components\TextInput::make('payment_stages')
                     ->label('Tahapan Pembayaran')
                     ->suffix('Tahap')
+                    ->required()
                     ->numeric(),
 
                 Forms\Components\Select::make('work_package')
                     ->label('Paket Pekerjaan')
                     ->searchable()
                     ->placeholder('Pilih Paket Pekerjaan')
-                    ->options(function () {
-                        return WorkPackage::all()->pluck('name', 'name')->toArray();
+                    ->options(function (Get $get) {
+
+                        $ppk_id = $get('ppk_id') ?? null;
+
+                        $ppk = PPK::find($ppk_id);
+
+                        if (!$ppk) return [];
+
+                        $wp =  $ppk->workPackages;
+
+                        $op = [ ];
+
+                        foreach ($wp as $pkg) {
+                            $op[$pkg->name] = $pkg->name;
+                        }
+
+                        return $op;
                     })
                     ->required()
-                    ->preload()
-                    ->createOptionForm([
-                        Forms\Components\TextInput::make('name')
-                            ->label('Nama Paket Pekerjaan')
-                            ->required()
-                            ->unique(WorkPackage::class, 'name'),
-                    ])
-                    ->createOptionUsing(function (array $data) {
-                        $workPackage = WorkPackage::create([
-                            'name' => $data['name'],
-                        ]);
-
-                        return $workPackage->name;
-                    }),
+                    ->preload(),
 
                 Forms\Components\Select::make('ppk_id')
                     ->label('Petugas PPK (Pejabat Pembuat Komitmen)')

@@ -66,6 +66,13 @@ class CreatePaymentRequest extends CreateRecord
                 ]);
 
                 Document::create([
+                    'name'  =>  'Rincian Penggunaan Uang Muka',
+                    'path'  =>  $data['Rincian Penggunaan Uang Muka'],
+                    'type'  =>  'document_by_penyedia_jasa',
+                    'payment_request_id'    =>  $record->id,
+                ]);
+
+                Document::create([
                     'name'  =>  'Rekening Koran',
                     'path'  =>  $data['Rekening Koran'],
                     'type'  =>  'document_by_penyedia_jasa',

@@ -71,7 +71,6 @@ class SPMRequestResource extends Resource
                     ->label('Nilai SPM')
                     ->required()
                     ->stripCharacters(',')
-                    ->maxLength(255)
                     ->mask(RawJs::make('$money($input)')),
 
                 Forms\Components\TextInput::make('spm_description')
@@ -136,7 +135,7 @@ class SPMRequestResource extends Resource
                             ->disabled(),
 
                         Textarea::make('treasurer_rejection_reason')
-                            ->label('Alasan Penolkan Bendahara')
+                            ->label('Alasan Penolakan Bendahara')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
                                 return !$state ? true : false;
@@ -172,7 +171,7 @@ class SPMRequestResource extends Resource
                             ->disabled(),
 
                         Textarea::make('kpa_rejection_reason')
-                            ->label('Alasan Penolkan KPA')
+                            ->label('Alasan Penolakan KPA')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
                                 return !$state ? true : false;

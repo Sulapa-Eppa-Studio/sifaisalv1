@@ -137,7 +137,7 @@ class PaymentRequestResource extends Resource
                             ->required()
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('jaminan_uang_muka')
+                        FileUpload::make('Jaminan Uang Muka')
                             ->directory('documents')
                             ->uploadingMessage('Upload dokumen...')
                             ->acceptedFileTypes(['application/pdf'])
@@ -145,6 +145,14 @@ class PaymentRequestResource extends Resource
                             ->maxSize(1024 * 25),
 
                         FileUpload::make('Surat Keabsahan Dan Kebenaran Jaminan Uang Muka')
+                            ->directory('documents')
+                            ->uploadingMessage('Upload dokumen...')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->required()
+                            ->maxSize(1024 * 25),
+
+
+                        FileUpload::make('Rincian Penggunaan Uang Muka')
                             ->directory('documents')
                             ->uploadingMessage('Upload dokumen...')
                             ->acceptedFileTypes(['application/pdf'])
@@ -484,7 +492,7 @@ class PaymentRequestResource extends Resource
                             ->disabled(),
 
                         Textarea::make('ppk_rejection_reason')
-                            ->label('Alasan Penolkan PPK')
+                            ->label('Alasan Penolakan PPK')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
                                 return !$state ? true : false;
@@ -520,7 +528,7 @@ class PaymentRequestResource extends Resource
                             ->disabled(),
 
                         Textarea::make('ppspm_rejection_reason')
-                            ->label('Alasan Penolkan PPSPM')
+                            ->label('Alasan Penolakan PPSPM')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
                                 return !$state ? true : false;
@@ -556,7 +564,7 @@ class PaymentRequestResource extends Resource
                             ->disabled(),
 
                         Textarea::make('treasurer_rejection_reason')
-                            ->label('Alasan Penolkan Bendahara')
+                            ->label('Alasan Penolakan Bendahara')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
                                 return !$state ? true : false;
@@ -585,7 +593,7 @@ class PaymentRequestResource extends Resource
                             ->disabled(),
 
                         Textarea::make('kpa_rejection_reason')
-                            ->label('Alasan Penolkan KPA')
+                            ->label('Alasan Penolakan KPA')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
                                 return !$state ? true : false;

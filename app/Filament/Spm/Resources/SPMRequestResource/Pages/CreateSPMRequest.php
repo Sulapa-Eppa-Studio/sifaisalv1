@@ -4,6 +4,7 @@ namespace App\Filament\Spm\Resources\SPMRequestResource\Pages;
 
 use App\Filament\Spm\Resources\SPMRequestResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateSPMRequest extends CreateRecord
@@ -17,12 +18,28 @@ class CreateSPMRequest extends CreateRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $user   =   get_auth_user();
+        try {
 
-        $spm    =   $user->spm;
+            $user   =   get_auth_user();
 
-        $data['spm_id']     =   $spm->id;
+            $spm    =   $user->spm;
 
-        return $data;
+            $data['spm_id']     =   $spm->id;
+            if (intval($data['spm_value']) > 1000000000000) {
+
+                throw new \Exception('Nilai SPM tidak boleh lebih dari 1.000.000.000.000');
+            }
+
+            return $data;
+
+        } catch (\Throwable $th) {
+
+            Notification::make()
+                ->title('Terjadi Kesalahan')
+                ->body($th->getMessage())
+                ->send();
+
+            $this->halt();
+        }
     }
 }
