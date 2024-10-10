@@ -119,21 +119,25 @@ div.fi-topbar nav {
     position: relative;
     background-image: url('/bg-images/bg-nav-batik.jpg');
     /* Ganti dengan URL gambar batik Anda */
-    background-size: auto;
-    /* Gambar akan ditampilkan dalam ukuran aslinya */
+    background-size: 300px;
+    /* Atur ukuran pengulangan gambar batik */
     background-position: top left;
     /* Mulai dari sudut kiri atas */
     background-repeat: repeat;
     /* Gambar akan diulang baik secara horizontal maupun vertikal */
     width: 100%;
-    height: auto;
-    /* Sesuaikan tinggi navbar sesuai kebutuhan */
-}
-
-/* Jika Anda ingin mengatur tinggi spesifik untuk navbar */
-div.fi-topbar nav {
-    min-height: 30px;
-    /* Sesuaikan tinggi navbar */
+    /* Atur tinggi navbar agar konsisten */
+    padding: 10px 20px;
+    /* Beri padding agar konten navbar terlihat rapi */
+    display: flex;
+    justify-content: space-between;
+    /* Sebar konten ke kiri dan kanan */
+    align-items: center;
+    /* Konten di tengah secara vertikal */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Beri shadow agar navbar terlihat menonjol */
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    /* Garis bawah yang halus */
 }
 
 
