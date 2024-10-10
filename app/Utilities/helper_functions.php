@@ -18,11 +18,13 @@ function get_my_contracts_for_options_by_ppk()
 {
     $user = get_auth_user();
 
-    $contracts = $user->ppk->contracts();
+    // Pastikan ppk ada, jika tidak return collection kosong
+    $contracts = $user->ppk ? $user->ppk->contracts : collect();
 
-
-    return $contracts->get()->pluck('contract_number', 'contract_number');
+    // Pluck contract_number sebagai label dan id sebagai value
+    return $contracts->pluck('contract_number', 'id');
 }
+
 
 function get_auth_user(): User
 {
