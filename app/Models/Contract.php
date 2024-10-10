@@ -23,7 +23,7 @@ class Contract extends Model
 
     public function ppk()
     {
-        return $this->belongsTo(PPK::class);
+        return $this->belongsTo(PPK::class, 'ppk_id', 'id');
     }
 
     public function service_provider()

@@ -33,13 +33,18 @@ class TermintSppPpkResource extends Resource
         return $record->ppspm_verification_status == 'rejected';
     }
 
+
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('contract_id')
                     ->relationship('contract', 'contract_number')
-                    ->required()->label('Kontrak'),
+                    ->required()
+                    ->searchable()
+                    ->label('Nomor Kontrak')
+                    ->options(get_my_contracts_for_options_by_ppk()),
                 Forms\Components\TextInput::make('no_termint')
                     ->label('Nomor SPP')
                     ->required(),

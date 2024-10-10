@@ -14,6 +14,16 @@ function get_my_contracts_for_options()
     return $contracts->get()->pluck('contract_number', 'contract_number');
 }
 
+function get_my_contracts_for_options_by_ppk()
+{
+    $user = get_auth_user();
+
+    $contracts = $user->ppk->contracts();
+
+
+    return $contracts->get()->pluck('contract_number', 'contract_number');
+}
+
 function get_auth_user(): User
 {
     return auth()->user();
