@@ -43,7 +43,6 @@ class TermintSppPpkResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('contract_id')
-                    ->relationship('contract', 'contract_number')
                     ->required()
                     ->searchable()
                     ->label('Nomor Kontrak')
