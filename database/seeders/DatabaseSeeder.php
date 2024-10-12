@@ -38,15 +38,16 @@ class DatabaseSeeder extends Seeder
         $this->call(WorkPackagesSeeder::class);
 
         $this->call(ContractSeeder::class);
-        $this->call(PaymentRequestSeeder::class);
 
-        Document::factory()->count(250)->create();
+        // $this->call(PaymentRequestSeeder::class);
 
-        TermintSppPpk::factory()->count(10)->create();
+        // Document::factory()->count(250)->create();
 
-        TermintSppPpkFile::factory()->count(150)->create();
+        // TermintSppPpk::factory()->count(10)->create();
 
-        SPMRequest::factory()->count(50)->create();
+        // TermintSppPpkFile::factory()->count(150)->create();
+
+        // SPMRequest::factory()->count(50)->create();
         }
     }
 }

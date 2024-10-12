@@ -18,6 +18,7 @@ class TermintSppPpk extends Model
         'has_advance_payment',
         'ppspm_verification_status',
         'ppspm_rejection_reason',
+        'payment_request_id',
         'ppspm_id'
     ];
 
@@ -39,5 +40,10 @@ class TermintSppPpk extends Model
     public function files()
     {
         return $this->hasMany(TermintSppPpkFile::class);
+    }
+
+    public function payment_request()
+    {
+        return $this->belongsTo(PaymentRequest::class);
     }
 }

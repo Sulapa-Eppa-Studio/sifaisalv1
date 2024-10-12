@@ -55,11 +55,9 @@ class SPMRequestAprovalResource extends Resource
         return $form
             ->schema([
                 // ...
-
                 TextInput::make('spm_number')
                     ->label('No SPM')
-                    ->required()
-                    ->numeric(),
+                    ->required(),
 
                 TextInput::make('spm_value')
                     ->label('Nilai SPM')
@@ -105,15 +103,24 @@ class SPMRequestAprovalResource extends Resource
             ->columns([
 
                 Tables\Columns\TextColumn::make('spm_number')
-                    ->label('Nomor SPM')
+                    ->label('No. SPM')
                     ->numeric()
                     ->searchable()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('ppk_request.no_termint')
+                    ->label('No. PPK')
+                    ->prefix('#')
+                    ->sortable(),
+
+
                 Tables\Columns\TextColumn::make('spm_value')
                     ->label('Nilai SPM')
                     ->numeric()
-                    ->money('IDR', true)
+                    ->formatStateUsing(function ($state) {
+                        return format_number_new($state);
+                    })
+                    ->prefix('Rp. ')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('treasurer_verification_status')
@@ -128,6 +135,7 @@ class SPMRequestAprovalResource extends Resource
                 Tables\Columns\TextColumn::make('treasurer_rejection_reason')
                     ->label('Alasan Penolakan')
                     ->sortable()
+                    ->placeholder('Tidak Tersedia!')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -179,6 +187,7 @@ class SPMRequestAprovalResource extends Resource
                         Notification::make('x_not')
                             ->title('Permohonan SPM Diterima')
                             ->body('Pengajuan Pembayaran #' . $record->spm_number . ' Diterima')
+                            ->success()
                             ->send();
                     })
                     ->icon('heroicon-o-check-circle'),
@@ -213,6 +222,7 @@ class SPMRequestAprovalResource extends Resource
                         Notification::make('x_not')
                             ->title('Permohonan SPM ditolak')
                             ->body('Berhasil Menolak Permohonan Dengan alasan ' . "' $record->treasurer_rejection_reason '")
+                            ->danger()
                             ->send();
                     })
                     ->color('danger')

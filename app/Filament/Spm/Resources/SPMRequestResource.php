@@ -13,11 +13,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Spm\Resources\SPMRequestResource\Pages;
 use App\Filament\Spm\Resources\SPMRequestResource\RelationManagers;
+use App\Models\PPK;
+use App\Models\TermintSppPpk;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Support\RawJs;
 
@@ -95,15 +99,40 @@ class SPMRequestResource extends Resource
                             ->label('Pilih SPP-PPK')
                             ->placeholder('Pilih SPP-PPK')
                             ->required()
+                            ->live()
                             ->searchable()
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                $ppk = TermintSppPpk::find($state);
+
+                                if ($ppk?->payment_request?->ppspm_verification_status !== 'approved') {
+                                    Notification::make()
+                                        ->title('Peringatan!')
+                                        ->body('Verifikasi Dokumen Pendukung Belum Disetujui')
+                                        ->warning()
+                                        ->send();
+
+                                    return;
+                                }
+
+                                $set('payment_request_id', $ppk?->payment_request_id);
+                                $set('payment_request_name', $ppk?->payment_request?->request_number);
+                            })
                             ->options(get_list_ppk_request()),
 
-                        Select::make('payment_request_id')
-                            ->label('Nomor Pengajuan Pembayaran')
-                            ->placeholder('Pilih Nomor Pengajuan')
-                            ->required()
-                            ->searchable()
-                            ->options(get_list_request_payment('treasurer')),
+                        TextInput::make('payment_request_name')
+                            ->disabled()
+                            ->hiddenOn('view')
+                            ->label('Nomor Pengajuan Pembayaran'),
+
+                        TextInput::make('payment_request_name')
+                            ->visibleOn('view')
+                            ->disabled()
+                            ->formatStateUsing(function ($record) {
+                                return $record->payment_request?->request_number ?? 'Belum Tersedia';
+                            })
+                            ->label('Nomor Pengajuan Pembayaran'),
+
+                        Hidden::make('payment_request_id'),
                     ]),
 
 
@@ -186,9 +215,14 @@ class SPMRequestResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('spm_number')
-                    ->label('Nomor SPM')
+                    ->label('No. SPM')
                     ->numeric()
                     ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('ppk_request.no_termint')
+                    ->label('No. PPK')
+                    ->prefix('#')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('spm_value')

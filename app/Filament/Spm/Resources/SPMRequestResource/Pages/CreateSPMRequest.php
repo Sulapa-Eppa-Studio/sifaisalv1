@@ -3,6 +3,8 @@
 namespace App\Filament\Spm\Resources\SPMRequestResource\Pages;
 
 use App\Filament\Spm\Resources\SPMRequestResource;
+use App\Models\Contract;
+use App\Models\TermintSppPpk;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -25,9 +27,13 @@ class CreateSPMRequest extends CreateRecord
             $spm    =   $user->spm;
 
             $data['spm_id']     =   $spm->id;
-            if (intval($data['spm_value']) > 1000000000000) {
 
-                throw new \Exception('Nilai SPM tidak boleh lebih dari 1.000.000.000.000');
+            $termit_ppk     =   TermintSppPpk::findOrFail($data['ppk_request_id']);
+
+            $contract       =   $termit_ppk->contract;
+
+            if ($contract->payment_value - $contract->paid_value < $data['spm_value']) {
+                throw new \Exception('Nilai SPM melebihi sisa kontrak ' . 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.'));
             }
 
             return $data;

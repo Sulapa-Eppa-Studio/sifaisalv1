@@ -28,6 +28,10 @@ class SPMRequest extends Model
         'kpa_rejection_reason'
     ];
 
+    protected $with = [
+        'payment_request',
+    ];
+
     // Relasi dengan SPM
     public function spm()
     {

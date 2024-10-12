@@ -39,6 +39,11 @@ class EditSPMRequest extends EditRecord
 
         // $data = array_merge($data, $record->documents()->get()->pluck('path', 'name')->toArray());
 
+        $data['payment_request_name']   = $this->record->payment_request->request_number;
+        // $data['payment_request_id']     = $this->record->payment_request_id;
+
+        // dd($data);
+
         return $data;
     }
 

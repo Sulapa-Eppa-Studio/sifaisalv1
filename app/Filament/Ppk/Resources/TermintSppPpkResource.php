@@ -10,12 +10,16 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use App\Enums\FileType;
+use App\Models\Contract;
+use App\Models\PaymentRequest;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Facades\Filament;
-
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use function Filament\Support\format_number;
 
 class TermintSppPpkResource extends Resource
 {
@@ -42,27 +46,62 @@ class TermintSppPpkResource extends Resource
     {
         return $form
             ->schema([
+
                 Forms\Components\Select::make('contract_id')
                     ->required()
                     ->searchable()
                     ->live()
                     ->label('Nomor Kontrak')
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $array = [];
+
+                        $contract    =   Contract::find($state);
+
+                        $record = PaymentRequest::where('contract_number', $contract?->contract_number)
+                            ->where('ppk_verification_status', operator: 'approved')
+                            ->where('verification_progress', 'ppk')
+                            ->first();
+
+                        $set('payment_request_id', $record?->id);
+                        $set('payment_request_name', $record?->request_number);
+
+                        // foreach ($record as $value) {
+                        //     $array[$value->id] = $value->request_number;
+                        // }
+
+                        return $record?->request_number;
+                    })
                     ->options(get_my_contracts_for_options_by_ppk()),
+
+                Forms\Components\TextInput::make('payment_request_name')
+                    ->disabled()
+                    ->required()
+                    ->placeholder('Tidak Terdapat Nomor Pengajuan')
+                    ->label('Nomor Pengajuan'),
+
+                Forms\Components\Hidden::make('payment_request_id'),
+
                 Forms\Components\TextInput::make('no_termint')
                     ->label('Nomor SPP')
                     ->required(),
+
                 Forms\Components\TextInput::make('description')
                     ->label('Uraian Pembayaran SPP-PPK')
                     ->required(),
+
                 Forms\Components\TextInput::make('payment_value')
                     ->label('Nilai Permintaan Pembayaran')
                     ->required()
+                    ->columnSpanFull()
                     ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
                     ->prefix('Rp'),
+
+
                 Forms\Components\Toggle::make('has_advance_payment')
                     ->label('Uang Muka')
                     ->disabledOn('edit')
                     ->reactive(),
+
                 Forms\Components\Fieldset::make('Pilih Dokumen Yang Akan Diunggah')
                     ->schema(function (Forms\Components\Component $component) {
                         return self::getDocumentFields($component->getState()['has_advance_payment'] ?? false);
@@ -191,10 +230,14 @@ class TermintSppPpkResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('contract.contract_number')
-                    ->label('Kontrak'),
+                    ->label('No. Kontrak'),
+
+                Tables\Columns\TextColumn::make('payment_request.request_number')
+                    ->label('No. Pengajuan')
+                    ->prefix('#'),
 
                 Tables\Columns\TextColumn::make('no_termint')
-                    ->label('Nomor SPP'),
+                    ->label('No. SPP'),
 
                 Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi')
@@ -207,7 +250,20 @@ class TermintSppPpkResource extends Resource
                 Tables\Columns\TextColumn::make('payment_value')
                     ->label('Nilai Pembayaran')
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->money('IDR', true)
+                    ->formatStateUsing(function ($state) {
+                        return format_number_new($state);
+                    })
+                    ->prefix('Rp. ')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Sisa Kontrak')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->formatStateUsing(function (TermintSppPpk $record) {
+                        $contract = $record->contract;
+                        return format_number_new($contract->payment_value - $record->paid_value);
+                    })
+                    ->prefix('Rp. ')
                     ->sortable(),
 
                 Tables\Columns\BooleanColumn::make('has_advance_payment')
@@ -230,11 +286,9 @@ class TermintSppPpkResource extends Resource
                     ->modalContent(function (TermintSppPpk $record) {
                         return view('livewire.view-files-modal', ['record' => $record]);
                     })
-                    ->modalActions([
-                        ButtonAction::make('close')
-                            ->label('Tutup')
-                            ->close(),
-                    ]),
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Tutup'),
+
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
 

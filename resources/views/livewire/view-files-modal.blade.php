@@ -4,7 +4,7 @@
             <p class="text-gray-500 text-lg">Tidak ada file yang diunggah untuk record ini.</p>
         </div>
     @else
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             @foreach ($record->files as $file)
                 @php
                     $fileTypeEnum = \App\Enums\FileType::tryFrom($file->file_type);

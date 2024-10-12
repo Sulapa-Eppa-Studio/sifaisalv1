@@ -120,7 +120,7 @@ class PdfController extends Controller
             'tables'    =>  $tables
         ];
 
-        $pdf = Pdf::loadView("components.reports.report-layout", $data);
+        $pdf = Pdf::loadView("components.reports.report-layout", $data)->setPaper('A4', 'portrait');
 
 
 
@@ -173,7 +173,7 @@ class PdfController extends Controller
             'tables'    =>  $tables
         ];
 
-        $pdf = Pdf::loadView("components.reports.report-layout", $data);
+        $pdf = Pdf::loadView("components.reports.report-layout", $data)->setPaper('A4', 'landscape');
 
         return $pdf->download("contract_report.pdf");
     }
@@ -262,7 +262,7 @@ class PdfController extends Controller
             'tables'    => $tables
         ];
 
-        $pdf = Pdf::loadView("components.reports.report-layout", $data);
+        $pdf = Pdf::loadView("components.reports.report-layout", $data)->setPaper('A4', 'landscape');
 
         return $pdf->download("payment_request_report.pdf");
     }
@@ -329,7 +329,7 @@ class PdfController extends Controller
             'tables'    => $tables
         ];
 
-        $pdf = Pdf::loadView("components.reports.report-layout", $data);
+        $pdf = Pdf::loadView("components.reports.report-layout", $data)->setPaper('A4', 'landscape');
 
         return $pdf->download("termint_spp_ppk_report.pdf");
     }
@@ -377,7 +377,7 @@ class PdfController extends Controller
             'tables'    => $tables
         ];
 
-        $pdf = Pdf::loadView("components.reports.report-layout", $data);
+        $pdf = Pdf::loadView("components.reports.report-layout", $data)->setPaper('A4', 'landscape');
 
         return $pdf->download("work_package_report.pdf");
     }
@@ -436,7 +436,7 @@ class PdfController extends Controller
             'tables'    => $tables
         ];
 
-        $pdf = Pdf::loadView("components.reports.report-layout", $data);
+        $pdf = Pdf::loadView("components.reports.report-layout", $data)->setPaper('A4', 'landscape');
 
         return $pdf->download("spm_request_report.pdf");
     }
