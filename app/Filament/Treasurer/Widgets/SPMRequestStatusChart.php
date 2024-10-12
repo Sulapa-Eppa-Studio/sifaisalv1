@@ -96,19 +96,19 @@ class SPMRequestStatusChart extends ApexChartWidget
         // Menyiapkan data untuk chart
         $series = [
             [
-                'name' => 'In Progress',
+                'name' => 'Dalam Proses',
                 'data' => [],
             ],
             [
-                'name' => 'Approved',
+                'name' => 'Disetujui',
                 'data' => [],
             ],
             [
-                'name' => 'Rejected',
+                'name' => 'Ditolak',
                 'data' => [],
             ],
             [
-                'name' => 'Not Available',
+                'name' => 'Belum Tersedia',
                 'data' => [],
             ],
         ];
@@ -134,7 +134,7 @@ class SPMRequestStatusChart extends ApexChartWidget
             ],
             'series' => $series,
             'xaxis' => [
-                'categories' => $stages,
+                'categories' => ['Bendahara', 'KPA'],
                 'labels' => [
                     'style' => [
                         'fontFamily' => 'inherit',

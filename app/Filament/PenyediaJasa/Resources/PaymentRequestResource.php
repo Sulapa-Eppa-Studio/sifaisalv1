@@ -10,6 +10,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -645,7 +646,6 @@ class PaymentRequestResource extends Resource
 
                 TextColumn::make('id')
                     ->label('Sisa Kontrak')
-                    ->money('IDR', true)
                     ->formatStateUsing(function ($record) {
                         $contract = $record->contract;
                         return 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.');
@@ -657,8 +657,10 @@ class PaymentRequestResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->wrap(),
 
+                // Menggunakan TextColumn dengan badge() dan formatStateUsing() untuk 'verification_progress'
                 TextColumn::make('verification_progress')
                     ->label('Progres Verifikasi')
+                    ->badge()
                     ->colors([
                         'primary'   => 'ppk',
                         'success'   => 'done',
@@ -667,51 +669,102 @@ class PaymentRequestResource extends Resource
                         'secondary' => 'treasurer',
                     ])
                     ->formatStateUsing(function ($state) {
-                        return strtoupper($state);
+                        $labels = [
+                            'ppk'       => 'PPK',
+                            'ppspm'     => 'PP-SPM',
+                            'treasurer' => 'Bendahara',
+                            'done'      => 'Selesai',
+                            'rejected'  => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? $state;
                     })
                     ->sortable(),
 
+                // Menggunakan TextColumn dengan badge() dan formatStateUsing() untuk 'ppk_verification_status'
                 TextColumn::make('ppk_verification_status')
                     ->label('Status Verifikasi PPK')
+                    ->badge()
                     ->colors([
-                        'warning'   => 'not_available',
-                        'primary'   => 'in_progress',
-                        'success'   => 'approved',
-                        'danger'    => 'rejected',
+                        'warning' => 'not_available',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'not_available' => 'Belum Tersedia',
+                            'in_progress'   => 'Sedang Diproses',
+                            'approved'      => 'Disetujui',
+                            'rejected'      => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? $state;
+                    })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
 
+                // Menggunakan TextColumn dengan badge() dan formatStateUsing() untuk 'ppspm_verification_status'
                 TextColumn::make('ppspm_verification_status')
                     ->label('Status Verifikasi PP-SPM')
+                    ->badge()
                     ->colors([
-                        'warning'   => 'not_available',
-                        'primary'   => 'in_progress',
-                        'success'   => 'approved',
-                        'danger'    => 'rejected',
+                        'warning' => 'not_available',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'not_available' => 'Belum Tersedia',
+                            'in_progress'   => 'Sedang Diproses',
+                            'approved'      => 'Disetujui',
+                            'rejected'      => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? $state;
+                    })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
 
+                // Menggunakan TextColumn dengan badge() dan formatStateUsing() untuk 'treasurer_verification_status'
                 TextColumn::make('treasurer_verification_status')
                     ->label('Status Verifikasi Bendahara')
+                    ->badge()
                     ->colors([
-                        'warning'   => 'not_available',
-                        'primary'   => 'in_progress',
-                        'success'   => 'approved',
-                        'danger'    => 'rejected',
+                        'warning' => 'not_available',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'not_available' => 'Belum Tersedia',
+                            'in_progress'   => 'Sedang Diproses',
+                            'approved'      => 'Disetujui',
+                            'rejected'      => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? $state;
+                    })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
 
+                // Menggunakan TextColumn dengan badge() dan formatStateUsing() untuk 'kpa_verification_status'
                 TextColumn::make('kpa_verification_status')
                     ->label('Status Verifikasi KPA')
+                    ->badge()
                     ->colors([
-                        'warning'   => 'not_available',
-                        'primary'   => 'in_progress',
-                        'success'   => 'approved',
-                        'danger'    => 'rejected',
+                        'warning' => 'not_available',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'not_available' => 'Belum Tersedia',
+                            'in_progress'   => 'Sedang Diproses',
+                            'approved'      => 'Disetujui',
+                            'rejected'      => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? $state;
+                    })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
 
@@ -728,15 +781,15 @@ class PaymentRequestResource extends Resource
             ->filters([
                 Filter::make('verification_status')
                     ->query(fn(Builder $query): Builder => $query->where('verification_status', 'approved'))
-                    ->label('Approved Payments'),
+                    ->label('Pembayaran Disetujui'),
 
                 Filter::make('verification_status')
                     ->query(fn(Builder $query): Builder => $query->where('verification_status', 'in_progress'))
-                    ->label('In Progress Payments'),
+                    ->label('Pembayaran Sedang Diproses'),
 
                 Filter::make('verification_status')
                     ->query(fn(Builder $query): Builder => $query->where('verification_status', 'rejected'))
-                    ->label('Rejected Payments'),
+                    ->label('Pembayaran Ditolak'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

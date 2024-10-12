@@ -25,6 +25,32 @@
 
     <title>SiFaisal</title>
 
+    <style>
+        .post-heading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .post-heading img {
+            width: auto;
+            /* Sesuaikan ukuran logo sesuai kebutuhan */
+            height: 50px;
+            margin-left: 8px;
+        }
+
+        .post-heading h3 {
+            margin: 0;
+        }
+
+        .post-heading p {
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+
 </head>
 
 <body data-spy="scroll" class="overflow-auto">
@@ -62,10 +88,11 @@
     <div class="service-area">
         <div class="container">
             <div class="post-heading text-center">
-                <h3>Selamat Datang</h3>
+                <h3>Selamat Datang Di Aplikasi</h3>
+                <img src="{{ asset('images/logo-app.png') }}" alt="Logo">
                 <p>
-                    Di Aplikasi SiFaisal ( Sistem Informasi Verifikasi Pertanggungjawaban Anggaran Kegiatan Yang
-                    Dilaksanakan Secara Kontraktual )
+                    Sistem Informasi Verifikasi Pertanggungjawaban Anggaran Kegiatan Yang
+                    Dilaksanakan Secara Kontraktual
                 </p>
             </div>
             <div class="section-wrapper">
@@ -76,8 +103,7 @@
 
                             <div class="post-content text-center service-content wow">
                                 <div class="post-thumb">
-                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
-                                        alt="service-image">
+                                    <img src="{{ asset('images/ic-admin.svg') }}" alt="service-image">
                                 </div>
                                 <div class="post-text">
                                     <h4><a href="{{ get_admin_panel_url() }}/admin"
@@ -93,8 +119,7 @@
                         <a href="{{ get_ppk_panel_url() }}/penyedia-jasa" target="get_ppk_panel_url">
                             <div class="post-content text-center service-content wow">
                                 <div class="post-thumb">
-                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
-                                        alt="service-image">
+                                    <img src="{{ asset('images/ic-penyedia-jasa.svg') }}" alt="service-image">
                                 </div>
                                 <div class="post-text">
                                     <h4><a href="{{ get_sp_panel_url() }}/penyedia-jasa"
@@ -111,8 +136,7 @@
                             <div class="post-content text-center service-content wow">
 
                                 <div class="post-thumb">
-                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
-                                        alt="service-image">
+                                    <img src="{{ asset('images/ic-ppk.svg') }}" alt="service-image">
                                 </div>
                                 <div class="post-text">
                                     <h4><a href="{{ get_ppk_panel_url() }}/ppk" target="get_ppk_panel_url">Pejabat
@@ -128,8 +152,7 @@
                         <a href="{{ get_spm_panel_url() }}/spm" target="get_spm_panel_url">
                             <div class="post-content text-center service-content wow">
                                 <div class="post-thumb">
-                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
-                                        alt="service-image">
+                                    <img src="{{ asset('images/ic-ppspm.svg') }}" alt="service-image">
                                 </div>
                                 <div class="post-text">
                                     <h4><a href="{{ get_spm_panel_url() }}/spm" target="get_spm_panel_url">Pejabat
@@ -144,8 +167,7 @@
                         <a href="{{ get_treasurer_panel_url() }}/treasurer" target="get_treasurer_panel_url">
                             <div class="post-content text-center service-content wow">
                                 <div class="post-thumb">
-                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
-                                        alt="service-image">
+                                    <img src="{{ asset('images/ic-bendahara.svg') }}" alt="service-image">
                                 </div>
                                 <div class="post-text">
                                     <h4><a href="{{ get_treasurer_panel_url() }}/treasurer"
@@ -160,8 +182,7 @@
                         <a href="{{ get_kpa_panel_url() }}/kpa" target="get_admin_panel_url">
                             <div class="post-content text-center service-content wow">
                                 <div class="post-thumb">
-                                    <img src="{{ asset('modern') }}/assets/images/service/icon/13.png"
-                                        alt="service-image">
+                                    <img src="{{ asset('images/ic-kpa.svg') }}" alt="service-image">
                                 </div>
                                 <div class="post-text">
                                     <h4><a href="{{ get_kpa_panel_url() }}/kpa" target="get_kpa_panel_url">Kuasa

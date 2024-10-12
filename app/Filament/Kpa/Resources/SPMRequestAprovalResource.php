@@ -22,6 +22,8 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\RawJs;
 
+use Filament\Tables\Columns\TextColumn;
+
 class SPMRequestAprovalResource extends Resource
 {
     protected static ?string $model = SPMRequest::class;
@@ -111,39 +113,49 @@ class SPMRequestAprovalResource extends Resource
         return $table
             ->columns([
 
-                Tables\Columns\TextColumn::make('spm_number')
+                TextColumn::make('spm_number')
                     ->label('Nomor SPM')
                     ->numeric()
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('spm_value')
+                TextColumn::make('spm_value')
                     ->label('Nilai SPM')
                     ->numeric()
                     ->money('IDR', true)
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('kpa_verification_status')
+                // Menggunakan badge pada 'kpa_verification_status'
+                TextColumn::make('kpa_verification_status')
                     ->label('Status Verifikasi KPA')
+                    ->badge()
                     ->colors([
-                        'primary'   => 'in_progress',
-                        'success'   => 'approved',
-                        'danger'    => 'rejected',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'in_progress' => 'Sedang Diproses',
+                            'approved'    => 'Disetujui',
+                            'rejected'    => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? ucfirst($state);
+                    })
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('kpa_rejection_reason')
+                TextColumn::make('kpa_rejection_reason')
                     ->label('Alasan Penolakan')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
@@ -159,24 +171,20 @@ class SPMRequestAprovalResource extends Resource
                     ->label('Setujui')
                     ->requiresConfirmation()
                     ->disabled(function (SPMRequest $record) {
-
-                        if ($record->kpa_verification_status == 'in_progress') {
-                            return false;
-                        }
-
-                        return true;
+                        return $record->kpa_verification_status !== 'in_progress';
                     })
                     ->action(function (SPMRequest $record, array $data) {
 
-                        $contract   =   $record->payment_request->contract;
+                        $contract = $record->payment_request->contract;
 
                         if ($contract instanceof Contract) {
 
                             if ($contract->paid_value >= $contract->payment_value) {
 
-                                Notification::make('x_not')
-                                    ->title('Gagal menyetujui')
-                                    ->body('Kontrak #' . $record->contract_number . ' sudah terbayarkan!')
+                                Notification::make()
+                                    ->title('Gagal Menyetujui')
+                                    ->body('Kontrak #' . $contract->contract_number . ' sudah terbayarkan!')
+                                    ->danger()
                                     ->send();
 
                                 return;
@@ -185,33 +193,34 @@ class SPMRequestAprovalResource extends Resource
                             $contract->update([
                                 'paid_value' => $record->payment_request->payment_value + $contract->paid_value,
                             ]);
-
                         } else {
 
-                            Notification::make('x_not')
-                                ->title('Gagal menyetujui')
-                                ->body('Kontrak #' . $record->contract_number . ' tidak ditemukan!')
+                            Notification::make()
+                                ->title('Gagal Menyetujui')
+                                ->body('Kontrak tidak ditemukan!')
+                                ->danger()
                                 ->send();
 
                             return;
                         }
 
-                        $payment_request   =   $record->payment_request;
+                        $payment_request = $record->payment_request;
 
                         $payment_request->update([
-                            'treasurer_id'                      =>  get_auth_user()->kpa->id,
-                            'verification_progress'             =>  'done',
-                            'kpa_verification_status'           =>  'approved',
+                            'kpa_id'                  => get_auth_user()->kpa->id,
+                            'verification_progress'   => 'done',
+                            'kpa_verification_status' => 'approved',
                         ]);
 
                         $record->update([
-                            'kpa_verification_status'     =>  'approved',
-                            'kpa_id'                      =>  get_auth_user()->kpa->id,
+                            'kpa_verification_status' => 'approved',
+                            'kpa_id'                  => get_auth_user()->kpa->id,
                         ]);
 
-                        Notification::make('x_not')
-                            ->title('Permohonan SPM Diterima')
-                            ->body('Pengajuan Pembayaran #' . $record->spm_number . ' Diterima')
+                        Notification::make()
+                            ->title('Permohonan SPM Disetujui')
+                            ->body('Pengajuan Pembayaran #' . $record->spm_number . ' telah disetujui.')
+                            ->success()
                             ->send();
                     })
                     ->icon('heroicon-o-check-circle'),
@@ -220,32 +229,27 @@ class SPMRequestAprovalResource extends Resource
                     ->label('Tolak')
                     ->requiresConfirmation()
                     ->disabled(function (SPMRequest $record) {
-
-                        if ($record->kpa_verification_status == 'in_progress') {
-                            return false;
-                        }
-
-                        return true;
+                        return $record->kpa_verification_status !== 'in_progress';
                     })
                     ->form([
                         TextInput::make('reject_reason')
                             ->label('Alasan Penolakan')
                             ->required()
-                            ->placeholder('Kenapa anda menolaknya?')
+                            ->placeholder('Mengapa Anda menolaknya?')
                             ->minLength(3)
-                            ->maxLength(199)
+                            ->maxLength(199),
                     ])
                     ->action(function (SPMRequest $record, array $data) {
-
                         $record->update([
-                            'kpa_verification_status'     =>  'rejected',
-                            'kpa_rejection_reason'        =>  $data['reject_reason'],
-                            'kpa_id'                      =>  get_auth_user()->kpa->id,
+                            'kpa_verification_status' => 'rejected',
+                            'kpa_rejection_reason'    => $data['reject_reason'],
+                            'kpa_id'                  => get_auth_user()->kpa->id,
                         ]);
 
-                        Notification::make('x_not')
-                            ->title('Permohonan SPM ditolak')
-                            ->body('Berhasil Menolak Permohonan Dengan alasan ' . "' $record->kpa_rejection_reason '")
+                        Notification::make()
+                            ->title('Permohonan SPM Ditolak')
+                            ->body('Anda telah menolak permohonan dengan alasan: ' . $record->kpa_rejection_reason)
+                            ->danger()
                             ->send();
                     })
                     ->color('danger')

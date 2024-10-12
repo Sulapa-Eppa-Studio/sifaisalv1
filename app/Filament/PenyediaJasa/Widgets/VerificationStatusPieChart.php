@@ -65,7 +65,7 @@ class VerificationStatusPieChart extends ApexChartWidget
                 $totalApproved,
                 $totalRejected,
             ],
-            'labels' => ['In Progress', 'Approved', 'Rejected'],
+            'labels' => ['Dalam Proses', 'Diterima', 'Ditelak'],
             'colors' => ['#4ade80', '#facc15', '#f87171'],
             'title' => [
                 'text' => 'Status Verifikasi',

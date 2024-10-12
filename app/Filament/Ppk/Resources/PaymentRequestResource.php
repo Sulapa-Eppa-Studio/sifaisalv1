@@ -340,7 +340,6 @@ class PaymentRequestResource extends Resource
 
                 TextColumn::make('request_number')
                     ->label('Nomor Permintaan')
-                    ->prefix('#')
                     ->searchable(),
 
                 TextColumn::make('payment_stage')
@@ -355,7 +354,6 @@ class PaymentRequestResource extends Resource
 
                 TextColumn::make('id')
                     ->label('Sisa Kontrak')
-                    ->money('IDR', true)
                     ->formatStateUsing(function ($record) {
                         $contract = $record->contract;
                         return 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.');
@@ -367,13 +365,23 @@ class PaymentRequestResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->wrap(),
 
+                // Menggunakan badge pada 'ppk_verification_status'
                 TextColumn::make('ppk_verification_status')
                     ->label('Status Verifikasi PPK')
+                    ->badge()
                     ->colors([
-                        'primary'   => 'in_progress',
-                        'success'   => 'approved',
-                        'danger'    => 'rejected',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'in_progress' => 'Sedang Diproses',
+                            'approved'    => 'Disetujui',
+                            'rejected'    => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? ucfirst($state);
+                    })
                     ->sortable(),
 
                 TextColumn::make('ppk_rejection_reason')
@@ -402,30 +410,24 @@ class PaymentRequestResource extends Resource
                     ->label('Setujui')
                     ->requiresConfirmation()
                     ->disabled(function (PaymentRequest $record) {
-
-                        if ($record->ppk_verification_status == 'in_progress') {
-                            return false;
-                        }
-
-                        return true;
+                        return $record->ppk_verification_status !== 'in_progress';
                     })
                     ->action(function (PaymentRequest $record, array $data) {
-
                         $record->update([
-                            'ppk_verification_status'   =>  'approved',
-                            'ppk_id'                    =>  get_auth_user()->ppk->id,
-                            'verification_progress'     =>  'ppspm',
-                            'ppspm_verification_status' =>  'in_progress',
+                            'ppk_verification_status'   => 'approved',
+                            'ppk_id'                    => get_auth_user()->ppk->id,
+                            'verification_progress'     => 'ppspm',
+                            'ppspm_verification_status' => 'in_progress',
                         ]);
 
-                        Notification::make('x_not')
-                            ->title('Permohonan Pembayaran Diterima')
-                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' Diterima')
+                        Notification::make()
+                            ->title('Permohonan Pembayaran Disetujui')
+                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' telah disetujui.')
                             ->send();
 
-                        Notification::make('x_not_srv')
-                            ->title('Permohonan Pembayaran Diterima')
-                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' Diterima')
+                        Notification::make()
+                            ->title('Permohonan Pembayaran Disetujui')
+                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' telah disetujui.')
                             ->sendToDatabase($record->service_provider->user);
                     })
                     ->icon('heroicon-o-check-circle'),
@@ -434,38 +436,32 @@ class PaymentRequestResource extends Resource
                     ->label('Tolak')
                     ->requiresConfirmation()
                     ->disabled(function (PaymentRequest $record) {
-
-                        if ($record->ppk_verification_status == 'in_progress') {
-                            return false;
-                        }
-
-                        return true;
+                        return $record->ppk_verification_status !== 'in_progress';
                     })
                     ->form([
                         TextInput::make('reject_reason')
                             ->label('Alasan Penolakan')
                             ->required()
-                            ->placeholder('Kenapa anda menolaknya?')
+                            ->placeholder('Kenapa Anda menolaknya?')
                             ->minLength(3)
-                            ->maxLength(199)
+                            ->maxLength(199),
                     ])
                     ->action(function (PaymentRequest $record, array $data) {
-
                         $record->update([
-                            'ppk_verification_status'   =>  'rejected',
-                            'verification_progress'     =>  'rejected',
-                            'ppk_rejection_reason'      =>  $data['reject_reason'],
-                            'ppk_id'                    =>  get_auth_user()->ppk->id,
+                            'ppk_verification_status' => 'rejected',
+                            'verification_progress'   => 'rejected',
+                            'ppk_rejection_reason'    => $data['reject_reason'],
+                            'ppk_id'                  => get_auth_user()->ppk->id,
                         ]);
 
-                        Notification::make('x_not')
-                            ->title('Permohonan Pembayaran ditolak')
-                            ->body('Berhasil Menolak Permohonan Dengan alasan ' . "' $record->ppk_rejection_reason '")
+                        Notification::make()
+                            ->title('Permohonan Pembayaran Ditolak')
+                            ->body('Anda telah menolak permohonan dengan alasan: ' . $record->ppk_rejection_reason)
                             ->send();
 
-                        Notification::make('x_not_srv')
-                            ->title('Permohonan Pembayaran ditolak')
-                            ->body('Petugas PPK Menolak Permohonan Anda Dengan alasan ' . "' $record->ppk_rejection_reason '")
+                        Notification::make()
+                            ->title('Permohonan Pembayaran Ditolak')
+                            ->body('Permohonan Anda ditolak oleh PPK dengan alasan: ' . $record->ppk_rejection_reason)
                             ->sendToDatabase($record->service_provider->user);
                     })
                     ->color('danger')
