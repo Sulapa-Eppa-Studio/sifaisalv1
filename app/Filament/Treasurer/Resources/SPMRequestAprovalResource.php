@@ -19,6 +19,8 @@ use Filament\Notifications\Notification;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\RawJs;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
 
 class SPMRequestAprovalResource extends Resource
 {
@@ -104,39 +106,49 @@ class SPMRequestAprovalResource extends Resource
         return $table
             ->columns([
 
-                Tables\Columns\TextColumn::make('spm_number')
+                TextColumn::make('spm_number')
                     ->label('Nomor SPM')
                     ->numeric()
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('spm_value')
+                TextColumn::make('spm_value')
                     ->label('Nilai SPM')
                     ->numeric()
                     ->money('IDR', true)
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('treasurer_verification_status')
+                // Menggunakan badge pada 'treasurer_verification_status'
+                TextColumn::make('treasurer_verification_status')
                     ->label('Status Verifikasi Bendahara')
+                    ->badge()
                     ->colors([
-                        'primary'   => 'in_progress',
-                        'success'   => 'approved',
-                        'danger'    => 'rejected',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'in_progress' => 'Sedang Diproses',
+                            'approved'    => 'Disetujui',
+                            'rejected'    => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? ucfirst($state);
+                    })
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('treasurer_rejection_reason')
+                TextColumn::make('treasurer_rejection_reason')
                     ->label('Alasan Penolakan')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
@@ -148,37 +160,31 @@ class SPMRequestAprovalResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
 
-
                 Tables\Actions\Action::make('approve_btn')
                     ->label('Setujui')
                     ->requiresConfirmation()
                     ->disabled(function (SPMRequest $record) {
-
-                        if ($record->treasurer_verification_status == 'in_progress') {
-                            return false;
-                        }
-
-                        return true;
+                        return $record->treasurer_verification_status !== 'in_progress';
                     })
                     ->action(function (SPMRequest $record, array $data) {
-
-                        $payment_request   =   $record->payment_request;
+                        $payment_request = $record->payment_request;
 
                         $payment_request->update([
-                            'treasurer_verification_status'     =>  'approved',
-                            'treasurer_id'                      =>  get_auth_user()->treasurer->id,
-                            'verification_progress'             =>  'kpa',
-                            'kpa_verification_status'           =>  'in_progress',
+                            'treasurer_verification_status' => 'approved',
+                            'treasurer_id'                  => get_auth_user()->treasurer->id,
+                            'verification_progress'         => 'kpa',
+                            'kpa_verification_status'       => 'in_progress',
                         ]);
 
                         $record->update([
-                            'treasurer_verification_status'     =>  'approved',
-                            'treasurer_id'                      =>  get_auth_user()->treasurer->id,
+                            'treasurer_verification_status' => 'approved',
+                            'treasurer_id'                  => get_auth_user()->treasurer->id,
                         ]);
 
-                        Notification::make('x_not')
-                            ->title('Permohonan SPM Diterima')
-                            ->body('Pengajuan Pembayaran #' . $record->spm_number . ' Diterima')
+                        Notification::make()
+                            ->title('Permohonan SPM Disetujui')
+                            ->body('Pengajuan Pembayaran #' . $record->spm_number . ' telah disetujui.')
+                            ->success()
                             ->send();
                     })
                     ->icon('heroicon-o-check-circle'),
@@ -187,32 +193,27 @@ class SPMRequestAprovalResource extends Resource
                     ->label('Tolak')
                     ->requiresConfirmation()
                     ->disabled(function (SPMRequest $record) {
-
-                        if ($record->treasurer_verification_status == 'in_progress') {
-                            return false;
-                        }
-
-                        return true;
+                        return $record->treasurer_verification_status !== 'in_progress';
                     })
                     ->form([
                         TextInput::make('reject_reason')
                             ->label('Alasan Penolakan')
                             ->required()
-                            ->placeholder('Kenapa anda menolaknya?')
+                            ->placeholder('Mengapa Anda menolaknya?')
                             ->minLength(3)
-                            ->maxLength(199)
+                            ->maxLength(199),
                     ])
                     ->action(function (SPMRequest $record, array $data) {
-
                         $record->update([
-                            'treasurer_verification_status'     =>  'rejected',
-                            'treasurer_rejection_reason'        =>  $data['reject_reason'],
-                            'treasurer_id'                      =>  get_auth_user()->treasurer->id,
+                            'treasurer_verification_status' => 'rejected',
+                            'treasurer_rejection_reason'    => $data['reject_reason'],
+                            'treasurer_id'                  => get_auth_user()->treasurer->id,
                         ]);
 
-                        Notification::make('x_not')
-                            ->title('Permohonan SPM ditolak')
-                            ->body('Berhasil Menolak Permohonan Dengan alasan ' . "' $record->treasurer_rejection_reason '")
+                        Notification::make()
+                            ->title('Permohonan SPM Ditolak')
+                            ->body('Anda telah menolak permohonan dengan alasan: ' . $record->treasurer_rejection_reason)
+                            ->danger()
                             ->send();
                     })
                     ->color('danger')

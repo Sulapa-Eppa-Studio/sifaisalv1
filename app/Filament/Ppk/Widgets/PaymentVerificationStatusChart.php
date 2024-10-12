@@ -115,19 +115,19 @@ class PaymentVerificationStatusChart extends ApexChartWidget
         // Menyiapkan data untuk chart
         $series = [
             [
-                'name' => 'In Progress',
+                'name' => 'Dalam Proses',
                 'data' => [],
             ],
             [
-                'name' => 'Approved',
+                'name' => 'Disetujui',
                 'data' => [],
             ],
             [
-                'name' => 'Rejected',
+                'name' => 'Ditolak',
                 'data' => [],
             ],
             [
-                'name' => 'Not Available',
+                'name' => 'Belum Tersedia',
                 'data' => [],
             ],
         ];
@@ -160,7 +160,7 @@ class PaymentVerificationStatusChart extends ApexChartWidget
             ],
             'series' => $series,
             'xaxis' => [
-                'categories' => $stages,
+                'categories' => ['PPK', 'PPSPM', 'Bendahara', 'KPA'],
                 'labels' => [
                     'style' => [
                         'fontFamily' => 'inherit',

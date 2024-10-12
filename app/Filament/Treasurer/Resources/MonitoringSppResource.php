@@ -1,34 +1,41 @@
 <?php
 
-namespace App\Filament\Spm\Resources;
+namespace App\Filament\Treasurer\Resources;
 
-use App\Filament\Spm\Resources\ApprovalSPPResource\Pages;
-use App\Filament\Spm\Resources\ApprovalSPPResource\RelationManagers;
-use App\Models\ApprovalSPP;
-use App\Models\TermintSppPpk;
+use App\Filament\Treasurer\Resources\MonitoringSppResource\Pages;
+use App\Filament\Treasurer\Resources\MonitoringSppResource\RelationManagers;
+use App\Models\MonitoringSpp;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+use App\Models\PaymentRequest;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use App\Models\TermintSppPpk;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ButtonAction;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Blade;
 use App\Enums\FileType;
-use Filament\Notifications\Notification;
-use Filament\Tables\Columns\BooleanColumn;
-use Filament\Tables\Columns\TextColumn;
 
-class ApprovalSPPResource extends Resource
+
+class MonitoringSppResource extends Resource
 {
+
     protected static ?string $model = TermintSppPpk::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-check-circle';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
 
-    protected static ?string $label = 'Verifikasi SPP';
+    protected static ?string $navigationLabel = 'Monitoring SPP';
+
+    protected static ?string $label = 'Monitoring Surat Permohonan Pembayaran (SPP)';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationGroup = 'Menu Utama';
 
@@ -37,12 +44,12 @@ class ApprovalSPPResource extends Resource
         return false;
     }
 
-    public static function canEdit(Model $record): bool
+    public static function canEdit($record): bool
     {
         return false;
     }
 
-    public static function canDelete(Model $record): bool
+    public static function canDelete($record): bool
     {
         return false;
     }
@@ -52,33 +59,6 @@ class ApprovalSPPResource extends Resource
         return false;
     }
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('contract_id')
-                    ->label('No. Kontrak')
-                    ->relationship('contract', 'contract_number')
-                    ->required(),
-                Forms\Components\TextInput::make('no_termint')
-                    ->label('No. SPP')
-                    ->required(),
-                Forms\Components\TextInput::make('description')
-                    ->label('Uraian Pembayaran SPP-PPK')
-                    ->required(),
-                Forms\Components\TextInput::make('payment_value')
-                    ->label('Nilai Permintaan Pembayaran')
-                    ->required()->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)->prefix('Rp'),
-                Forms\Components\Toggle::make('has_advance_payment')
-                    ->label('Uang Muka')
-                    ->reactive(),
-                Forms\Components\Fieldset::make('Pilih Dokumen Yang Akan Diunggah')
-                    ->schema(function (Forms\Components\Component $component) {
-                        return self::getDocumentFields($component->getState()['has_advance_payment'] ?? false);
-                    })
-                    ->columns(2),
-            ]);
-    }
 
     protected static function getDocumentFields(bool $hasAdvancePayment): array
     {
@@ -180,71 +160,59 @@ class ApprovalSPPResource extends Resource
         }
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
-                TextColumn::make('contract.contract_number')
-                    ->label('Kontrak')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('contract.contract_number')
+                    ->label('Kontrak'),
 
-                TextColumn::make('no_termint')
-                    ->label('No. SPP')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('no_termint')
+                    ->label('Nomor SPP'),
 
-                TextColumn::make('description')
+                Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi')
-                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->wrap(),
 
-                TextColumn::make('payment_value')
-                    ->label('Nilai Pembayaran')
-                    ->money('IDR', true)
-                    ->sortable(),
-
-                // Menggunakan badge pada 'ppspm_verification_status'
-                TextColumn::make('ppspm_verification_status')
-                    ->label('Status Verifikasi SPM')
+                // Menggunakan TextColumn dengan badge untuk 'ppspm_verification_status'
+                Tables\Columns\TextColumn::make('ppspm_verification_status')
+                    ->label('Status Verifikasi')
                     ->badge()
                     ->colors([
+                        'warning' => 'not_available',
                         'primary' => 'in_progress',
                         'success' => 'approved',
                         'danger'  => 'rejected',
                     ])
                     ->formatStateUsing(function ($state) {
                         $labels = [
-                            'in_progress' => 'Sedang Diproses',
-                            'approved'    => 'Disetujui',
-                            'rejected'    => 'Ditolak',
+                            'not_available' => 'Belum Tersedia',
+                            'in_progress'   => 'Sedang Diproses',
+                            'approved'      => 'Disetujui',
+                            'rejected'      => 'Ditolak',
                         ];
-                        return $labels[$state] ?? ucfirst($state);
-                    })
+                        return $labels[$state] ?? $state;
+                    }),
+
+                Tables\Columns\TextColumn::make('payment_value')
+                    ->label('Nilai Pembayaran')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->money('IDR', true)
                     ->sortable(),
 
-                TextColumn::make('ppspm_rejection_reason')
-                    ->label('Alasan Penolakan')
-                    ->limit(50)
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->searchable(),
-
-                BooleanColumn::make('has_advance_payment')
+                Tables\Columns\BooleanColumn::make('has_advance_payment')
                     ->label('Uang Muka'),
 
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->dateTime(),
-
-                TextColumn::make('updated_at')
-                    ->label('Diperbarui Pada')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->dateTime(),
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
-
                 Action::make('viewFiles')
                     ->label('Lihat File')
                     ->icon('heroicon-o-eye')
@@ -258,64 +226,9 @@ class ApprovalSPPResource extends Resource
                             ->label('Tutup')
                             ->close(),
                     ]),
-
-                Tables\Actions\ViewAction::make(),
-
-                Tables\Actions\Action::make('approve_btn')
-                    ->label('Setujui')
-                    ->requiresConfirmation()
-                    ->color('success')
-                    ->disabled(function (TermintSppPpk $record) {
-                        return $record->ppspm_verification_status !== 'in_progress';
-                    })
-                    ->action(function (TermintSppPpk $record, array $data) {
-                        $record->update([
-                            'ppspm_verification_status' => 'approved',
-                            'ppspm_id'                  => get_auth_user()->spm->id,
-                        ]);
-
-                        Notification::make()
-                            ->title('Permohonan Pembayaran Disetujui')
-                            ->body('Pengajuan Pembayaran #' . $record->no_termint . ' telah disetujui.')
-                            ->send();
-                    })
-                    ->icon('heroicon-o-check-circle'),
-
-                Tables\Actions\Action::make('reject_btn')
-                    ->label('Tolak')
-                    ->requiresConfirmation()
-                    ->disabled(function (TermintSppPpk $record) {
-                        return $record->ppspm_verification_status !== 'in_progress';
-                    })
-                    ->form([
-                        TextInput::make('reject_reason')
-                            ->label('Alasan Penolakan')
-                            ->required()
-                            ->placeholder('Kenapa Anda menolaknya?')
-                            ->minLength(3)
-                            ->maxLength(199),
-                    ])
-                    ->action(function (TermintSppPpk $record, array $data) {
-                        $record->update([
-                            'ppspm_verification_status' => 'rejected',
-                            'ppspm_rejection_reason'    => $data['reject_reason'],
-                            'ppspm_id'                  => get_auth_user()->spm->id,
-                        ]);
-
-                        Notification::make()
-                            ->title('Permohonan Pembayaran Ditolak')
-                            ->body('Anda telah menolak permohonan dengan alasan: ' . $record->ppspm_rejection_reason)
-                            ->send();
-                    })
-                    ->color('danger')
-                    ->icon('heroicon-o-x-mark'),
-
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
@@ -329,9 +242,9 @@ class ApprovalSPPResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListApprovalSPPS::route('/'),
-            'create' => Pages\CreateApprovalSPP::route('/create'),
-            'edit' => Pages\EditApprovalSPP::route('/{record}/edit'),
+            'index' => Pages\ListMonitoringSpps::route('/'),
+            'create' => Pages\CreateMonitoringSpp::route('/create'),
+            'edit' => Pages\EditMonitoringSpp::route('/{record}/edit'),
         ];
     }
 }

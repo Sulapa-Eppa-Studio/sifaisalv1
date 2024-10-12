@@ -20,6 +20,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Support\RawJs;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\Action;
 
 class SPMRequestResource extends Resource
 {
@@ -185,44 +187,65 @@ class SPMRequestResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('spm_number')
+                TextColumn::make('spm_number')
                     ->label('Nomor SPM')
                     ->numeric()
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('spm_value')
+                TextColumn::make('spm_value')
                     ->label('Nilai SPM')
                     ->numeric()
                     ->money('IDR', true)
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('treasurer_verification_status')
+                // Menggunakan badge pada 'treasurer_verification_status'
+                TextColumn::make('treasurer_verification_status')
                     ->label('Status Verifikasi Bendahara')
+                    ->badge()
                     ->colors([
-                        'primary'   => 'in_progress',
-                        'success'   => 'approved',
-                        'danger'    => 'rejected',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'in_progress' => 'Sedang Diproses',
+                            'approved'    => 'Disetujui',
+                            'rejected'    => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? ucfirst($state);
+                    })
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('kpa_verification_status')
+                // Menggunakan badge pada 'kpa_verification_status'
+                TextColumn::make('kpa_verification_status')
                     ->label('Status Verifikasi KPA')
+                    ->badge()
                     ->colors([
-                        'warning'   => 'not_available',
-                        'primary'   => 'in_progress',
-                        'success'   => 'approved',
-                        'danger'    => 'rejected',
+                        'warning' => 'not_available',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'not_available' => 'Belum Tersedia',
+                            'in_progress'   => 'Sedang Diproses',
+                            'approved'      => 'Disetujui',
+                            'rejected'      => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? ucfirst($state);
+                    })
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
@@ -232,23 +255,23 @@ class SPMRequestResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('next_kpa')
+                Action::make('next_kpa')
                     ->label('Ajukan Ke KPA')
                     ->icon('heroicon-o-arrow-right')
                     ->action(function ($record) {
 
-                        $record?->update([
-                            'kpa_verification_status'           =>  'in_progress',
+                        $record->update([
+                            'kpa_verification_status' => 'in_progress',
                         ]);
 
                         Notification::make()
                             ->title('Pengajuan Berhasil')
-                            ->body('SPM berhasil di ajukan ke KPA')
+                            ->body('SPM berhasil diajukan ke KPA.')
+                            ->success()
                             ->send();
                     })
                     ->disabled(function ($record) {
-                        return $record->treasurer_verification_status == 'approved' && $record->kpa_verification_status == 'not_available' ?  false : true;
-                        // return false;
+                        return !($record->treasurer_verification_status === 'approved' && $record->kpa_verification_status === 'not_available');
                     }),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
