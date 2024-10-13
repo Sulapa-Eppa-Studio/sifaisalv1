@@ -40,6 +40,7 @@ class CreateTermintSppPpk extends CreateRecord
                 ->title('Terjadi Keslahan')
                 ->body($th->getMessage())
                 ->danger()
+                ->color('#c44d47')
                 ->send();
 
             $this->halt();
