@@ -210,11 +210,9 @@ class MonitoringSppResource extends Resource
                     ->modalContent(function (TermintSppPpk $record) {
                         return view('livewire.view-files-modal', ['record' => $record]);
                     })
-                    ->modalActions([
-                        ButtonAction::make('close')
-                            ->label('Tutup')
-                            ->close(),
-                    ]),
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Tutup'),
+
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
