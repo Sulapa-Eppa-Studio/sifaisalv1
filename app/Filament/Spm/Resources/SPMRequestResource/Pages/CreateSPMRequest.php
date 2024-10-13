@@ -4,6 +4,7 @@ namespace App\Filament\Spm\Resources\SPMRequestResource\Pages;
 
 use App\Filament\Spm\Resources\SPMRequestResource;
 use App\Models\Contract;
+use App\Models\PaymentRequest;
 use App\Models\TermintSppPpk;
 use Filament\Actions;
 use Filament\Notifications\Notification;
@@ -31,6 +32,10 @@ class CreateSPMRequest extends CreateRecord
             $termit_ppk     =   TermintSppPpk::findOrFail($data['ppk_request_id']);
 
             $contract       =   $termit_ppk->contract;
+
+            if (!PaymentRequest::where('id', $data['payment_request_id'])->exists()) {
+                throw new \Exception('Pengajuan pembayaran tidak ditemukan');
+            }
 
             if ($contract->payment_value - $contract->paid_value < $data['spm_value']) {
                 throw new \Exception('Nilai SPM melebihi sisa kontrak ' . 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.'));

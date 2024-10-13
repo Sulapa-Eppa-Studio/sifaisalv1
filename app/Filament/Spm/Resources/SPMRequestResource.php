@@ -110,7 +110,7 @@ class SPMRequestResource extends Resource
                                     Notification::make()
                                         ->title('Peringatan!')
                                         ->body('Verifikasi Dokumen Pendukung Belum Disetujui')
-                                        ->warning()
+                                        ->color('#c44d47')
                                         ->send();
 
                                     return;
