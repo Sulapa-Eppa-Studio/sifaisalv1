@@ -1,11 +1,17 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Kpa\Resources;
 
-use App\Filament\Resources\MonitoringPengajuanResource\Pages;
+use App\Filament\Kpa\Resources\MonitoringPengajuanResource\Pages;
+use App\Filament\Kpa\Resources\MonitoringPengajuanResource\RelationManagers;
+use App\Models\MonitoringPengajuan;
+use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use App\Models\PaymentRequest;
 use Filament\Tables\Columns\TextColumn;
@@ -216,8 +222,6 @@ class MonitoringPengajuanResource extends Resource
             //
         ];
     }
-
-
 
     public static function getPages(): array
     {

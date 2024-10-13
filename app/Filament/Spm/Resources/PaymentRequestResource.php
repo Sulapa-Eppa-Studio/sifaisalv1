@@ -353,7 +353,6 @@ class PaymentRequestResource extends Resource
 
                 TextColumn::make('id')
                     ->label('Sisa Kontrak')
-                    ->money('IDR', true)
                     ->formatStateUsing(function ($record) {
                         $contract = $record->contract;
                         return 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.');
@@ -365,13 +364,23 @@ class PaymentRequestResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->wrap(),
 
+                // Menggunakan badge pada 'ppspm_verification_status'
                 TextColumn::make('ppspm_verification_status')
                     ->label('Status Verifikasi SPM')
+                    ->badge()
                     ->colors([
-                        'primary'   => 'in_progress',
-                        'success'   => 'approved',
-                        'danger'    => 'rejected',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
                     ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'in_progress' => 'Sedang Diproses',
+                            'approved'    => 'Disetujui',
+                            'rejected'    => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? ucfirst($state);
+                    })
                     ->sortable(),
 
                 TextColumn::make('ppspm_rejection_reason')
@@ -401,41 +410,9 @@ class PaymentRequestResource extends Resource
                     ->requiresConfirmation()
                     ->color('success')
                     ->disabled(function (PaymentRequest $record) {
-
-                        if ($record->ppspm_verification_status == 'in_progress') {
-                            return false;
-                        }
-
-                        return true;
+                        return $record->ppspm_verification_status !== 'in_progress';
                     })
                     ->action(function (PaymentRequest $record, array $data) {
-
-                        // $contract   =   $record->contract;
-
-                        // if ($contract instanceof Contract) {
-
-                        //     if ($contract->paid_value >= $contract->payment_value) {
-
-                        //         Notification::make('x_not')
-                        //             ->title('Gagal menyetujui')
-                        //             ->body('Kontrak #' . $record->contract_number . ' sudah terbayarkan!')
-                        //             ->send();
-
-                        //         return;
-                        //     }
-
-                        //     $contract->update([
-                        //         'paid_value' => $record->payment_value,
-                        //     ]);
-                        // } else {
-
-                        //     Notification::make('x_not')
-                        //         ->title('Gagal menyetujui')
-                        //         ->body('Kontrak #' . $record->contract_number . ' tidak ditemukan!')
-                        //         ->send();
-
-                        //     return;
-                        // }
 
                         $record->update([
                             'ppspm_verification_status'     =>  'approved',
@@ -444,16 +421,15 @@ class PaymentRequestResource extends Resource
                             'treasurer_verification_status' =>  'in_progress',
                         ]);
 
-
-                        Notification::make('x_not')
-                            ->title('Permohonan Pembayaran Diterima')
-                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' Diterima')
+                        Notification::make()
+                            ->title('Permohonan Pembayaran Disetujui')
+                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' telah disetujui.')
                             ->success()
                             ->send();
 
-                        Notification::make('x_not_srv')
-                            ->title('Permohonan Pembayaran Diterima')
-                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' Diterima')
+                        Notification::make()
+                            ->title('Permohonan Pembayaran Disetujui')
+                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' telah disetujui.')
                             ->sendToDatabase($record->service_provider->user);
                     })
                     ->icon('heroicon-o-check-circle'),
@@ -462,20 +438,15 @@ class PaymentRequestResource extends Resource
                     ->label('Tolak')
                     ->requiresConfirmation()
                     ->disabled(function (PaymentRequest $record) {
-
-                        if ($record->ppspm_verification_status == 'in_progress') {
-                            return false;
-                        }
-
-                        return true;
+                        return $record->ppspm_verification_status !== 'in_progress';
                     })
                     ->form([
                         TextInput::make('reject_reason')
                             ->label('Alasan Penolakan')
                             ->required()
-                            ->placeholder('Kenapa anda menolaknya?')
+                            ->placeholder('Mengapa Anda menolaknya?')
                             ->minLength(3)
-                            ->maxLength(199)
+                            ->maxLength(199),
                     ])
                     ->action(function (PaymentRequest $record, array $data) {
 
@@ -486,15 +457,15 @@ class PaymentRequestResource extends Resource
                             'ppspm_id'                    =>  get_auth_user()->spm->id,
                         ]);
 
-                        Notification::make('x_not')
-                            ->title('Permohonan Pembayaran ditolak')
-                            ->body('Berhasil Menolak Permohonan Dengan alasan ' . "' $record->ppk_rejection_reason '")
-                            ->danger()
+                        Notification::make()
+                            ->title('Permohonan Pembayaran Ditolak')
+                            ->body('Anda telah menolak permohonan dengan alasan: ' . $record->ppspm_rejection_reason)
+                            ->danger()  
                             ->send();
 
-                        Notification::make('x_not_srv')
-                            ->title('Permohonan Pembayaran ditolak')
-                            ->body('Petugas PPK Menolak Permohonan Anda Dengan alasan ' . "' $record->ppk_rejection_reason '")
+                        Notification::make()
+                            ->title('Permohonan Pembayaran Ditolak')
+                            ->body('Permohonan Anda ditolak oleh PP-SPM dengan alasan: ' . $record->ppspm_rejection_reason)
                             ->sendToDatabase($record->service_provider->user);
                     })
                     ->color('danger')

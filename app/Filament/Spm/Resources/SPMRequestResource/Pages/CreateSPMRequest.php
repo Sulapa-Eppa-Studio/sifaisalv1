@@ -37,12 +37,12 @@ class CreateSPMRequest extends CreateRecord
             }
 
             return $data;
-
         } catch (\Throwable $th) {
 
             Notification::make()
-                ->title('Terjadi Kesalahan')
+                ->title('Terjadi Keslaahan')
                 ->body($th->getMessage())
+                ->color('#c44d47') //#369663 => green, #c44d47 => red
                 ->send();
 
             $this->halt();

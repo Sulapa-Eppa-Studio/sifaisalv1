@@ -328,6 +328,7 @@ class CreatePaymentRequest extends CreateRecord
             Notification::make()
                 ->title('Terjadi Keslaahan')
                 ->body($th->getMessage())
+                ->color('#c44d47') //#369663 => green, #c44d47 => red
                 ->send();
 
             $this->halt();

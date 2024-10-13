@@ -161,15 +161,33 @@ class MonitoringSppResource extends Resource
 
                 Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi')
-                    ->toggleable(isToggledHiddenByDefault: true)->wrap(),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->wrap(),
 
+                // Menggunakan TextColumn dengan badge untuk 'ppspm_verification_status'
                 Tables\Columns\TextColumn::make('ppspm_verification_status')
                     ->label('Status Verifikasi')
-                    ->color('primary'),
+                    ->badge()
+                    ->colors([
+                        'warning' => 'not_available',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
+                    ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'not_available' => 'Belum Tersedia',
+                            'in_progress'   => 'Sedang Diproses',
+                            'approved'      => 'Disetujui',
+                            'rejected'      => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? $state;
+                    }),
 
                 Tables\Columns\TextColumn::make('payment_value')
                     ->label('Nilai Pembayaran')
-                    ->toggleable(isToggledHiddenByDefault: false)->money('IDR', true)
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->money('IDR', true)
                     ->sortable(),
 
                 Tables\Columns\BooleanColumn::make('has_advance_payment')

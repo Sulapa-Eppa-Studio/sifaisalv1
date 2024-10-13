@@ -241,11 +241,26 @@ class TermintSppPpkResource extends Resource
 
                 Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi')
-                    ->toggleable(isToggledHiddenByDefault: true)->wrap(),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->wrap(),
 
+                // Menggunakan TextColumn dengan badge untuk 'ppspm_verification_status'
                 Tables\Columns\TextColumn::make('ppspm_verification_status')
                     ->label('Status Verifikasi')
-                    ->color('primary'),
+                    ->badge()
+                    ->colors([
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
+                    ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'in_progress' => 'Sedang Diproses',
+                            'approved'    => 'Disetujui',
+                            'rejected'    => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? ucfirst($state);
+                    }),
 
                 Tables\Columns\TextColumn::make('payment_value')
                     ->label('Nilai Pembayaran')
@@ -291,7 +306,6 @@ class TermintSppPpkResource extends Resource
 
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
