@@ -57,11 +57,9 @@ class SPMRequestAprovalResource extends Resource
         return $form
             ->schema([
                 // ...
-
                 TextInput::make('spm_number')
                     ->label('No SPM')
-                    ->required()
-                    ->numeric(),
+                    ->required(),
 
                 TextInput::make('spm_value')
                     ->label('Nilai SPM')
@@ -106,16 +104,25 @@ class SPMRequestAprovalResource extends Resource
         return $table
             ->columns([
 
-                TextColumn::make('spm_number')
-                    ->label('Nomor SPM')
+                Tables\Columns\TextColumn::make('spm_number')
+                    ->label('No. SPM')
                     ->numeric()
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('spm_value')
+                Tables\Columns\TextColumn::make('ppk_request.no_termint')
+                    ->label('No. PPK')
+                    ->prefix('#')
+                    ->sortable(),
+
+
+                Tables\Columns\TextColumn::make('spm_value')
                     ->label('Nilai SPM')
                     ->numeric()
-                    ->money('IDR', true)
+                    ->formatStateUsing(function ($state) {
+                        return format_number_new($state);
+                    })
+                    ->prefix('Rp. ')
                     ->sortable(),
 
                 // Menggunakan badge pada 'treasurer_verification_status'
@@ -140,6 +147,7 @@ class SPMRequestAprovalResource extends Resource
                 TextColumn::make('treasurer_rejection_reason')
                     ->label('Alasan Penolakan')
                     ->sortable()
+                    ->placeholder('Tidak Tersedia!')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')

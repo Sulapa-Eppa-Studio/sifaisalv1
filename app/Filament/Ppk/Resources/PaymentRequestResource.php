@@ -335,11 +335,12 @@ class PaymentRequestResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('contract_number')
-                    ->label('Nomor Kontrak')
+                    ->label('No. Kontrak')
                     ->searchable(),
 
                 TextColumn::make('request_number')
-                    ->label('Nomor Permintaan')
+                    ->label('No. Pengajuan')
+                    ->prefix('#')
                     ->searchable(),
 
                 TextColumn::make('payment_stage')
@@ -414,15 +415,16 @@ class PaymentRequestResource extends Resource
                     })
                     ->action(function (PaymentRequest $record, array $data) {
                         $record->update([
-                            'ppk_verification_status'   => 'approved',
-                            'ppk_id'                    => get_auth_user()->ppk->id,
-                            'verification_progress'     => 'ppspm',
-                            'ppspm_verification_status' => 'in_progress',
+                            'ppk_verification_status'   =>  'approved',
+                            'ppk_id'                    =>  get_auth_user()->ppk->id,
+                            // 'verification_progress'     =>  'ppspm',
+                            // 'ppspm_verification_status' =>  'in_progress',
                         ]);
 
-                        Notification::make()
-                            ->title('Permohonan Pembayaran Disetujui')
-                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' telah disetujui.')
+                        Notification::make('x_not')
+                            ->title('Permohonan Pembayaran Diterima')
+                            ->body('Pengajuan Pembayaran #' . $record->contract_number . ' Diterima')
+                            ->success()
                             ->send();
 
                         Notification::make()
@@ -457,6 +459,7 @@ class PaymentRequestResource extends Resource
                         Notification::make()
                             ->title('Permohonan Pembayaran Ditolak')
                             ->body('Anda telah menolak permohonan dengan alasan: ' . $record->ppk_rejection_reason)
+                            ->danger()
                             ->send();
 
                         Notification::make()

@@ -333,11 +333,11 @@ class PaymentRequestResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('contract_number')
-                    ->label('Nomor Kontrak')
+                    ->label('No. Kontrak')
                     ->searchable(),
 
                 TextColumn::make('request_number')
-                    ->label('Nomor Permintaan')
+                    ->label('No. Permintaan')
                     ->prefix('#')
                     ->searchable(),
 
@@ -424,6 +424,7 @@ class PaymentRequestResource extends Resource
                         Notification::make()
                             ->title('Permohonan Pembayaran Disetujui')
                             ->body('Pengajuan Pembayaran #' . $record->contract_number . ' telah disetujui.')
+                            ->success()
                             ->send();
 
                         Notification::make()
@@ -459,6 +460,7 @@ class PaymentRequestResource extends Resource
                         Notification::make()
                             ->title('Permohonan Pembayaran Ditolak')
                             ->body('Anda telah menolak permohonan dengan alasan: ' . $record->ppspm_rejection_reason)
+                            ->danger()  
                             ->send();
 
                         Notification::make()

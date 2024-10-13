@@ -101,3 +101,8 @@ function get_kpa_panel_url()
 {
     return env('DOMAIN_KPA') ?? env('APP_URL');
 }
+
+function format_number_new($number)
+{
+    return number_format($number, 0, ',', '.');
+}

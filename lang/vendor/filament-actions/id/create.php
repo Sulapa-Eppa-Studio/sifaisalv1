@@ -4,20 +4,20 @@ return [
 
     'single' => [
 
-        'label' => 'Rekam',
+        'label' => 'Buat',
 
         'modal' => [
 
-            'heading' => 'Rekam :label',
+            'heading' => 'Buat :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Simpan',
+                    'label' => 'Buat',
                 ],
 
                 'create_another' => [
-                    'label' => 'Simpan & Rekam lainnya',
+                    'label' => 'Buat & buat lainnya',
                 ],
 
             ],

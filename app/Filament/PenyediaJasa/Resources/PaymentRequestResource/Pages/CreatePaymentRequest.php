@@ -38,12 +38,16 @@ class CreatePaymentRequest extends CreateRecord
 
             foreach ($payment_lists as $value) {
                 if ($value->verification_progress != 'done') {
-                    throw new \Exception('Terdapat pengajuan pembayaran yang belum selesai!');
+                    throw new \Exception( ucwords(strtolower('TERDAPAT PENGAJUAN PEMBAYARAN TAHAP SEBELUMNYA YANG BELUM TERPROSES!!')));
                 }
             }
 
-            if ($contract->payment_stages <= get_payment_stage($contract)) {
+            if ($contract->payment_stages < get_payment_stage($contract)) {
                 throw new \Exception('Tahap pembayaran melebihi kontrak ' . $contract->payment_stages . " Tahap Pembayaran : " . get_payment_stage($contract));
+            }
+
+            if($contract->payment_value - $contract->paid_value < $data['payment_value']) {
+                throw new \Exception('Nilai pembayaran melebihi sisa kontrak ' . 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.'));
             }
 
             $data['payment_stage']          =   get_payment_stage($contract);
@@ -87,7 +91,6 @@ class CreatePaymentRequest extends CreateRecord
                 ]);
 
 
-
                 Document::create([
                     'name'  =>  'E-Faktur',
                     'path'  =>  $data['E-Faktur'],
@@ -97,7 +100,7 @@ class CreatePaymentRequest extends CreateRecord
 
                 Document::create([
                     'name'  =>  'Jaminan Uang Muka',
-                    'path'  =>  $data['jaminan_uang_muka'],
+                    'path'  =>  $data['Jaminan Uang Muka'],
                     'type'  =>  'document_by_penyedia_jasa',
                     'payment_request_id'    =>  $record->id,
                 ]);

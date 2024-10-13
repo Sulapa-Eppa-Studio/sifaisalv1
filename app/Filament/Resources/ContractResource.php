@@ -106,30 +106,6 @@ class ContractResource extends Resource
                     ->required()
                     ->numeric(),
 
-                Forms\Components\Select::make('work_package')
-                    ->label('Paket Pekerjaan')
-                    ->searchable()
-                    ->placeholder('Pilih Paket Pekerjaan')
-                    ->options(function (Get $get) {
-
-                        $ppk_id = $get('ppk_id') ?? null;
-
-                        $ppk = PPK::find($ppk_id);
-
-                        if (!$ppk) return [];
-
-                        $wp =  $ppk->workPackages;
-
-                        $op = [ ];
-
-                        foreach ($wp as $pkg) {
-                            $op[$pkg->name] = $pkg->name;
-                        }
-
-                        return $op;
-                    })
-                    ->required()
-                    ->preload(),
 
                 Forms\Components\Select::make('ppk_id')
                     ->label('Petugas PPK (Pejabat Pembuat Komitmen)')
@@ -147,6 +123,31 @@ class ContractResource extends Resource
                     })
                     ->placeholder('Pilih NIP Petugas PPK')
                     ->required(),
+
+                Forms\Components\Select::make('work_package')
+                    ->label('Paket Pekerjaan')
+                    ->searchable()
+                    ->placeholder('Pilih Paket Pekerjaan')
+                    ->options(function (Get $get) {
+
+                        $ppk_id = $get('ppk_id') ?? null;
+
+                        $ppk = PPK::find($ppk_id);
+
+                        if (!$ppk) return [];
+
+                        $wp =  $ppk->workPackages;
+
+                        $op = [];
+
+                        foreach ($wp as $pkg) {
+                            $op[$pkg->name] = $pkg->name;
+                        }
+
+                        return $op;
+                    })
+                    ->required()
+                    ->preload(),
 
                 Forms\Components\TextInput::make('working_unit')
                     ->label('Unit Kerja')
@@ -285,7 +286,6 @@ class ContractResource extends Resource
 
                 Tables\Columns\TextColumn::make('service_provider')
                     ->label('Penyedia Jasa')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('npwp')
@@ -300,7 +300,6 @@ class ContractResource extends Resource
 
                 Tables\Columns\TextColumn::make('ppk_officer.full_name')
                     ->label('Pejabat PPK')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('working_unit')

@@ -189,17 +189,38 @@ class ApprovalSPPResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('no_termint')
-                    ->label('No. SPP')
+                    ->label('No. Pengajuan SPP')
                     ->searchable(),
+
+                TextColumn::make('contract.contract_number')
+                    ->label('No. Kontrak'),
+
+                TextColumn::make('payment_request.request_number')
+                    ->label('No. Permintaan')
+                    ->prefix('#'),
 
                 TextColumn::make('description')
                     ->label('Deskripsi')
                     ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->wrap(),
 
                 TextColumn::make('payment_value')
                     ->label('Nilai Pembayaran')
-                    ->money('IDR', true)
+                    ->formatStateUsing(function ($state) {
+                        return format_number_new($state);
+                    })
+                    ->prefix('Rp. ')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Sisa Kontrak')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->formatStateUsing(function (TermintSppPpk $record) {
+                        $contract = $record->contract;
+                        return format_number_new($contract->payment_value - $record->paid_value);
+                    })
+                    ->prefix('Rp. ')
                     ->sortable(),
 
                 // Menggunakan badge pada 'ppspm_verification_status'
@@ -222,22 +243,22 @@ class ApprovalSPPResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('ppspm_rejection_reason')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->label('Alasan Penolakan')
                     ->limit(50)
-                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
 
                 BooleanColumn::make('has_advance_payment')
                     ->label('Uang Muka'),
 
                 TextColumn::make('created_at')
-                    ->label('Dibuat Pada')
                     ->toggleable(isToggledHiddenByDefault: true)
+                    ->label('Dibuat Pada')
                     ->dateTime(),
 
                 TextColumn::make('updated_at')
-                    ->label('Diperbarui Pada')
                     ->toggleable(isToggledHiddenByDefault: true)
+                    ->label('Diperbarui Pada')
                     ->dateTime(),
             ])
             ->filters([
@@ -253,11 +274,9 @@ class ApprovalSPPResource extends Resource
                     ->modalContent(function (TermintSppPpk $record) {
                         return view('livewire.view-files-modal', ['record' => $record]);
                     })
-                    ->modalActions([
-                        ButtonAction::make('close')
-                            ->label('Tutup')
-                            ->close(),
-                    ]),
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Tutup'),
+
 
                 Tables\Actions\ViewAction::make(),
 
@@ -277,6 +296,7 @@ class ApprovalSPPResource extends Resource
                         Notification::make()
                             ->title('Permohonan Pembayaran Disetujui')
                             ->body('Pengajuan Pembayaran #' . $record->no_termint . ' telah disetujui.')
+                            ->success()
                             ->send();
                     })
                     ->icon('heroicon-o-check-circle'),
@@ -302,9 +322,11 @@ class ApprovalSPPResource extends Resource
                             'ppspm_id'                  => get_auth_user()->spm->id,
                         ]);
 
+                            
                         Notification::make()
                             ->title('Permohonan Pembayaran Ditolak')
                             ->body('Anda telah menolak permohonan dengan alasan: ' . $record->ppspm_rejection_reason)
+                            ->danger()  
                             ->send();
                     })
                     ->color('danger')

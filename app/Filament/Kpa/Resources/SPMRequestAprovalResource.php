@@ -67,8 +67,7 @@ class SPMRequestAprovalResource extends Resource
 
                 TextInput::make('spm_number')
                     ->label('No SPM')
-                    ->required()
-                    ->numeric(),
+                    ->required(),
 
                 TextInput::make('spm_value')
                     ->label('Nilai SPM')
@@ -113,16 +112,24 @@ class SPMRequestAprovalResource extends Resource
         return $table
             ->columns([
 
-                TextColumn::make('spm_number')
-                    ->label('Nomor SPM')
+                Tables\Columns\TextColumn::make('spm_number')
+                    ->label('No. SPM')
                     ->numeric()
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('spm_value')
+                Tables\Columns\TextColumn::make('ppk_request.no_termint')
+                    ->label('No. PPK')
+                    ->prefix('#')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('spm_value')
                     ->label('Nilai SPM')
                     ->numeric()
-                    ->money('IDR', true)
+                    ->formatStateUsing(function ($state) {
+                        return format_number_new($state);
+                    })
+                    ->prefix('Rp. ')
                     ->sortable(),
 
                 // Menggunakan badge pada 'kpa_verification_status'
@@ -217,8 +224,8 @@ class SPMRequestAprovalResource extends Resource
                             'kpa_id'                  => get_auth_user()->kpa->id,
                         ]);
 
-                        Notification::make()
-                            ->title('Permohonan SPM Disetujui')
+                        Notification::make('x_not')
+                            ->title('Permohonan SPM Diterima')
                             ->body('Pengajuan Pembayaran #' . $record->spm_number . ' telah disetujui.')
                             ->success()
                             ->send();
@@ -239,6 +246,7 @@ class SPMRequestAprovalResource extends Resource
                             ->minLength(3)
                             ->maxLength(199),
                     ])
+                    ->color('danger')
                     ->action(function (SPMRequest $record, array $data) {
                         $record->update([
                             'kpa_verification_status' => 'rejected',
@@ -252,7 +260,6 @@ class SPMRequestAprovalResource extends Resource
                             ->danger()
                             ->send();
                     })
-                    ->color('danger')
                     ->icon('heroicon-o-x-mark'),
             ])
             ->bulkActions([

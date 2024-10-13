@@ -3,7 +3,9 @@
 namespace App\Filament\Ppk\Resources\TermintSppPpkResource\Pages;
 
 use App\Filament\Ppk\Resources\TermintSppPpkResource;
-use Filament\Actions;
+use App\Models\Contract;
+use App\Models\PaymentRequest;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,14 +15,35 @@ class CreateTermintSppPpk extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        // Hapus 'files' dari data untuk mencegah masalah mass assignment
-        unset($data['files']);
+        try {
+            // Hapus 'files' dari data untuk mencegah masalah mass assignment
+            unset($data['files']);
 
+            // Tambahkan 'user_id' dari pengguna yang sedang login
+            $data['user_id'] = Auth::user()->id;
 
-        // Tambahkan 'user_id' dari pengguna yang sedang login
-        $data['user_id'] = Auth::user()->id;
+            $contract    =   Contract::find($data['contract_id']);
 
-        return $data;
+            if ($contract->payment_value - $contract->paid_value < $data['payment_value']) {
+                throw new \Exception('Nilai pembayaran melebihi sisa kontrak ' . 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.'));
+            }
+
+            PaymentRequest::find($data['payment_request_id'])->update([
+                'verification_progress'     =>  'ppspm',
+                'ppspm_verification_status' =>  'in_progress',
+            ]);
+
+            return $data;
+        } catch (\Throwable $th) {
+
+            Notification::make()
+                ->title('Terjadi Keslahan')
+                ->body($th->getMessage())
+                ->danger()
+                ->send();
+
+            $this->halt();
+        }
     }
 
     protected function afterCreate(): void
@@ -36,5 +59,7 @@ class CreateTermintSppPpk extends CreateRecord
                 ]);
             }
         }
+
+        // Tutup modal
     }
 }

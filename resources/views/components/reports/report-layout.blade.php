@@ -131,9 +131,9 @@
 <body style="position: relative">
     <center class="header">
         <h2>{{ config('app.name') }}</h2>
+        <h3>SNVT PELAKSANAAN JARINGAN PEMANFAATAN AIR POMPENGAN-JENEBERANG PROVINSI SULAWESI SELATAN</h2>
         <h4>{{ $title }}</h4>
-        <h5> <span class="date-element">{{ \Carbon\Carbon::now()->format('l, d F Y') }}</span> | PDF &middot; Cleoun
-            Render Engine &middot; V2.0.0
+        <h5> <span class="date-element">{{ \Carbon\Carbon::now()->format('l, d F Y') }}</span> | PDF
         </h5>
     </center>
 
