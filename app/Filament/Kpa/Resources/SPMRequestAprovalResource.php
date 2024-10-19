@@ -198,8 +198,9 @@ class SPMRequestAprovalResource extends Resource
                             }
 
                             $contract->update([
-                                'paid_value' => $record->payment_request->payment_value + $contract->paid_value,
+                                'paid_value' => $record->spm_value + $contract->paid_value,
                             ]);
+
                         } else {
 
                             Notification::make()

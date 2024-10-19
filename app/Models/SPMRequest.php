@@ -32,6 +32,22 @@ class SPMRequest extends Model
         'payment_request',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($spm_request) {
+            $contract = $spm_request->payment_request->contract;
+
+            // $spm_request->payment_request->update([]);
+
+            if ($spm_request->kpa_verification_status == 'approved') {
+
+                $contract->decrement('paid_value', $spm_request->spm_value);
+            }
+        });
+    }
+
     // Relasi dengan SPM
     public function spm()
     {
