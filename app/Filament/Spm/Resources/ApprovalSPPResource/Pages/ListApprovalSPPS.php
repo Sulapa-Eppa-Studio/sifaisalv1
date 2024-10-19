@@ -12,7 +12,7 @@ class ListApprovalSPPS extends ListRecords
 {
     protected static string $resource = ApprovalSPPResource::class;
 
-    protected static ?string $title = 'Verifikasi Surat Permohonan Pembayara ( SPP )';
+    protected static ?string $title = 'Verifikasi Surat Permohonan Pembayaran ( SPP )';
 
     protected function getHeaderActions(): array
     {

@@ -26,11 +26,44 @@
     <title>SiFaisal</title>
 
     <style>
+        body {
+            background-image: url('{{ asset('bg-images/background_login.jpg') }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            /* Opsional: membuat latar belakang tetap saat scroll */
+            /* Tambahkan warna latar belakang fallback */
+            background-color: #f8f9fa;
+        }
+
+        /* Optional: Tambahkan overlay untuk meningkatkan keterbacaan konten */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            /* Sesuaikan opacity dan warna sesuai kebutuhan */
+            z-index: -1;
+        }
+
+        /* Pastikan konten berada di atas overlay */
+        .service-area {
+            position: relative;
+            z-index: 1;
+        }
+
+
         .post-heading {
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             flex-wrap: wrap;
+            color: #ffffff;
+            margin-bottom: 40px;
         }
 
         .post-heading img {
@@ -42,12 +75,42 @@
 
         .post-heading h3 {
             margin: 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
         }
 
         .post-heading p {
             width: 100%;
             text-align: center;
             margin-top: 10px;
+            font-size: 1.1rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .service-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .service-content:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .post-thumb img {
+            width: 70%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .service-content .post-text h4 a {
+            font-size: 1rem;
+
         }
     </style>
 
@@ -55,6 +118,7 @@
 
 <body data-spy="scroll" class="overflow-auto">
     <!-- preloader start here -->
+    <div class="overlay"></div>
     <div class="preloader">
         <div class="preloader-inner">
             <div class="preloader-icon">
@@ -88,9 +152,9 @@
     <div class="service-area">
         <div class="container">
             <div class="post-heading text-center">
-                <h3>Selamat Datang Di Aplikasi</h3>
-                <img src="{{ asset('images/logo-app.png') }}" alt="Logo">
-                <p>
+                <h3 class="text-white">Selamat Datang Di Aplikasi</h3>
+                <img src="{{ asset('images/logo-app-dark.png') }}" alt="Logo">
+                <p class="text-white">
                     Sistem Informasi Verifikasi Pertanggungjawaban Anggaran Kegiatan Yang
                     Dilaksanakan Secara Kontraktual
                 </p>
