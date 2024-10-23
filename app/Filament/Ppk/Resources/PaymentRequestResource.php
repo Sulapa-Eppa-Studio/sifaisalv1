@@ -3,12 +3,10 @@
 namespace App\Filament\Ppk\Resources;
 
 use App\Filament\Ppk\Resources\PaymentRequestResource\Pages;
-use App\Filament\Ppk\Resources\PaymentRequestResource\RelationManagers;
 use App\Models\Contract;
 use App\Models\Document;
 use App\Models\PaymentRequest;
 use Filament\Facades\Filament;
-use Filament\Forms;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -20,7 +18,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
@@ -29,10 +26,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Storage;
-use Joaopaulolndev\FilamentPdfViewer\Forms\Components\PdfViewerField;
-use Symfony\Component\Yaml\Inline;
+
 
 class PaymentRequestResource extends Resource
 {

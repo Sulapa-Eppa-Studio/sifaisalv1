@@ -70,8 +70,14 @@ class PaymentRequestResource extends Resource
 
                 TextInput::make('request_number')
                     ->required()
-                    ->label('Nomor Permintaan')
+                    ->label('No. Surat Permohonan Pembayaran')
                     ->maxLength(255),
+
+                // Add Date
+                DatePicker::make('request_date')
+                    ->required()
+                    ->columnSpan(2)
+                    ->label('Tanggal Surat Permohonan Pembayaran'),
 
                 TextInput::make('payment_value')
                     ->string()
@@ -630,7 +636,7 @@ class PaymentRequestResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('request_number')
-                    ->label('Nomor Permintaan')
+                    ->label('No. Surat Permohonan Pembayaran')
                     ->prefix('#')
                     ->searchable(),
 
