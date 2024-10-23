@@ -140,28 +140,39 @@ class PdfController extends Controller
         $period_dates = [$start_date, $end_date];
 
         // Mendapatkan data kontrak dan relasi
-        $contracts = Contract::with('service_provider', 'admin', 'ppk')->get();
+        $contracts = Contract::with('service_provider', 'ppk')->get(); // Menghapus relasi 'admin'
 
         // Data tabel kontrak beserta relasinya
-        $contract_table_data = $contracts->map(function ($contract) {
+        $contract_table_data = $contracts->map(function ($contract, $index) {
             return [
-                'ID' => $contract->id,
+                'No' => $index + 1,
                 'No. Kontrak' => $contract->contract_number,
+                'Tgl Kontrak' => Carbon::parse($contract->contract_date)->format('d M Y'),
+                'Tgl Selesai Kontrak' => Carbon::parse($contract->end_date)->format('d M Y'), // Menambahkan kolom tanggal selesai kontrak
                 'Paket Pekerjaan' => $contract->work_package,
                 'Nilai Kontrak' => number_format($contract->payment_value, 0, ',', '.'),
-                'Penyedia Jasa' => $contract->service_provider->full_name ?? 'Tidak Ada',
-                'Admin' => $contract->admin->name ?? 'Tidak Ada',
+                'Realisasi' => number_format($contract->paid_value, 0, ',', '.'),
+                'Sisa Nilai Kontrak' => number_format($contract->payment_value - $contract->paid_value, 0, ',', '.'), // Menambahkan kolom sisa nilai kontrak
                 'PPK' => $contract->ppk->full_name ?? 'Tidak Ada',
-                'Tgl Kontrak' => Carbon::parse($contract->contract_date)->format('d M Y'),
+                'Penyedia Jasa' => $contract->service_provider->full_name ?? 'Tidak Ada',
             ];
         })->toArray();
 
-
-
         // Menyusun data tabel dinamis berdasarkan role
         $tables = [
-            'Ringkasan Kontrak' => [
-                "kolom" => ['ID', 'No. Kontrak', 'Paket Pekerjaan', 'Nilai Kontrak', 'Penyedia Jasa', 'Admin', 'PPK', 'Tgl Kontrak'],
+            'Laporan Data Kontrak' => [
+                "kolom" => [
+                    'No',
+                    'No. Kontrak',
+                    'Tgl Kontrak',
+                    'Tgl Selesai Kontrak',
+                    'Paket Pekerjaan',
+                    'Nilai Kontrak',
+                    'Realisasi',
+                    'Sisa Nilai Kontrak',
+                    'PPK',
+                    'Penyedia Jasa'
+                ],
                 "data"  => $contract_table_data,
             ],
         ];
@@ -191,7 +202,6 @@ class PdfController extends Controller
         $period_dates = [$start_date, $end_date];
 
         // Mengambil data permintaan pembayaran berdasarkan periode
-
         $user = Auth::user();
 
         switch ($user->role) {
@@ -200,55 +210,71 @@ class PdfController extends Controller
                 break;
             case 'penyedia_jasa':
                 $providerId = ServiceProvider::where('user_id', $user->id)->first()->id;
-                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('service_provider_id', $providerId)->get();
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])
+                    ->where('service_provider_id', $providerId)->get();
                 break;
             case 'ppk':
                 $ppkId = PPK::where('user_id', $user->id)->first()->id;
-                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('ppk_id', $ppkId)->get();
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])
+                    ->where('ppk_id', $ppkId)->get();
                 break;
             case 'kpa':
                 $kpaId = KPA::where('user_id', $user->id)->first()->id;
-                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('kpa_id', $kpaId)->get();
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])
+                    ->where('kpa_id', $kpaId)->get();
                 break;
             case 'spm':
                 $spmId = SPM::where('user_id', $user->id)->first()->id;
-                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('spm_id', $spmId)->get();
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])
+                    ->where('spm_id', $spmId)->get();
                 break;
             case 'bendahara':
                 $treasurerId = User::where('id', $user->id)->first()->id;
-                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->where('treasurer_id', $treasurerId)->get();
+                $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])
+                    ->where('treasurer_id', $treasurerId)->get();
                 break;
             default:
                 $payment_requests = PaymentRequest::with(['service_provider', 'ppk', 'spm', 'treasurer', 'kpa', 'contract'])->get();
                 break;
         }
 
-
         // Menyusun data tabel untuk laporan PDF
         $payment_request_table_data = $payment_requests->map(function ($payment_request) {
+
+
             return [
                 'No. Kontrak' => $payment_request->contract_number,
-                'No. Permintaan' => $payment_request->request_number,
+                'No. Surat Permohonan' => $payment_request->request_number, // Mengganti dari No. Permintaan
+                'Tanggal Surat Permohonan' => Carbon::parse($payment_request->request_date)->format('d M Y'), // Menambahkan kolom Tanggal Surat Permohonan
                 'Tahap Pembayaran' => $payment_request->payment_stage,
                 'Nilai Pembayaran' => number_format($payment_request->payment_value, 0, ',', '.'),
                 'Penyedia Jasa' => $payment_request->service_provider->full_name ?? 'Tidak Ada',
-                'Status Verifikasi PPK' => ucfirst($payment_request->ppk_verification_status),
-                'Status Verifikasi KPA' => ucfirst($payment_request->kpa_verification_status),
+                'Status Verifikasi Dok. Permohonan Pembayaran' => $payment_request->verification_progress == 'done' ? 'Selesai' : $payment_request->verification_progress,
+                // 'Status Verifikasi Dok. SPP' => ucfirst($doc_spp_status),
                 'Tanggal Dibuat' => Carbon::parse($payment_request->created_at)->format('d M Y'),
             ];
         })->toArray();
 
+        $title = null;
+
+        if ($user->role == 'admin') {
+            $title = 'Laporan Permintaan Pembayaran (Ringkasan)';
+        } else {
+            $title = 'Laporan Permohonan Pembayaran (Ringkasan)';
+        }
+
         // Data tabel untuk laporan PDF
         $tables = [
-            'Laporan Permintaan Pembayaran (Ringkasan)' => [
+            $title => [
                 "kolom" => [
                     'No. Kontrak',
-                    'No. Permintaan',
+                    'No. Surat Permohonan',
+                    'Tanggal Surat Permohonan',
                     'Tahap Pembayaran',
                     'Nilai Pembayaran',
                     'Penyedia Jasa',
-                    'Status Verifikasi PPK',
-                    'Status Verifikasi KPA',
+                    'Status Verifikasi Dok. Permohonan Pembayaran',
+                    // 'Status Verifikasi Dok. SPP',
                     'Tanggal Dibuat'
                 ],
                 "data"  => $payment_request_table_data,
@@ -257,15 +283,17 @@ class PdfController extends Controller
 
         // Menyusun data laporan yang akan dipassing ke view PDF
         $data = [
-            'title'     => 'Laporan Permintaan Pembayaran Periode ' . Carbon::parse($start_date)->format('d M Y') . ' - ' . Carbon::parse($end_date)->format('d M Y'),
+            'title'     => "$title Periode " . Carbon::parse($start_date)->format('d M Y') . ' - ' . Carbon::parse($end_date)->format('d M Y'),
             'content'   => [],
             'tables'    => $tables
         ];
 
         $pdf = Pdf::loadView("components.reports.report-layout", $data)->setPaper('A4', 'landscape');
 
-        return $pdf->download("payment_request_report.pdf");
+        return $pdf->download("$title.pdf");
     }
+
+
 
 
     public function handle_termint_spp_ppks_report(Request $request)
@@ -294,12 +322,12 @@ class PdfController extends Controller
         // Menyusun data tabel dengan informasi penting saja
         $termint_table_data = $termint_spp_ppks->map(function ($termint) {
             return [
-                'No. Termint' => $termint->no_termint,
-                'Deskripsi' => $termint->description,
-                'Nilai Pembayaran' => number_format($termint->payment_value, 0, ',', '.'),
-                'Pembayaran Uang Muka' => $termint->has_advance_payment ? 'Ya' : 'Tidak',
+                'No. SPP' => $termint->no_termint,
+                'Tgl SPP' => Carbon::parse($termint->spp_date)->format('d M Y'),
                 'No. Kontrak' => $termint->contract->contract_number ?? 'Tidak Ada',
-                'Pengguna' => $termint->user->name ?? 'Tidak Ada',
+                'Uraian Pembayaran' => $termint->description,
+                'Nilai SPP' => number_format($termint->payment_value, 0, ',', '.'),
+                'Jabatan PPK' => $termint->user->ppk->position ?? 'Tidak Ada',
                 'Status Verifikasi PPSPM' => ucfirst($termint->ppspm_verification_status),
                 'Tanggal Dibuat' => Carbon::parse($termint->created_at)->format('d M Y'),
             ];
@@ -307,14 +335,14 @@ class PdfController extends Controller
 
         // Data tabel untuk laporan PDF
         $tables = [
-            'Laporan Surat Permohonan Pembayaran (Ringkasan)' => [
+            'Surat Permintaan Pembayaran (SPP)' => [
                 "kolom" => [
-                    'No. Termint',
-                    'Deskripsi',
-                    'Nilai Pembayaran',
-                    'Pembayaran Uang Muka',
+                    'No. SPP',
+                    'Tgl SPP',
                     'No. Kontrak',
-                    'Pengguna',
+                    'Uraian Pembayaran',
+                    'Nilai SPP',
+                    'Jabatan PPK',
                     'Status Verifikasi PPSPM',
                     'Tanggal Dibuat'
                 ],
@@ -324,7 +352,7 @@ class PdfController extends Controller
 
         // Menyusun data laporan yang akan dipassing ke view PDF
         $data = [
-            'title'     => 'Laporan Termint SPP PPK Periode ' . Carbon::parse($start_date)->format('d M Y') . ' - ' . Carbon::parse($end_date)->format('d M Y'),
+            'title'     => 'Surat Permintaan Pembayaran (SPP) Periode ' . Carbon::parse($start_date)->format('d M Y') . ' - ' . Carbon::parse($end_date)->format('d M Y'),
             'content'   => [],
             'tables'    => $tables
         ];

@@ -38,7 +38,7 @@ class CreatePaymentRequest extends CreateRecord
 
             foreach ($payment_lists as $value) {
                 if ($value->verification_progress != 'done') {
-                    throw new \Exception( ucwords(strtolower('TERDAPAT PENGAJUAN PEMBAYARAN TAHAP SEBELUMNYA YANG BELUM TERPROSES!!')));
+                    throw new \Exception(ucwords(strtolower('TERDAPAT PENGAJUAN PEMBAYARAN TAHAP SEBELUMNYA YANG BELUM TERPROSES!!')));
                 }
             }
 
@@ -46,7 +46,7 @@ class CreatePaymentRequest extends CreateRecord
                 throw new \Exception('Tahap pembayaran melebihi kontrak ' . $contract->payment_stages . " Tahap Pembayaran : " . get_payment_stage($contract));
             }
 
-            if($contract->payment_value - $contract->paid_value < $data['payment_value']) {
+            if ($contract->payment_value - $contract->paid_value < $data['payment_value']) {
                 throw new \Exception('Nilai pembayaran melebihi sisa kontrak ' . 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.'));
             }
 
@@ -300,7 +300,7 @@ class CreatePaymentRequest extends CreateRecord
 
                 if (isset($data['Backup Invoice'])) {
                     Document::create([
-                        'name'  =>  'Backup Invoice (Jika Konsultan)',
+                        'name'  =>  'Backup Kuantitas (Backup Data) / Backup Invoice',
                         'path'  =>  $data['Backup Invoice'],  // Ambil dari $data
                         'type'  =>  'document_by_penyedia_jasa',
                         'payment_request_id'    =>  $record->id,

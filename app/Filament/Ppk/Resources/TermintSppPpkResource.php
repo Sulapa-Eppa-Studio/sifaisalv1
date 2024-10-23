@@ -3,7 +3,6 @@
 namespace App\Filament\Ppk\Resources;
 
 use App\Filament\Ppk\Resources\TermintSppPpkResource\Pages;
-use App\Filament\Ppk\Resources\TermintSppPpkResource\RelationManagers;
 use App\Models\TermintSppPpk;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -13,13 +12,12 @@ use App\Enums\FileType;
 use App\Models\Contract;
 use App\Models\PaymentRequest;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Facades\Filament;
-use Filament\Forms\Get;
 use Filament\Forms\Set;
-use function Filament\Support\format_number;
+use Filament\Forms\Components\DatePicker;
+
 
 class TermintSppPpkResource extends Resource
 {
@@ -52,24 +50,17 @@ class TermintSppPpkResource extends Resource
                     ->searchable()
                     ->live()
                     ->label('Nomor Kontrak')
+                    ->required()
+                    ->searchable()
+                    ->live()
+                    ->label('Nomor Kontrak')
+                    ->afterStateHydrated(function (Set $set, $state) {
+                        // Jalankan fungsi untuk mengisi payment request secara otomatis saat edit
+                        self::loadPaymentRequestData($set, $state);
+                    })
                     ->afterStateUpdated(function (Set $set, $state) {
-                        $array = [];
-
-                        $contract    =   Contract::find($state);
-
-                        $record = PaymentRequest::where('contract_number', $contract?->contract_number)
-                            ->where('ppk_verification_status', operator: 'approved')
-                            ->where('verification_progress', 'ppk')
-                            ->first();
-
-                        $set('payment_request_id', $record?->id);
-                        $set('payment_request_name', $record?->request_number);
-
-                        // foreach ($record as $value) {
-                        //     $array[$value->id] = $value->request_number;
-                        // }
-
-                        return $record?->request_number;
+                        // Juga tetap jalankan ketika pengguna memilih ulang
+                        self::loadPaymentRequestData($set, $state);
                     })
                     ->options(get_my_contracts_for_options_by_ppk()),
 
@@ -85,8 +76,11 @@ class TermintSppPpkResource extends Resource
                     ->label('Nomor SPP')
                     ->required(),
 
-                Forms\Components\TextInput::make('description')
-                    ->label('Uraian Pembayaran SPP-PPK')
+                DatePicker::make('spp_date')->required()
+                    ->label('Tanggal SPP')->required(),
+
+                Forms\Components\Textarea::make('description')
+                    ->label('Uraian Pembayaran SPP-PPK')->columnSpanFull()
                     ->required(),
 
                 Forms\Components\TextInput::make('payment_value')
@@ -106,7 +100,8 @@ class TermintSppPpkResource extends Resource
                     ->schema(function (Forms\Components\Component $component) {
                         return self::getDocumentFields($component->getState()['has_advance_payment'] ?? false);
                     })
-                    ->columns(2),
+                    ->columns(2)
+                    ->hidden(fn(array $state): bool => empty($state['payment_request_name'])),
             ]);
     }
 
@@ -163,6 +158,11 @@ class TermintSppPpkResource extends Resource
                     ->label('Ringkasan Kontrak')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
+
+                Forms\Components\FileUpload::make('files.' . FileType::LAINNYA->value)
+                    ->label('LAINNYA')
+                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
+                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
             ];
         } else {
             return [
@@ -175,7 +175,7 @@ class TermintSppPpkResource extends Resource
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
                 Forms\Components\FileUpload::make('files.' . FileType::BAPP_BAST->value)
-                    ->label('BAPP / BAST')
+                    ->label('BAPP / BAST (dari Aplikasi SAKTI)')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
                 Forms\Components\FileUpload::make('files.' . FileType::SPP->value)
@@ -198,7 +198,7 @@ class TermintSppPpkResource extends Resource
                     ->label('Ringkasan Kontrak')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::BUKTI_PEMBAYARAN->value)
+                Forms\Components\FileUpload::make('files.' . FileType::BUKTI_PEMBAYARAN_PAJAK->value)
                     ->label('Surat Setoran Pajak (SSP)')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
@@ -206,6 +206,12 @@ class TermintSppPpkResource extends Resource
                     ->label('SPTJB')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
+
+                Forms\Components\FileUpload::make('files.' . FileType::LAINNYA->value)
+                    ->label('LAINNYA')
+                    ->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
+                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
+
             ];
         }
     }
@@ -238,6 +244,9 @@ class TermintSppPpkResource extends Resource
 
                 Tables\Columns\TextColumn::make('no_termint')
                     ->label('No. SPP'),
+
+                Tables\Columns\TextColumn::make('spp_date')->label('Tanggal SPP')
+                    ->dateTime(),
 
                 Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi')
@@ -318,6 +327,23 @@ class TermintSppPpkResource extends Resource
             // Definisikan relasi jika diperlukan
         ];
     }
+
+    /**
+     * Fungsi untuk memuat data PaymentRequest berdasarkan contract_id yang diberikan
+     */
+    protected static function loadPaymentRequestData(Set $set, $contractId)
+    {
+        if ($contractId) {
+            $contract = Contract::find($contractId);
+            $record = PaymentRequest::where('contract_number', $contract?->contract_number)
+                ->where('ppk_verification_status', 'approved')
+                ->first();
+
+            $set('payment_request_id', $record?->id);
+            $set('payment_request_name', $record?->request_number);
+        }
+    }
+
 
     public static function getPages(): array
     {

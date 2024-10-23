@@ -35,7 +35,7 @@ class ListSPMRequests extends ListRecords
     {
         return [
             'Semua Permohonan' => Tab::make(),
-            'Verifikasi Pendahara' => Tab::make()
+            'Verifikasi Bendahara' => Tab::make()
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('treasurer_verification_status', ['in_progress', 'approved', 'rejected'])->where('kpa_verification_status', 'not_available')),
             'Verifikasi KPA' => Tab::make()
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('kpa_verification_status', ['in_progress', 'approved', 'rejected'])),
