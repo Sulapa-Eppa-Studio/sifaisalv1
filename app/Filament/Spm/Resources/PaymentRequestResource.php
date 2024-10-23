@@ -81,6 +81,7 @@ class PaymentRequestResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(2)
             ->schema([
 
                 TextInput::make('contract.contract_number')
@@ -322,8 +323,7 @@ class PaymentRequestResource extends Resource
 
                     ]),
 
-                ResourcesPaymentRequestResource::getPDFs(),
-
+                self::getPDFs(),
             ]);
     }
 
@@ -460,7 +460,7 @@ class PaymentRequestResource extends Resource
                         Notification::make()
                             ->title('Permohonan Pembayaran Ditolak')
                             ->body('Anda telah menolak permohonan dengan alasan: ' . $record->ppspm_rejection_reason)
-                            ->danger()  
+                            ->danger()
                             ->send();
 
                         Notification::make()
@@ -486,6 +486,32 @@ class PaymentRequestResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getPDFs()
+    {
+        return Repeater::make('documents')
+            ->relationship()
+            ->label('Daftar Dokumen Pendukung')
+            ->columnSpanFull()
+            ->grid(2)
+            ->schema([
+
+                TextInput::make('name')->label(''),
+
+                Actions::make([
+
+                    Action::make('View')
+                        ->icon('heroicon-o-eye')
+                        ->label('Tampilkan')
+                        ->url(function (Document $record) {
+
+                            return asset('/storage/' . $record->path);
+                        }, true),
+
+                ])->inlineLabel(),
+
+            ]);
     }
 
     public static function getPages(): array

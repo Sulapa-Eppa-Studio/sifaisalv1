@@ -23,7 +23,7 @@ enum FileType: string
     case BA_SERAH_TERIMA = 'ba_serah_terima';
     case SURAT_PERMOHONAN_PENYEDIA_JASA = 'surat_permohonan_penyedia_jasa';
     case BAP = 'bap';
-    case BUKTI_PEMBAYARAN = 'bukti_pembayaran';
+    case BUKTI_PEMBAYARAN_PAJAK = 'bukti_pembayaran_pajak';
     case LAINNYA = 'lainnya';
 
     public function label(): string
@@ -45,7 +45,7 @@ enum FileType: string
             self::BA_SERAH_TERIMA => 'BA Serah Terima',
             self::SURAT_PERMOHONAN_PENYEDIA_JASA => 'Surat Permohonan Penyedia Jasa',
             self::BAP => 'BAP',
-            self::BUKTI_PEMBAYARAN => 'Surat Setoran Pajak (SSP)',
+            self::BUKTI_PEMBAYARAN_PAJAK => 'Surat Setoran Pajak (SSP)',
             self::LAINNYA => 'Lainnya',
         };
     }
@@ -69,7 +69,7 @@ enum FileType: string
             self::BA_SERAH_TERIMA => 'Berita Acara Serah Terima pekerjaan atau barang.',
             self::SURAT_PERMOHONAN_PENYEDIA_JASA => 'Surat permohonan yang diajukan oleh penyedia jasa.',
             self::BAP => 'Berita Acara Pembayaran.',
-            self::BUKTI_PEMBAYARAN => 'Dokumen yang menunjukkan bukti bahwa pembayaran telah dilakukan.',
+            self::BUKTI_PEMBAYARAN_PAJAK => 'Dokumen yang menunjukkan bukti bahwa pembayaran telah dilakukan.',
             self::LAINNYA => 'Dokumen yang tidak termasuk dalam kategori yang telah disebutkan.',
         };
     }

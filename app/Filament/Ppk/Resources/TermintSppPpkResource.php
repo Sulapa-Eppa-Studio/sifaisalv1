@@ -198,7 +198,7 @@ class TermintSppPpkResource extends Resource
                     ->label('Ringkasan Kontrak')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::BUKTI_PEMBAYARAN->value)
+                Forms\Components\FileUpload::make('files.' . FileType::BUKTI_PEMBAYARAN_PAJAK->value)
                     ->label('Surat Setoran Pajak (SSP)')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
