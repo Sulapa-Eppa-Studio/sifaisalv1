@@ -249,10 +249,20 @@ class SPMRequestAprovalResource extends Resource
                     ])
                     ->color('danger')
                     ->action(function (SPMRequest $record, array $data) {
+
                         $record->update([
                             'kpa_verification_status' => 'rejected',
                             'kpa_rejection_reason'    => $data['reject_reason'],
                             'kpa_id'                  => get_auth_user()->kpa->id,
+                        ]);
+
+                        $payment_request = $record->payment_request;
+
+                        $payment_request->update([
+                            'kpa_id'                  => get_auth_user()->kpa->id,
+                            'kpa_rejection_reason'    => $data['reject_reason'],
+                            'verification_progress'   => 'rejected',
+                            'kpa_verification_status' => 'rejected',
                         ]);
 
                         Notification::make()

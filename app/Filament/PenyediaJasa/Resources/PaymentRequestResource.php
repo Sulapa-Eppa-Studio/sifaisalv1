@@ -53,7 +53,14 @@ class PaymentRequestResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
+        if($record->kpa_verification_status == 'rejected') return false;
+
         return $record->verification_progress == 'rejected';
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return $record->verification_progress != 'done';
     }
 
     public static function form(Form $form): Form

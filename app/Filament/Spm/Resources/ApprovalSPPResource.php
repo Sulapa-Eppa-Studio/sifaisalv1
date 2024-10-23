@@ -168,7 +168,7 @@ class ApprovalSPPResource extends Resource
                     ->label('Ringkasan Kontrak')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::BUKTI_PEMBAYARAN->value)
+                Forms\Components\FileUpload::make('files.' . FileType::BUKTI_PEMBAYARAN_PAJAK->value)
                     ->label('Surat Setoran Pajak (SSP)')
                     ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
                     ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
@@ -322,11 +322,11 @@ class ApprovalSPPResource extends Resource
                             'ppspm_id'                  => get_auth_user()->spm->id,
                         ]);
 
-                            
+
                         Notification::make()
                             ->title('Permohonan Pembayaran Ditolak')
                             ->body('Anda telah menolak permohonan dengan alasan: ' . $record->ppspm_rejection_reason)
-                            ->danger()  
+                            ->danger()
                             ->send();
                     })
                     ->color('danger')

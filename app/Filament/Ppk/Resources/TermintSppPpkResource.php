@@ -35,6 +35,10 @@ class TermintSppPpkResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
+        if ($record instanceof TermintSppPpk) {
+            if ($record->payment_request?->kpa_verification_status == 'rejected') return false;
+        }
+
         return $record->ppspm_verification_status == 'rejected';
     }
 
@@ -337,6 +341,7 @@ class TermintSppPpkResource extends Resource
             $contract = Contract::find($contractId);
             $record = PaymentRequest::where('contract_number', $contract?->contract_number)
                 ->where('ppk_verification_status', 'approved')
+                ->where('verification_progress', 'ppk')
                 ->first();
 
             $set('payment_request_id', $record?->id);
