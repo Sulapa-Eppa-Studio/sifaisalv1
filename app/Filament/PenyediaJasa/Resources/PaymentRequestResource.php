@@ -53,7 +53,7 @@ class PaymentRequestResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        if($record->kpa_verification_status == 'rejected') return false;
+        if ($record->kpa_verification_status == 'rejected') return false;
 
         return $record->verification_progress == 'rejected';
     }
@@ -656,6 +656,11 @@ class PaymentRequestResource extends Resource
                     ->label('Nilai Pembayaran')
                     ->money('IDR', 0)
                     ->sortable(),
+
+                TextColumn::make('request_date')
+                    ->label('Tanggal Permohonan Pembayaran')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->date('d M Y'),
 
                 TextColumn::make('id')
                     ->label('Sisa Kontrak')

@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Facades\Filament;
 use Filament\Forms\Set;
 use Filament\Forms\Components\DatePicker;
-
+use Filament\Forms\Get;
 
 class TermintSppPpkResource extends Resource
 {
@@ -52,29 +52,36 @@ class TermintSppPpkResource extends Resource
                 Forms\Components\Select::make('contract_id')
                     ->required()
                     ->searchable()
-                    ->live()
                     ->label('Nomor Kontrak')
                     ->required()
                     ->searchable()
                     ->live()
                     ->label('Nomor Kontrak')
-                    ->afterStateHydrated(function (Set $set, $state) {
-                        // Jalankan fungsi untuk mengisi payment request secara otomatis saat edit
-                        self::loadPaymentRequestData($set, $state);
-                    })
-                    ->afterStateUpdated(function (Set $set, $state) {
-                        // Juga tetap jalankan ketika pengguna memilih ulang
-                        self::loadPaymentRequestData($set, $state);
-                    })
+                    // ->afterStateHydrated(function (Set $set, $state) {
+                    //     // Jalankan fungsi untuk mengisi payment request secara otomatis saat edit
+                    //     self::loadPaymentRequestData($set, $state);
+                    // })
+                    // ->afterStateUpdated(function (Set $set, $state) {
+                    //     // Juga tetap jalankan ketika pengguna memilih ulang
+                    //     self::loadPaymentRequestData($set, $state);
+                    // })
                     ->options(get_my_contracts_for_options_by_ppk()),
 
-                Forms\Components\TextInput::make('payment_request_name')
-                    ->disabled()
+                Forms\Components\Select::make('payment_request_id')
+                    ->label('Nomor Pengajuan')
                     ->required()
-                    ->placeholder('Tidak Terdapat Nomor Pengajuan')
-                    ->label('Nomor Pengajuan'),
+                    ->reactive()
+                    ->options(function (Get $get) {
+                        $contract = Contract::find($get('contract_id'));
 
-                Forms\Components\Hidden::make('payment_request_id'),
+                        $record = PaymentRequest::where('contract_number', $contract?->contract_number)
+                            ->where('ppk_verification_status', 'approved')
+                            ->get();
+
+                        return $record->pluck('request_number', 'id');
+                    }),
+
+                // Forms\Components\Hidden::make('payment_request_id'),
 
                 Forms\Components\TextInput::make('no_termint')
                     ->label('Nomor SPP')
@@ -105,7 +112,7 @@ class TermintSppPpkResource extends Resource
                         return self::getDocumentFields($component->getState()['has_advance_payment'] ?? false);
                     })
                     ->columns(2)
-                    ->hidden(fn(array $state): bool => empty($state['payment_request_name'])),
+                    ->hidden(fn(array $state): bool => empty($state['payment_request_id'])),
             ]);
     }
 
