@@ -19,6 +19,7 @@ class TermintSppPpk extends Model
         'ppspm_verification_status',
         'ppspm_rejection_reason',
         'payment_request_id',
+        'spp_date',
         'ppspm_id'
     ];
 

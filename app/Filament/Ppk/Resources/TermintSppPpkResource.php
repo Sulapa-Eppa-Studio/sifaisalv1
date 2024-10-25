@@ -172,8 +172,9 @@ class TermintSppPpkResource extends Resource
 
                 Forms\Components\FileUpload::make('files.' . FileType::LAINNYA->value)
                     ->label('LAINNYA')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
+                    ->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
+                    ->maxSize($pdfValidation['maxSize'])
+                    ->directory('termint_files'),
             ];
         } else {
             return [
@@ -221,7 +222,8 @@ class TermintSppPpkResource extends Resource
                 Forms\Components\FileUpload::make('files.' . FileType::LAINNYA->value)
                     ->label('LAINNYA')
                     ->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
+                    ->maxSize($pdfValidation['maxSize'])
+                    ->directory('termint_files'),
 
             ];
         }
@@ -257,7 +259,7 @@ class TermintSppPpkResource extends Resource
                     ->label('No. SPP'),
 
                 Tables\Columns\TextColumn::make('spp_date')->label('Tanggal SPP')
-                    ->dateTime(),
+                    ->date(),
 
                 Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi')

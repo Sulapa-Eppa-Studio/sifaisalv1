@@ -49,18 +49,37 @@ class CreateTermintSppPpk extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $data = $this->form->getState();
+        try {
 
-        // Simpan file-file
-        if (!empty($data['files'])) {
-            foreach ($data['files'] as $fileType => $filePath) {
-                $this->record->files()->create([
-                    'file_type' => $fileType,
-                    'file_path' => $filePath,
-                ]);
+            $data = $this->form->getState();
+
+            // Simpan file-file
+            if (!empty($data['files'])) {
+                foreach ($data['files'] as $fileType => $filePath) {
+
+                    if(empty($filePath)) {
+                        continue;
+                    }
+
+                    $this->record->files()->create([
+                        'file_type' => $fileType,
+                        'file_path' => $filePath,
+                    ]);
+                }
             }
-        }
 
-        // Tutup modal
+        } catch (\Throwable $th) {
+
+            Notification::make()
+                ->title('Terjadi Keslahan')
+                ->body($th->getMessage())
+                ->danger()
+                ->color('#c44d47')
+                ->send();
+
+            $this->halt();
+
+            //throw $th;
+        }
     }
 }
