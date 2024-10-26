@@ -108,11 +108,48 @@ class TermintSppPpkResource extends Resource
                     ->reactive(),
 
                 Forms\Components\Fieldset::make('Pilih Dokumen Yang Akan Diunggah')
+                    ->visibleOn(['create', 'edit'])
                     ->schema(function (Forms\Components\Component $component) {
                         return self::getDocumentFields($component->getState()['has_advance_payment'] ?? false);
                     })
                     ->columns(2)
                     ->hidden(fn(array $state): bool => empty($state['payment_request_id'])),
+
+                Forms\Components\Fieldset::make('Progres Verifikasi Petugas PPSPM')
+                    ->visibleOn(['view', 'edit'])
+                    ->hidden(function ($record) {
+                        return $record?->ppspm_verification_status === 'not_available';
+                    })
+                    ->schema([
+
+                        Forms\Components\TextInput::make('spm.full_name')
+                            ->label('Petugas PPSPM')
+                            ->formatStateUsing(function ($record) {
+                                return $record?->spm?->full_name ?? 'Belum Tersedia';
+                            })
+                            ->disabled(),
+
+                        Forms\Components\TextInput::make('ppspm_verification_status')
+                            ->label('Status Verifikasi Petugas PPSPM')
+                            ->formatStateUsing(function ($state, $record) {
+                                return match ($state) {
+                                    'not_available' => 'Belum Tersedia',
+                                    'in_progress' => 'Dalam Proses',
+                                    'approved' => 'Disetujui',
+                                    'rejected' => 'Ditolak',
+                                    default => $state,
+                                };
+                            })
+                            ->disabled(),
+
+                        Forms\Components\Textarea::make('ppspm_rejection_reason')
+                            ->label('Alasan Penolakan PPSPM')
+                            ->columnSpanFull()
+                            ->hidden(function ($state) {
+                                return !$state ? true : false;
+                            })
+                            ->disabled(),
+                    ]),
             ]);
     }
 
@@ -315,6 +352,8 @@ class TermintSppPpkResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()->label('Detail'),
+
                 Action::make('viewFiles')
                     ->label('Lihat File')
                     ->icon('heroicon-o-eye')
