@@ -6,11 +6,13 @@ use App\Filament\PenyediaJasa\Resources\PaymentRequestResource\Pages;
 use App\Models\Contract;
 use App\Models\PaymentRequest;
 use Filament\Facades\Filament;
+use App\Models\Document;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Columns\BadgeColumn;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -376,7 +378,7 @@ class PaymentRequestResource extends Resource
 
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Laporan Antara')
+                        FileUpload::make('Laporan Antara (Jika Konsultan)')
                             ->label('Laporan Antara (Jika Konsultan)')
                             ->directory('documents')
                             ->uploadingMessage('Upload Laporan Antara...')
@@ -384,7 +386,7 @@ class PaymentRequestResource extends Resource
 
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Laporan Akhir')
+                        FileUpload::make('Laporan Akhir (Jika Konsultan)')
                             ->label('Laporan Akhir (Jika Konsultan)')
                             ->directory('documents')
                             ->uploadingMessage('Upload Laporan Akhir...')
@@ -392,7 +394,7 @@ class PaymentRequestResource extends Resource
 
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Backup Invoice')
+                        FileUpload::make('Backup Kuantitas (Backup Data) / Backup Invoice')
                             ->label('Backup Invoice (Jika Konsultan)')
                             ->directory('documents')
                             ->uploadingMessage('Upload Backup Invoice...')
@@ -400,7 +402,7 @@ class PaymentRequestResource extends Resource
 
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Dokumen Lainnya')
+                        FileUpload::make('Dokumen Lainnya yang dipersyaratkan dalam kontrak')
                             ->label('Dokumen Lainnya yang dipersyaratkan dalam kontrak')
                             ->directory('documents')
                             ->uploadingMessage('Upload Dokumen Lainnya...')
@@ -618,6 +620,7 @@ class PaymentRequestResource extends Resource
                     ]),
 
 
+
                 // Select::make('verification_status')
                 //     ->columnSpanFull()
                 //     ->options([
@@ -633,6 +636,7 @@ class PaymentRequestResource extends Resource
                 //     ->columnSpanFull()
                 //     ->nullable(),
 
+                self::getPDFs(),
             ]);
     }
 
@@ -828,6 +832,33 @@ class PaymentRequestResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getPDFs()
+    {
+        return Repeater::make('documents')
+            ->relationship()
+            ->label('Daftar Dokumen Pendukung')
+            ->columnSpanFull()
+            ->grid(2)
+            ->visibleOn(['view'])
+            ->schema([
+
+                TextInput::make('name')->label(''),
+
+                Actions::make([
+
+                    Action::make('View')
+                        ->icon('heroicon-o-eye')
+                        ->label('Tampilkan')
+                        ->url(function (Document $record) {
+
+                            return asset('/storage/' . $record->path);
+                        }, true),
+
+                ])->inlineLabel(),
+
+            ]);
     }
 
     public static function getPages(): array
