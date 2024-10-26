@@ -35,6 +35,7 @@ class EditPaymentRequest extends EditRecord
         $data['treasurer_verification_status'] = 'not_available';
         $data['kpa_verification_status'] = 'not_available';
 
+
         return $data;
     }
 
@@ -47,6 +48,7 @@ class EditPaymentRequest extends EditRecord
         $record = $this->getRecord();
 
         $data = array_merge($data, $record->documents()->get()->pluck('path', 'name')->toArray());
+
 
         return $data;
     }
