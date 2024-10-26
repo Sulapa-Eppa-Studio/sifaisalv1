@@ -21,6 +21,7 @@ class PaymentRequest extends Model
         'rejection_reason',
         'service_provider_id',
         'verification_progress',
+        'request_date',
         'ppk_verification_status',
         'ppk_rejection_reason',
         'ppk_id',
