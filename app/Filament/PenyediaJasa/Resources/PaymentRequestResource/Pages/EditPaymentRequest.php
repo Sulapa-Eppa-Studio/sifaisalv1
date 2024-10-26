@@ -79,6 +79,10 @@ class EditPaymentRequest extends EditRecord
 
             $record->update($data);
 
+            if($record instanceof PaymentRequest) {
+                $record->documents()->delete();
+            }
+
             if (cek_pembayaran_pertama($contract)) {
 
                 // insert documents

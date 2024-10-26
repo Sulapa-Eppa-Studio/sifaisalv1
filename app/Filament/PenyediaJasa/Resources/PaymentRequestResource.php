@@ -53,7 +53,7 @@ class PaymentRequestResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        return true;
+        // return true;
 
         if ($record->kpa_verification_status == 'rejected') return false;
 

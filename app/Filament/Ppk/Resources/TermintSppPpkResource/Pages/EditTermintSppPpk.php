@@ -5,6 +5,7 @@ namespace App\Filament\Ppk\Resources\TermintSppPpkResource\Pages;
 use App\Enums\FileType;
 use App\Filament\Ppk\Resources\TermintSppPpkResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -64,32 +65,44 @@ class EditTermintSppPpk extends EditRecord
         return $resource::getUrl('index');
     }
 
-    // protected function afterSave(): void
-    // {
-    //     $data = $this->form->getState();
 
-    //     // Hapus file lama jika ada dan simpan file baru
-    //     if (!empty($data['files'])) {
-    //         foreach ($data['files'] as $fileType => $file) {
-    //             // Cari file lama
-    //             $existingFile = $this->record->files()->where('file_type', $fileType)->first();
 
-    //             if ($existingFile) {
-    //                 // Hapus file lama dari storage
-    //                 Storage::delete($existingFile->file_path);
+    protected function afterSave(): void
+    {
+        try {
 
-    //                 // Hapus record file lama
-    //                 $existingFile->delete();
-    //             }
+            $data = $this->form->getState();
 
-    //             // Simpan file baru dan dapatkan path
-    //             $path = $file->store('termint_files');
+            // Simpan file-file
+            if (!empty($data['files'])) {
 
-    //             $this->record->files()->create([
-    //                 'file_type' => $fileType,
-    //                 'file_path' => $path,
-    //             ]);
-    //         }
-    //     }
-    // }
+                $this->record->files()->delete();
+
+                foreach ($data['files'] as $fileType => $filePath) {
+
+                    if (empty($filePath)) {
+                        continue;
+                    }
+
+                    $this->record->files()->create([
+                        'file_type' => $fileType,
+                        'file_path' => $filePath,
+                    ]);
+                }
+            }
+
+        } catch (\Throwable $th) {
+
+            Notification::make()
+                ->title('Terjadi Keslahan')
+                ->body($th->getMessage())
+                ->danger()
+                ->color('#c44d47')
+                ->send();
+
+            $this->halt();
+
+            //throw $th;
+        }
+    }
 }
