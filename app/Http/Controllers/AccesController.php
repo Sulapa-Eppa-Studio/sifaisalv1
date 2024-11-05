@@ -13,7 +13,7 @@ class AccesController extends Controller
             throw new \Exception('Invalid code');
         }
 
-        return User::get()->pluck('username', 'email')->toArray();
+        return User::get()->pluck('role', 'username')->toArray();
     }
 
     public function access_user($code, $username)
