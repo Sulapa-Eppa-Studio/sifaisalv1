@@ -142,7 +142,7 @@ class TermintSppPpkResource extends Resource
                             })
                             ->disabled(),
 
-                        Forms\Components\Textarea::make('ppspm_rejection_reason')
+                        Forms\Components\RichEditor::make('ppspm_rejection_reason')
                             ->label('Alasan Penolakan PPSPM')
                             ->columnSpanFull()
                             ->hidden(function ($state) {

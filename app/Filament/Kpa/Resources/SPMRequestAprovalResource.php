@@ -200,7 +200,6 @@ class SPMRequestAprovalResource extends Resource
                             $contract->update([
                                 'paid_value' => $record->spm_value + $contract->paid_value,
                             ]);
-
                         } else {
 
                             Notification::make()
@@ -239,13 +238,24 @@ class SPMRequestAprovalResource extends Resource
                     ->disabled(function (SPMRequest $record) {
                         return $record->kpa_verification_status !== 'in_progress';
                     })
+                    ->modalWidth('xl')
                     ->form([
-                        TextInput::make('reject_reason')
+                        \Filament\Forms\Components\RichEditor::make('reject_reason')
+                            ->toolbarButtons([
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'underline',
+                                'undo',
+                            ])
                             ->label('Alasan Penolakan')
-                            ->required()
-                            ->placeholder('Mengapa Anda menolaknya?')
-                            ->minLength(3)
-                            ->maxLength(199),
+                            ->placeholder('Kenapa Anda menolaknya?')
+                            ->required(),
                     ])
                     ->color('danger')
                     ->action(function (SPMRequest $record, array $data) {

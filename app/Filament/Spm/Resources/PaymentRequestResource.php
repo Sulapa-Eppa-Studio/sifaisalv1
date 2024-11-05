@@ -440,13 +440,24 @@ class PaymentRequestResource extends Resource
                     ->disabled(function (PaymentRequest $record) {
                         return $record->ppspm_verification_status !== 'in_progress';
                     })
+                    ->modalWidth('xl')
                     ->form([
-                        TextInput::make('reject_reason')
+                        \Filament\Forms\Components\RichEditor::make('reject_reason')
+                            ->toolbarButtons([
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'underline',
+                                'undo',
+                            ])
                             ->label('Alasan Penolakan')
-                            ->required()
-                            ->placeholder('Mengapa Anda menolaknya?')
-                            ->minLength(3)
-                            ->maxLength(199),
+                            ->placeholder('Kenapa Anda menolaknya?')
+                            ->required(),
                     ])
                     ->action(function (PaymentRequest $record, array $data) {
 

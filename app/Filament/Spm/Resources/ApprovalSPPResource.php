@@ -307,13 +307,24 @@ class ApprovalSPPResource extends Resource
                     ->disabled(function (TermintSppPpk $record) {
                         return $record->ppspm_verification_status !== 'in_progress';
                     })
+                    ->modalWidth('xl')
                     ->form([
-                        TextInput::make('reject_reason')
+                        \Filament\Forms\Components\RichEditor::make('reject_reason')
+                            ->toolbarButtons([
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'underline',
+                                'undo',
+                            ])
                             ->label('Alasan Penolakan')
-                            ->required()
                             ->placeholder('Kenapa Anda menolaknya?')
-                            ->minLength(3)
-                            ->maxLength(199),
+                            ->required(),
                     ])
                     ->action(function (TermintSppPpk $record, array $data) {
                         $record->update([
@@ -321,7 +332,6 @@ class ApprovalSPPResource extends Resource
                             'ppspm_rejection_reason'    => $data['reject_reason'],
                             'ppspm_id'                  => get_auth_user()->spm->id,
                         ]);
-
 
                         Notification::make()
                             ->title('Permohonan Pembayaran Ditolak')

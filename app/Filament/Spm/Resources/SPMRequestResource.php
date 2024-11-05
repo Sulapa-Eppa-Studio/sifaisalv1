@@ -3,6 +3,7 @@
 namespace App\Filament\Spm\Resources;
 
 use Filament\Forms;
+use Filament\Forms\Components\RichEditor;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -165,7 +166,7 @@ class SPMRequestResource extends Resource
                             })
                             ->disabled(),
 
-                        Textarea::make('treasurer_rejection_reason')
+                        RichEditor::make('treasurer_rejection_reason')
                             ->label('Alasan Penolakan Bendahara')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
@@ -201,7 +202,7 @@ class SPMRequestResource extends Resource
                             })
                             ->disabled(),
 
-                        Textarea::make('kpa_rejection_reason')
+                        RichEditor::make('kpa_rejection_reason')
                             ->label('Alasan Penolakan KPA')
                             ->columnSpanFull()
                             ->hidden(function ($state) {

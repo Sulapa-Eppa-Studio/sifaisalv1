@@ -13,6 +13,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -217,13 +218,24 @@ class PaymentRequestResource extends Resource
                     ->disabled(function (PaymentRequest $record) {
                         return $record->ppk_verification_status !== 'in_progress';
                     })
+                    ->modalWidth('xl')
                     ->form([
-                        TextInput::make('reject_reason')
+                        RichEditor::make('reject_reason')
+                            ->toolbarButtons([
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'underline',
+                                'undo',
+                            ])
                             ->label('Alasan Penolakan')
-                            ->required()
                             ->placeholder('Kenapa Anda menolaknya?')
-                            ->minLength(3)
-                            ->maxLength(199),
+                            ->required(),
                     ])
                     ->action(function (PaymentRequest $record, array $data) {
                         $record->update([

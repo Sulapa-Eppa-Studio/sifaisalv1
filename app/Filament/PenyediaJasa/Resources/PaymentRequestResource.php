@@ -13,6 +13,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -126,21 +127,21 @@ class PaymentRequestResource extends Resource
                     ->columns(3)
                     ->schema([
 
-                        FileUpload::make('Surat Permohonan Pembayaran Uang Muka')
+                        FileUpload::make('docs.Surat Permohonan Pembayaran Uang Muka')
                             ->directory('documents')
                             ->uploadingMessage('Upload dokumen...')
                             ->acceptedFileTypes(['application/pdf'])
                             ->required()
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Rekening Koran')
+                        FileUpload::make('docs.Rekening Koran')
                             ->directory('documents')
                             ->uploadingMessage('Upload dokumen...')
                             ->acceptedFileTypes(['application/pdf'])
                             ->required()
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('npwp')
+                        FileUpload::make('docs.npwp')
                             ->label('NPWP')
                             ->directory('documents')
                             ->uploadingMessage('Upload dokumen...')
@@ -148,21 +149,21 @@ class PaymentRequestResource extends Resource
                             ->required()
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('E-Faktur')
+                        FileUpload::make('docs.E-Faktur')
                             ->directory('documents')
                             ->uploadingMessage('Upload dokumen...')
                             ->acceptedFileTypes(['application/pdf'])
                             ->required()
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Jaminan Uang Muka')
+                        FileUpload::make('docs.Jaminan Uang Muka')
                             ->directory('documents')
                             ->uploadingMessage('Upload dokumen...')
                             ->acceptedFileTypes(['application/pdf'])
                             ->required()
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Surat Keabsahan Dan Kebenaran Jaminan Uang Muka')
+                        FileUpload::make('docs.Surat Keabsahan Dan Kebenaran Jaminan Uang Muka')
                             ->directory('documents')
                             ->uploadingMessage('Upload dokumen...')
                             ->acceptedFileTypes(['application/pdf'])
@@ -170,7 +171,7 @@ class PaymentRequestResource extends Resource
                             ->maxSize(1024 * 25),
 
 
-                        FileUpload::make('Rincian Penggunaan Uang Muka')
+                        FileUpload::make('docs.Rincian Penggunaan Uang Muka')
                             ->directory('documents')
                             ->uploadingMessage('Upload dokumen...')
                             ->acceptedFileTypes(['application/pdf'])
@@ -196,7 +197,7 @@ class PaymentRequestResource extends Resource
                     ->visibleOn(['create', 'edit'])
                     ->schema([
 
-                        FileUpload::make('Surat Permohonan Pembayaran')
+                        FileUpload::make('docs.Surat Permohonan Pembayaran')
                             ->label('Surat Permohonan Pembayaran')
                             ->directory('documents')
                             ->uploadingMessage('Upload Surat Permohonan Pembayaran...')
@@ -204,7 +205,7 @@ class PaymentRequestResource extends Resource
                             ->required() // required
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Rekening Koran')
+                        FileUpload::make('docs.Rekening Koran')
                             ->label('Rekening Koran')
                             ->directory('documents')
                             ->uploadingMessage('Upload Rekening Koran...')
@@ -212,7 +213,7 @@ class PaymentRequestResource extends Resource
                             ->required() // required
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('NPWP')
+                        FileUpload::make('docs.NPWP')
                             ->label('NPWP')
                             ->directory('documents')
                             ->uploadingMessage('Upload NPWP...')
@@ -220,7 +221,7 @@ class PaymentRequestResource extends Resource
                             ->required() // required
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('E-Faktur')
+                        FileUpload::make('docs.E-Faktur')
                             ->label('E-Faktur')
                             ->directory('documents')
                             ->uploadingMessage('Upload E-Faktur...')
@@ -228,75 +229,67 @@ class PaymentRequestResource extends Resource
                             ->required() // required
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Jaminan Pemeliharaan')
+                        FileUpload::make('docs.Jaminan Pemeliharaan')
                             ->label('Jaminan Pemeliharaan (Jika Termijn 100%)')
                             ->directory('documents')
                             ->uploadingMessage('Upload Jaminan Pemeliharaan...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Surat Permohonan Penerimaan Hasil Pekerjaan')
+                        FileUpload::make('docs.Surat Permohonan Penerimaan Hasil Pekerjaan')
                             ->label('Surat Permohonan Penerimaan Hasil Pekerjaan yang telah disetujui direksi')
                             ->directory('documents')
                             ->uploadingMessage('Upload Surat Permohonan Penerimaan Hasil Pekerjaan...')
                             ->acceptedFileTypes(['application/pdf'])
                             ->required() // required
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Surat Perintah Pemeriksaan Hasil Pekerjaan')
+                        FileUpload::make('docs.Surat Perintah Pemeriksaan Hasil Pekerjaan')
                             ->label('Surat Perintah Pemeriksaan Hasil Pekerjaan oleh PPK')
                             ->directory('documents')
                             ->uploadingMessage('Upload Surat Perintah Pemeriksaan Hasil Pekerjaan...')
                             ->acceptedFileTypes(['application/pdf'])
                             ->required() // required
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Berita Acara Pemeriksaan Pekerjaan')
+                        FileUpload::make('docs.Berita Acara Pemeriksaan Pekerjaan')
                             ->label('Berita Acara Pemeriksaan Pekerjaan')
                             ->directory('documents')
                             ->uploadingMessage('Upload Berita Acara Pemeriksaan Pekerjaan...')
                             ->acceptedFileTypes(['application/pdf'])
                             ->required() // required
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Berita Acara Prestasi Pekerjaan')
+                        FileUpload::make('docs.Berita Acara Prestasi Pekerjaan')
                             ->label('Berita Acara Prestasi Pekerjaan')
                             ->directory('documents')
                             ->uploadingMessage('Upload Berita Acara Prestasi Pekerjaan...')
                             ->acceptedFileTypes(['application/pdf'])
                             ->required() // required
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Gambar Kerja')
+                        FileUpload::make('docs.Gambar Kerja')
                             ->label('Gambar Kerja (Shop Drawing / Asbuilt Drawing)')
                             ->directory('documents')
                             ->uploadingMessage('Upload Gambar Kerja...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Spesifikasi Teknis')
+                        FileUpload::make('docs.Spesifikasi Teknis')
                             ->label('Spesifikasi Teknis')
                             ->directory('documents')
                             ->uploadingMessage('Upload Spesifikasi Teknis...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Backup Perhitungan Kuantitas')
+                        FileUpload::make('docs.Backup Perhitungan Kuantitas')
                             ->label('Backup Perhitungan Kuantitas')
                             ->directory('documents')
                             ->uploadingMessage('Upload Backup Perhitungan Kuantitas...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Form Penerimaan Hasil Pekerjaan')
+                        FileUpload::make('docs.Form Penerimaan Hasil Pekerjaan')
                             ->label('Form Penerimaan Hasil Pekerjaan')
                             ->directory('documents')
                             ->uploadingMessage('Upload Form Penerimaan Hasil Pekerjaan...')
@@ -304,7 +297,7 @@ class PaymentRequestResource extends Resource
 
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Peralatan Pemeriksaan')
+                        FileUpload::make('docs.Peralatan Pemeriksaan')
                             ->label('Peralatan Pemeriksaan')
                             ->directory('documents')
                             ->uploadingMessage('Upload Peralatan Pemeriksaan...')
@@ -312,44 +305,39 @@ class PaymentRequestResource extends Resource
 
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Daftar Hadir')
+                        FileUpload::make('docs.Daftar Hadir')
                             ->label('Daftar Hadir')
                             ->directory('documents')
                             ->uploadingMessage('Upload Daftar Hadir...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Laporan Hasil Pengujian Kualitas')
+                        FileUpload::make('docs.Laporan Hasil Pengujian Kualitas')
                             ->label('Laporan Hasil Pengujian Kualitas')
                             ->directory('documents')
                             ->uploadingMessage('Upload Laporan Hasil Pengujian Kualitas...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Laporan Kemajuan Pekerjaan')
+                        FileUpload::make('docs.Laporan Kemajuan Pekerjaan')
                             ->label('Laporan Kemajuan Pekerjaan')
                             ->directory('documents')
                             ->uploadingMessage('Upload Laporan Kemajuan Pekerjaan...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Sertifikat Bulanan')
+                        FileUpload::make('docs.Sertifikat Bulanan')
                             ->label('Sertifikat Bulanan / Monthly Certificate')
                             ->directory('documents')
                             ->uploadingMessage('Upload Sertifikat Bulanan...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Laporan Bulanan')
+                        FileUpload::make('docs.Laporan Bulanan')
                             ->label('Laporan Bulanan')
                             ->directory('documents')
                             ->uploadingMessage('Upload Laporan Bulanan...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
                     ]),
@@ -370,44 +358,39 @@ class PaymentRequestResource extends Resource
                     ->visibleOn(['create', 'edit'])
                     ->schema([
 
-                        FileUpload::make('Laporan Bulanan ( Jika Konsultan )')
+                        FileUpload::make('docs.Laporan Bulanan ( Jika Konsultan )')
                             ->label('Laporan Bulanan ( Jika Konsultan )')
                             ->directory('documents')
                             ->uploadingMessage('Upload Laporan Bulanan...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Laporan Antara (Jika Konsultan)')
+                        FileUpload::make('docs.Laporan Antara (Jika Konsultan)')
                             ->label('Laporan Antara (Jika Konsultan)')
                             ->directory('documents')
                             ->uploadingMessage('Upload Laporan Antara...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Laporan Akhir (Jika Konsultan)')
+                        FileUpload::make('docs.Laporan Akhir (Jika Konsultan)')
                             ->label('Laporan Akhir (Jika Konsultan)')
                             ->directory('documents')
                             ->uploadingMessage('Upload Laporan Akhir...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Backup Kuantitas (Backup Data) / Backup Invoice')
+                        FileUpload::make('docs.Backup Kuantitas (Backup Data) / Backup Invoice')
                             ->label('Backup Invoice (Jika Konsultan)')
                             ->directory('documents')
                             ->uploadingMessage('Upload Backup Invoice...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
 
-                        FileUpload::make('Dokumen Lainnya yang dipersyaratkan dalam kontrak')
+                        FileUpload::make('docs.Dokumen Lainnya yang dipersyaratkan dalam kontrak')
                             ->label('Dokumen Lainnya yang dipersyaratkan dalam kontrak')
                             ->directory('documents')
                             ->uploadingMessage('Upload Dokumen Lainnya...')
                             ->acceptedFileTypes(['application/pdf'])
-
                             ->maxSize(1024 * 25),
                     ]),
 
@@ -509,7 +492,7 @@ class PaymentRequestResource extends Resource
                             })
                             ->disabled(),
 
-                        Textarea::make('ppk_rejection_reason')
+                        RichEditor::make('ppk_rejection_reason')
                             ->label('Alasan Penolakan PPK')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
@@ -545,7 +528,7 @@ class PaymentRequestResource extends Resource
                             })
                             ->disabled(),
 
-                        Textarea::make('ppspm_rejection_reason')
+                        RichEditor::make('ppspm_rejection_reason')
                             ->label('Alasan Penolakan PPSPM')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
@@ -581,7 +564,7 @@ class PaymentRequestResource extends Resource
                             })
                             ->disabled(),
 
-                        Textarea::make('treasurer_rejection_reason')
+                        RichEditor::make('treasurer_rejection_reason')
                             ->label('Alasan Penolakan Bendahara')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
@@ -610,7 +593,7 @@ class PaymentRequestResource extends Resource
                             })
                             ->disabled(),
 
-                        Textarea::make('kpa_rejection_reason')
+                        RichEditor::make('kpa_rejection_reason')
                             ->label('Alasan Penolakan KPA')
                             ->columnSpanFull()
                             ->hidden(function ($state) {
