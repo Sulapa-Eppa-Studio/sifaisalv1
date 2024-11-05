@@ -464,10 +464,12 @@ class PaymentRequestResource extends Resource
                     ->action(function (PaymentRequest $record, array $data) {
 
                         $record->update([
-                            'ppspm_verification_status'   =>  'rejected',
-                            'verification_progress'       =>  'rejected',
-                            'ppspm_rejection_reason'      =>  $data['reject_reason'],
-                            'ppspm_id'                    =>  get_auth_user()->spm->id,
+                            'verification_progress'         =>  'rejected',
+                            'ppk_verification_status'       =>  'rejected',
+                            'ppk_rejection_reason'          =>  'Ditolak oleh SPM',
+                            'ppspm_verification_status'     =>  'rejected',
+                            'ppspm_rejection_reason'        =>  $data['reject_reason'],
+                            'ppspm_id'                      =>  get_auth_user()->spm->id,
                         ]);
 
                         Notification::make()
