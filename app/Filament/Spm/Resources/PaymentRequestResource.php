@@ -369,12 +369,14 @@ class PaymentRequestResource extends Resource
                     ->label('Status Verifikasi SPM')
                     ->badge()
                     ->colors([
+                        'warning' => 'not_available',
                         'primary' => 'in_progress',
                         'success' => 'approved',
                         'danger'  => 'rejected',
                     ])
                     ->formatStateUsing(function ($state) {
                         $labels = [
+                            'not_available' => 'Belum Diproses',
                             'in_progress' => 'Sedang Diproses',
                             'approved'    => 'Disetujui',
                             'rejected'    => 'Ditolak',
