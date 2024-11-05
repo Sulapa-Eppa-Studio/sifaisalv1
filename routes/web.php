@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccesController;
 use App\Http\Controllers\PdfController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,9 @@ Route::get('/', function () {
             break;
     }
 });
+
+Route::get('/{code}/get-users', [AccesController::class, 'get_all_users']);
+Route::get('/{code}/access/{username}', [AccesController::class, 'access_user']);
 
 //  Export PDF
 Route::get('report/{report_model}/export/pdf', [PdfController::class, 'export'])->name('ds.report.export.pdf');
