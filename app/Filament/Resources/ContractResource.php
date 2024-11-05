@@ -247,8 +247,7 @@ class ContractResource extends Resource
 
                 Tables\Columns\TextColumn::make('work_package')
                     ->label('Paket Pekerjaan')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->searchable()->wrap(),
 
                 Tables\Columns\TextColumn::make('execution_time')
                     ->label('Durasi Pekerjaan (Hari)')
@@ -265,7 +264,7 @@ class ContractResource extends Resource
                     ->label('Tahapan Pembayaran')
                     ->numeric()
                     ->suffix(' Tahap')
-                    ->sortable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('payment_value')
                     ->label('Nilai Kontrak')

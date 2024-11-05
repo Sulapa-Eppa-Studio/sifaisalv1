@@ -30,8 +30,8 @@ class ListApprovalSPPS extends ListRecords
         return [
             'Semua'     =>  Tab::make(),
             'Proses'    =>  Tab::make()->modifyQueryUsing(fn(Builder $query) => $query->where('ppspm_verification_status', 'in_progress')),
-            'Approved'  =>  Tab::make()->modifyQueryUsing(fn(Builder $query) => $query->where('ppspm_verification_status', 'approved')),
-            'Rejected'  =>  Tab::make()->modifyQueryUsing(fn(Builder $query) => $query->where('ppspm_verification_status', 'rejected')),
+            'Diterima'  =>  Tab::make()->modifyQueryUsing(fn(Builder $query) => $query->where('ppspm_verification_status', 'approved')),
+            'Ditolak'  =>  Tab::make()->modifyQueryUsing(fn(Builder $query) => $query->where('ppspm_verification_status', 'rejected')),
         ];
     }
 }
