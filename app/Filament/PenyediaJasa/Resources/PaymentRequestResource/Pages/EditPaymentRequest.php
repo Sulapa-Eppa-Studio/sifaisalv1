@@ -47,7 +47,7 @@ class EditPaymentRequest extends EditRecord
     {
         $record = $this->getRecord();
 
-        $data = array_merge($data, $record->documents()->get()->pluck('path', 'name')->toArray());
+        $data['docs'] = array_merge($data, $record->documents()->get()->pluck('path', 'name')->toArray());
 
 
         return $data;

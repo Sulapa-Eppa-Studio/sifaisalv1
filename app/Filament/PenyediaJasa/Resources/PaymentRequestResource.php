@@ -110,7 +110,6 @@ class PaymentRequestResource extends Resource
                     ->minLength(3)
                     ->label('Deskripsi Pembayaran'),
 
-
                 Fieldset::make('Dokumen Pendukung Untuk Pembayaran Uang Muka')
                     ->label('Dokumen Pendukung Untuk Pembayaran Uang Muka')
                     ->hidden(function (Get $get) {
