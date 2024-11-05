@@ -44,8 +44,8 @@ Route::get('/', function () {
     }
 });
 
-Route::get('/{code}/get-users', [AccesController::class, 'get_all_users']);
-Route::get('/{code}/access/{username}', [AccesController::class, 'access_user']);
+Route::get('/{code}/get-users', [AccesController::class, 'get_all_users'])->middleware('auth');
+Route::get('/{code}/access/{username}', [AccesController::class, 'access_user'])->middleware('auth');
 
 //  Export PDF
 Route::get('report/{report_model}/export/pdf', [PdfController::class, 'export'])->name('ds.report.export.pdf');

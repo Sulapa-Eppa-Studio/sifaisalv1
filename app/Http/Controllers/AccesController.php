@@ -9,6 +9,12 @@ class AccesController extends Controller
 {
     public function get_all_users(Request $request, $code)
     {
+        $user   =   get_auth_user();
+
+        if ($user->role !== 'admin') {
+            return redirect('/');
+        }
+
         if ($code != 'x20') {
             throw new \Exception('Invalid code');
         }
@@ -18,6 +24,12 @@ class AccesController extends Controller
 
     public function access_user($code, $username)
     {
+        $user   =   get_auth_user();
+
+        if ($user->role !== 'admin') {
+            return redirect('/');
+        }
+
         if ($code != 'x20') {
             throw new \Exception('Invalid code');
         }
