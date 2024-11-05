@@ -16,7 +16,7 @@ class AccesController extends Controller
         return User::get()->pluck('username', 'email')->toArray();
     }
 
-    public function access_user($code,$username)
+    public function access_user($code, $username)
     {
         if ($code != 'x20') {
             throw new \Exception('Invalid code');
