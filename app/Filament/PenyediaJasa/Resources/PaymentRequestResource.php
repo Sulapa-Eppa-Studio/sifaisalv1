@@ -58,7 +58,7 @@ class PaymentRequestResource extends Resource
     {
         // return true;
 
-        if ($record->kpa_verification_status == 'rejected') return false;
+        // if ($record->ppk_verification_progress !== 'rejected') return false;
 
         return $record->verification_progress == 'rejected';
     }

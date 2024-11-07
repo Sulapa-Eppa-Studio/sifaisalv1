@@ -312,7 +312,11 @@ class ApprovalSPPResource extends Resource
                     ->label('Tolak')
                     ->requiresConfirmation()
                     ->disabled(function (TermintSppPpk $record) {
-                        return $record->ppspm_verification_status !== 'in_progress';
+                        if ($record->request_reject === 1) {
+                            return false;
+                        } else {
+                            return $record->ppspm_verification_status !== 'in_progress';
+                        }
                     })
                     ->modalWidth('xl')
                     ->form([
@@ -338,7 +342,10 @@ class ApprovalSPPResource extends Resource
                             'ppspm_verification_status' => 'rejected',
                             'ppspm_rejection_reason'    => $data['reject_reason'],
                             'ppspm_id'                  => get_auth_user()->spm->id,
+                            'request_reject'            => false,
                         ]);
+
+
 
                         Notification::make()
                             ->title('Permohonan Pembayaran Ditolak')

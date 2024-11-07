@@ -35,9 +35,9 @@ class TermintSppPpkResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        if ($record instanceof TermintSppPpk) {
-            if ($record->payment_request?->kpa_verification_status == 'rejected') return false;
-        }
+        // if ($record instanceof TermintSppPpk) {
+        //     if ($record->payment_request?->kpa_verification_status == 'rejected') return false;
+        // }
 
         return $record->ppspm_verification_status == 'rejected';
     }
@@ -313,12 +313,14 @@ class TermintSppPpkResource extends Resource
                     ->label('Status Verifikasi')
                     ->badge()
                     ->colors([
+                        'warning' => 'not_available',
                         'primary' => 'in_progress',
                         'success' => 'approved',
                         'danger'  => 'rejected',
                     ])
                     ->formatStateUsing(function ($state) {
                         $labels = [
+                            'not_available' => 'Belum Diproses',
                             'in_progress' => 'Sedang Diproses',
                             'approved'    => 'Disetujui',
                             'rejected'    => 'Ditolak',
