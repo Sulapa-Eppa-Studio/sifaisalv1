@@ -123,6 +123,11 @@ class SPMRequestAprovalResource extends Resource
                     ->prefix('#')
                     ->sortable(),
 
+                TextColumn::make('payment_request.contract.work_package')
+                    ->label('Paket Pekerjaan')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('spm_value')
                     ->label('Nilai SPM')
                     ->numeric()

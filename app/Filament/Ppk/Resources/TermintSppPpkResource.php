@@ -292,6 +292,11 @@ class TermintSppPpkResource extends Resource
                     ->label('No. Pengajuan')
                     ->prefix('#'),
 
+                Tables\Columns\TextColumn::make('contract.work_package')
+                    ->label('Paket Pekerjaan')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('no_termint')
                     ->label('No. SPP'),
 

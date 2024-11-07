@@ -341,6 +341,11 @@ class PaymentRequestResource extends Resource
                     ->prefix('#')
                     ->searchable(),
 
+                TextColumn::make('contract.work_package')
+                    ->label('Paket Pekerjaan')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
+
                 TextColumn::make('payment_stage')
                     ->label('Tahap Pembayaran')
                     ->prefix('Tahap ')

@@ -121,6 +121,11 @@ class PaymentRequestResource extends Resource
                     ->prefix('#')
                     ->searchable(),
 
+                TextColumn::make('contract.work_package')
+                    ->label('Paket Pekerjaan')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
+
                 TextColumn::make('payment_stage')
                     ->label('Tahap Pembayaran')
                     ->prefix('Tahap ')
@@ -195,8 +200,8 @@ class PaymentRequestResource extends Resource
                         $record->update([
                             'ppk_verification_status'   =>  'approved',
                             'ppk_id'                    =>  get_auth_user()->ppk->id,
-                            // 'verification_progress'     =>  'ppspm',
-                            // 'ppspm_verification_status' =>  'in_progress',
+                            'verification_progress'     =>  'ppspm',
+                            'ppspm_verification_status' =>  'in_progress',
                         ]);
 
                         Notification::make('x_not')

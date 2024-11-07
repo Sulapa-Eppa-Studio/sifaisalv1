@@ -195,6 +195,11 @@ class ApprovalSPPResource extends Resource
                 TextColumn::make('contract.contract_number')
                     ->label('No. Kontrak'),
 
+                TextColumn::make('contract.work_package')
+                    ->label('Paket Pekerjaan')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
+
                 TextColumn::make('payment_request.request_number')
                     ->label('No. Permintaan')
                     ->prefix('#'),

@@ -79,6 +79,11 @@ class EditPaymentRequest extends EditRecord
             $data['contract_number']        =   $contract->contract_number;
             $data['service_provider_id']    =   $sp_id;
 
+            $data['ppk_verification_status']        =   'in_progress';
+            $data['ppspm_verification_status']      =   'not_available';
+            $data['treasurer_verification_status']  =   'not_available';
+            $data['kpa_verification_status']        =   'not_available';
+
             $record->update($data);
 
             if ($record instanceof PaymentRequest) {
