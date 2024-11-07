@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Spm\Resources\SPMRequestResource\Pages;
 use App\Filament\Spm\Resources\SPMRequestResource\RelationManagers;
+use App\Models\PaymentRequest;
 use App\Models\PPK;
 use App\Models\TermintSppPpk;
 use Filament\Forms\Components\Fieldset;
@@ -312,7 +313,19 @@ class SPMRequestResource extends Resource
                     }),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->after(function ($record) {
+                    try {
+                        PaymentRequest::where('id', $record->payment_request_id)->update(['request_reject' => true]);
+                        TermintSppPpk::where('id', $record->ppk_request_id)->update(['request_reject' => true]);
+                    } catch (\Exception $e) {
+                        Notification::make()
+                            ->title('Penghapusan Gagal')
+                            ->body('Terjadi kesalahan saat menghapus SPM.')
+                            ->danger()
+                            ->send();
+                        return false; // Batalkan penghapusan
+                    }
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

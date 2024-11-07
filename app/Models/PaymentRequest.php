@@ -33,6 +33,7 @@ class PaymentRequest extends Model
         'treasurer_id',
         'kpa_verification_status',
         'kpa_rejection_reason',
+        'request_reject',
         'kpa_id',
     ];
 

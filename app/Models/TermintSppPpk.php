@@ -20,7 +20,8 @@ class TermintSppPpk extends Model
         'ppspm_rejection_reason',
         'payment_request_id',
         'spp_date',
-        'ppspm_id'
+        'ppspm_id',
+        'request_reject',
     ];
 
     public function user()

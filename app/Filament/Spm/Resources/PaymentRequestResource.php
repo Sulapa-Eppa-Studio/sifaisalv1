@@ -440,7 +440,11 @@ class PaymentRequestResource extends Resource
                     ->label('Tolak')
                     ->requiresConfirmation()
                     ->disabled(function (PaymentRequest $record) {
-                        return $record->ppspm_verification_status !== 'in_progress';
+                        if ($record->request_reject === 1) {
+                            return false;
+                        } else {
+                            return $record->ppspm_verification_status !== 'in_progress';
+                        }
                     })
                     ->modalWidth('xl')
                     ->form([
@@ -463,14 +467,16 @@ class PaymentRequestResource extends Resource
                     ])
                     ->action(function (PaymentRequest $record, array $data) {
 
+
                         $record->update([
-                            'verification_progress'         =>  'rejected',
-                            'ppk_verification_status'       =>  'rejected',
-                            'ppk_rejection_reason'          =>  'Ditolak oleh SPM',
+                            'kpa_verification_status'       =>  'rejected',
+                            'treasurer_verification_status' =>  'rejected',
                             'ppspm_verification_status'     =>  'rejected',
                             'ppspm_rejection_reason'        =>  $data['reject_reason'],
                             'ppspm_id'                      =>  get_auth_user()->spm->id,
+                            'request_reject'                =>  false,
                         ]);
+
 
                         Notification::make()
                             ->title('Permohonan Pembayaran Ditolak')

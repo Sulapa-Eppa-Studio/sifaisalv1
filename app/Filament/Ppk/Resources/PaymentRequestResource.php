@@ -87,6 +87,42 @@ class PaymentRequestResource extends Resource
                     ->columnSpanFull()
                     ->label('Deskripsi Pembayaran'),
 
+                Fieldset::make('Progres Verifikasi Petugas PPSPM')
+                    ->visibleOn(['view', 'edit'])
+                    ->hidden(function ($record) {
+                        return $record?->ppspm_verification_status === 'not_available';
+                    })
+                    ->schema([
+
+                        TextInput::make('spm.full_name')
+                            ->label('Petugas PPSPM')
+                            ->formatStateUsing(function ($record) {
+                                return $record?->spm?->full_name ?? 'Belum Tersedia';
+                            })
+                            ->disabled(),
+
+                        TextInput::make('ppspm_verification_status')
+                            ->label('Status Verifikasi Petugas PPSPM')
+                            ->formatStateUsing(function ($state, $record) {
+                                return match ($state) {
+                                    'not_available' => 'Belum Tersedia',
+                                    'in_progress' => 'Dalam Proses',
+                                    'approved' => 'Disetujui',
+                                    'rejected' => 'Ditolak',
+                                    default => $state,
+                                };
+                            })
+                            ->disabled(),
+
+                        RichEditor::make('ppspm_rejection_reason')
+                            ->label('Alasan Penolakan PPSPM')
+                            ->columnSpanFull()
+                            ->hidden(function ($state) {
+                                return !$state ? true : false;
+                            })
+                            ->disabled(),
+                    ]),
+
                 self::getPDFs(),
             ]);
     }
@@ -149,12 +185,33 @@ class PaymentRequestResource extends Resource
                     ->label('Status Verifikasi PPK')
                     ->badge()
                     ->colors([
+                        'warning' => 'not_available',
                         'primary' => 'in_progress',
                         'success' => 'approved',
                         'danger'  => 'rejected',
                     ])
                     ->formatStateUsing(function ($state) {
                         $labels = [
+                            'not_available' => 'Belum Diproses',
+                            'in_progress' => 'Sedang Diproses',
+                            'approved'    => 'Disetujui',
+                            'rejected'    => 'Ditolak',
+                        ];
+                        return $labels[$state] ?? ucfirst($state);
+                    })
+                    ->sortable(),
+                TextColumn::make('ppspm_verification_status')
+                    ->label('Status Verifikasi SPM')
+                    ->badge()
+                    ->colors([
+                        'warning' => 'not_available',
+                        'primary' => 'in_progress',
+                        'success' => 'approved',
+                        'danger'  => 'rejected',
+                    ])
+                    ->formatStateUsing(function ($state) {
+                        $labels = [
+                            'not_available' => 'Belum Diproses',
                             'in_progress' => 'Sedang Diproses',
                             'approved'    => 'Disetujui',
                             'rejected'    => 'Ditolak',
@@ -216,7 +273,11 @@ class PaymentRequestResource extends Resource
                     ->label('Tolak')
                     ->requiresConfirmation()
                     ->disabled(function (PaymentRequest $record) {
-                        return $record->ppk_verification_status !== 'in_progress';
+                        if ($record->ppspm_verification_status === 'rejected' && $record->ppk_verification_status === 'approved') {
+                            return false;
+                        } else {
+                            return $record->ppk_verification_status !== 'in_progress';
+                        }
                     })
                     ->modalWidth('xl')
                     ->form([
