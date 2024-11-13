@@ -84,7 +84,7 @@ class PaymentRequestResource extends Resource
             ->columns(2)
             ->schema([
 
-                TextInput::make('contract.contract_number')
+                TextInput::make('contract.contract_number')->label('Nomor Kontrak')
                     ->required(),
 
                 TextInput::make('request_number')
