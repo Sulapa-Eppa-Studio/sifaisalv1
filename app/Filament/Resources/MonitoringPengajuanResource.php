@@ -454,7 +454,7 @@ class MonitoringPengajuanResource extends Resource
 
                 TextColumn::make('created_at')
                     ->label('Dibuat Pada')
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->dateTime(),
 
                 TextColumn::make('updated_at')

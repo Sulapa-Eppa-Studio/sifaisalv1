@@ -191,7 +191,7 @@ class MonitoringPengajuanResource extends Resource
 
                 TextColumn::make('created_at')
                     ->label('Dibuat Pada')
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->dateTime(),
 
                 TextColumn::make('updated_at')
@@ -199,6 +199,8 @@ class MonitoringPengajuanResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime(),
             ])
+
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 Filter::make('verification_status')
                     ->query(fn(Builder $query): Builder => $query->where('verification_status', 'approved'))

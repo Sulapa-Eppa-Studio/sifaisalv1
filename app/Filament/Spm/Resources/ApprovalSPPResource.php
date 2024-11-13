@@ -268,6 +268,7 @@ class ApprovalSPPResource extends Resource
                     ->label('Diperbarui Pada')
                     ->dateTime(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])
