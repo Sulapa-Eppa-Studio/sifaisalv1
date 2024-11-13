@@ -221,11 +221,10 @@ class ApprovalSPPResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->label('Sisa Kontrak')
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->formatStateUsing(function (TermintSppPpk $record) {
+                    ->formatStateUsing(function ($record) {
                         $contract = $record->contract;
-                        return format_number_new($contract->payment_value - $record->paid_value);
+                        return 'Rp. ' . number_format($contract->payment_value - $contract->paid_value, 0, ',', '.');
                     })
-                    ->prefix('Rp. ')
                     ->sortable(),
 
                 // Menggunakan badge pada 'ppspm_verification_status'

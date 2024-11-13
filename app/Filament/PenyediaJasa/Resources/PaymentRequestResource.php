@@ -467,19 +467,19 @@ class PaymentRequestResource extends Resource
 
                     ]),
 
-                Fieldset::make('Progres Verifikasi Petugas PPK')
+                Fieldset::make('Progres Verifikasi PPK')
                     ->visibleOn(['view', 'edit'])
                     ->schema([
 
                         TextInput::make('ppk.full_name')
-                            ->label('Petugas PPK')
+                            ->label('PPK')
                             ->formatStateUsing(function ($record) {
                                 return $record?->ppk?->full_name ?? 'Belum Tersedia';
                             })
                             ->disabled(),
 
                         TextInput::make('ppk_verification_status')
-                            ->label('Status Verifikasi Petugas PPK')
+                            ->label('Status Verifikasi PPK')
                             ->formatStateUsing(function ($state) {
                                 return match ($state) {
                                     'not_available' => 'Belum Tersedia',

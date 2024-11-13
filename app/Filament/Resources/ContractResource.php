@@ -108,7 +108,7 @@ class ContractResource extends Resource
 
 
                 Forms\Components\Select::make('ppk_id')
-                    ->label('Petugas PPK (Pejabat Pembuat Komitmen)')
+                    ->label('PPK (Pejabat Pembuat Komitmen)')
                     ->searchable()
                     ->options(function () {
                         $ppks = PPK::get();
@@ -121,7 +121,7 @@ class ContractResource extends Resource
 
                         return $options;
                     })
-                    ->placeholder('Pilih NIP Petugas PPK')
+                    ->placeholder('Pilih NIP PPK')
                     ->required(),
 
                 Forms\Components\Select::make('work_package')
