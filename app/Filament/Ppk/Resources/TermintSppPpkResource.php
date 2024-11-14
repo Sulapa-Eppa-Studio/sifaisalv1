@@ -76,6 +76,7 @@ class TermintSppPpkResource extends Resource
 
                         $record = PaymentRequest::where('contract_number', $contract?->contract_number)
                             ->where('ppk_verification_status', 'approved')
+                            ->whereNot('verification_progress', 'done')
                             ->get();
 
                         return $record->pluck('request_number', 'id');

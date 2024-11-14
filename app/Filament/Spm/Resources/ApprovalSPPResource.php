@@ -14,11 +14,21 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ButtonAction;
-use App\Enums\FileType;
+use App\Models\Contract;
+use App\Models\Document;
+use App\Models\TermintSppPpkFile;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action as ActionFile;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Filament\Support\RawJs;
 use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\TextColumn;
 
@@ -60,124 +70,40 @@ class ApprovalSPPResource extends Resource
                     ->label('No. Kontrak')
                     ->relationship('contract', 'contract_number')
                     ->required(),
+
                 Forms\Components\TextInput::make('no_termint')
                     ->label('No. SPP')
                     ->required(),
+
                 Forms\Components\TextInput::make('description')
                     ->label('Uraian Pembayaran SPP-PPK')
                     ->required(),
+
                 Forms\Components\TextInput::make('payment_value')
                     ->label('Nilai Permintaan Pembayaran')
+
                     ->required()->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)->prefix('Rp'),
                 Forms\Components\Toggle::make('has_advance_payment')
                     ->label('Uang Muka')
                     ->reactive(),
-                Forms\Components\Fieldset::make('Pilih Dokumen Yang Akan Diunggah')
-                    ->schema(function (Forms\Components\Component $component) {
-                        return self::getDocumentFields($component->getState()['has_advance_payment'] ?? false);
-                    })
-                    ->columns(2),
+
+                self::getDataContract(),
+
+                self::getFiles(),
+
+                Fieldset::make('payment_request')
+                    ->relationship('payment_request')
+                    ->label('Dokumen Penyedia Jasa')
+                    ->columns(2)
+                    ->schema(self::getPenyediaFields()),
+
+
             ]);
     }
 
-    protected static function getDocumentFields(bool $hasAdvancePayment): array
+    protected static function getDocumentFields(bool $hasAdvancePayment)
     {
-        $pdfValidation = [
-            'acceptedFileTypes' => ['application/pdf'],
-            'maxSize' => 32768, // 2MB
-        ];
-
-        if ($hasAdvancePayment) {
-            return [
-                Forms\Components\FileUpload::make('files.' . FileType::SURAT_PERMOHONAN_PEMBAYARAN_UANG_MUKA->value)
-                    ->label('Surat Permohonan Pembayaran Uang Muka')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::RINCIAN_PENGGUNAAN_UANG_MUKA->value)
-                    ->label('Rincian Penggunaan Uang Muka')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::SPTJB->value)
-                    ->label('SPTJB')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::BA_SERAH_TERIMA_SAKTI->value)
-                    ->label('BA. Serah Terima dari Aplikasi SAKTI')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::KUITANSI->value)
-                    ->label('Kuitansi')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::BERITA_ACARA_PEMBAYARAN->value)
-                    ->label('Berita Acara Pembayaran')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::BUKTI_PAJAK->value)
-                    ->label('Bukti Pajak')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::JAMINAN_UANG_MUKA->value)
-                    ->label('Jaminan Uang Muka')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::KARWAS_SAKTI->value)
-                    ->label('Karwas dari Aplikasi SAKTI')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::SPP->value)
-                    ->label('SPP')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::RINGKASAN_KONTRAK->value)
-                    ->label('Ringkasan Kontrak')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-            ];
-        } else {
-            return [
-                Forms\Components\FileUpload::make('files.' . FileType::KARWAS->value)
-                    ->label('Karwas')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::KUITANSI->value)
-                    ->label('Kuitansi')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::BAPP_BAST->value)
-                    ->label('BAPP / BAST')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::SPP->value)
-                    ->label('SPP')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::BA_SERAH_TERIMA->value)
-                    ->label('BA Serah Terima')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::SURAT_PERMOHONAN_PENYEDIA_JASA->value)
-                    ->label('Surat Permohonan dari Penyedia Jasa')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::BAP->value)
-                    ->label('BAP')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::RINGKASAN_KONTRAK->value)
-                    ->label('Ringkasan Kontrak')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::BUKTI_PEMBAYARAN_PAJAK->value)
-                    ->label('Surat Setoran Pajak (SSP)')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-                Forms\Components\FileUpload::make('files.' . FileType::SPTJB->value)
-                    ->label('SPTJB')
-                    ->required()->acceptedFileTypes($pdfValidation['acceptedFileTypes'])
-                    ->maxSize($pdfValidation['maxSize'])->directory('termint_files'),
-            ];
-        }
+        return self::getFiles();
     }
 
     public static function table(Table $table): Table
@@ -273,18 +199,6 @@ class ApprovalSPPResource extends Resource
             ])
             ->actions([
 
-                Action::make('viewFiles')
-                    ->label('Lihat File')
-                    ->icon('heroicon-o-eye')
-                    ->modalHeading(fn(TermintSppPpk $record): string => "Daftar File untuk {$record->no_termint}")
-                    ->modalWidth('6xl')
-                    ->modalContent(function (TermintSppPpk $record) {
-                        return view('livewire.view-files-modal', ['record' => $record]);
-                    })
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Tutup'),
-
-
                 Tables\Actions\ViewAction::make(),
 
                 Tables\Actions\Action::make('approve_btn')
@@ -295,10 +209,25 @@ class ApprovalSPPResource extends Resource
                         return $record->ppspm_verification_status !== 'in_progress';
                     })
                     ->action(function (TermintSppPpk $record, array $data) {
+
                         $record->update([
                             'ppspm_verification_status' => 'approved',
                             'ppspm_id'                  => get_auth_user()->spm->id,
                         ]);
+
+                        $payment_request = $record->payment_request;
+
+                        $payment_request->update([
+                            'ppspm_verification_status'     =>  'approved',
+                            'ppspm_id'                      =>  get_auth_user()->spm->id,
+                            'verification_progress'         =>  'treasurer',
+                            'treasurer_verification_status' =>  'in_progress',
+                        ]);
+
+                        Notification::make()
+                            ->title('Permohonan Pembayaran Disetujui')
+                            ->body('Pengajuan Pembayaran #' . $payment_request->contract_number . ' telah disetujui.')
+                            ->sendToDatabase($payment_request->service_provider->user);
 
                         Notification::make()
                             ->title('Permohonan Pembayaran Disetujui')
@@ -338,6 +267,7 @@ class ApprovalSPPResource extends Resource
                             ->required(),
                     ])
                     ->action(function (TermintSppPpk $record, array $data) {
+
                         $record->update([
                             'ppspm_verification_status' => 'rejected',
                             'ppspm_rejection_reason'    => $data['reject_reason'],
@@ -345,7 +275,21 @@ class ApprovalSPPResource extends Resource
                             'request_reject'            => false,
                         ]);
 
+                        $payment_request = $record->payment_request;
 
+                        $payment_request->update([
+                            'kpa_verification_status'       =>  'rejected',
+                            'treasurer_verification_status' =>  'rejected',
+                            'ppspm_verification_status'     =>  'rejected',
+                            'ppspm_rejection_reason'        =>  $data['reject_reason'],
+                            'ppspm_id'                      =>  get_auth_user()->spm->id,
+                            'request_reject'                =>  false,
+                        ]);
+
+                        Notification::make()
+                            ->title('Permohonan Pembayaran Ditolak')
+                            ->body('Permohonan Anda ditolak oleh PP-SPM')
+                            ->sendToDatabase($payment_request->service_provider->user);
 
                         Notification::make()
                             ->title('Permohonan Pembayaran Ditolak')
@@ -378,6 +322,169 @@ class ApprovalSPPResource extends Resource
             'index' => Pages\ListApprovalSPPS::route('/'),
             'create' => Pages\CreateApprovalSPP::route('/create'),
             'edit' => Pages\EditApprovalSPP::route('/{record}/edit'),
+            'view' => Pages\ViewApprovalSPP::route('/{record}/view'),
         ];
+    }
+
+    public static function getPenyediaFields(): array
+    {
+        return [
+
+            TextInput::make('contract_number')->label('Nomor Kontrak')
+                ->required(),
+
+            TextInput::make('request_number')
+                ->required()
+                ->label('Nomor Permintaan')
+                ->maxLength(255),
+
+            TextInput::make('payment_value')
+                ->string()
+                ->required()
+                ->prefix('Rp. ')
+                ->stripCharacters(',')
+                ->columnSpanFull()
+                ->label('Nilai Pembayaran')
+                ->mask(RawJs::make('$money($input)')),
+
+            Textarea::make('payment_description')
+                ->required()
+                ->columnSpanFull()
+                ->label('Deskripsi Pembayaran'),
+
+            self::getPDFs(),
+
+        ];
+    }
+
+
+    public static function getPDFs()
+    {
+        return Repeater::make('documents')
+            ->relationship()
+            ->label('Daftar Dokumen Penyedia Jasa')
+            ->columnSpanFull()
+            ->grid(2)
+            ->schema([
+
+                TextInput::make('name')
+                    ->formatStateUsing(function ($state) {
+                        return str_replace('_', ' ', strtoupper($state));
+                    })
+                    ->label(''),
+
+                Actions::make([
+
+                    ActionFile::make('View')
+                        ->icon('heroicon-o-eye')
+                        ->label('Tampilkan')
+                        ->url(function (Document $record) {
+
+                            return asset('/storage/' . $record->path);
+                        }, true),
+
+                ])->inlineLabel(),
+
+            ]);
+    }
+
+
+    public static function getFiles()
+    {
+        return Repeater::make('files')
+            ->relationship()
+            ->label('Daftar Dokumen PPK')
+            ->columnSpanFull()
+            ->grid(2)
+            ->schema([
+
+                TextInput::make('file_type')
+                    ->formatStateUsing(function ($state) {
+                        return str_replace('_', ' ', strtoupper($state));
+                    })
+                    ->label(''),
+
+                Actions::make([
+
+                    ActionFile::make('View')
+                        ->icon('heroicon-o-eye')
+                        ->label('Tampilkan')
+                        ->url(function (TermintSppPpkFile $record) {
+
+                            return asset('/storage/' . $record->file_path);
+                        }, true),
+
+                ])->inlineLabel(),
+
+            ]);
+    }
+
+    public static function getDataContract()
+    {
+        return  Fieldset::make('Data Kontrak')
+            ->relationship('contract')
+            ->visibleOn('view')
+            ->schema([
+
+                TextInput::make('contract_number')
+                    ->label('Nomor Kontrak')
+                    ->required()
+                    ->maxLength(255),
+
+                DatePicker::make('contract_date')
+                    ->label('Tanggal Kontrak')
+                    ->required(),
+
+                TextInput::make('can_number')
+                    ->label('Nomor CAN')
+                    ->nullable(),
+
+                TextInput::make('work_package')
+                    ->label('Paket Pekerjaan')
+                    ->required(),
+
+                TextInput::make('execution_time')
+                    ->label('Masa Pelaksanaan (Hari Kalender)')
+                    ->numeric()
+                    ->suffix('Hari')
+                    ->required(),
+
+                Select::make('advance_payment')
+                    ->label('Pemberian Uang Muka')
+                    ->options([
+                        true => 'Ya',
+                        false => 'Tidak',
+                    ])
+                    ->required(),
+
+                TextInput::make('payment_stages')
+                    ->label('Jumlah Tahap Pembayaran')
+                    ->numeric()
+                    ->prefix('Tahap')
+                    ->nullable(),
+
+                TextInput::make('npwp')
+                    ->label('NPWP')
+                    ->maxLength(20)
+                    ->required(),
+
+                TextInput::make('bank_account_number')
+                    ->label('Nomor Rekening')
+                    ->maxLength(199)
+                    ->required(),
+
+                TextInput::make('working_unit')
+                    ->label('Satuan Kerja')
+                    ->required(),
+
+                TextInput::make('payment_value')
+                    ->label('Nilai Kontrak')
+                    ->prefix('Rp. ')
+                    ->columnSpanFull()
+                    ->mask(RawJs::make('$money($input)'))
+                    ->numeric()
+                    ->required(),
+
+            ]);
     }
 }

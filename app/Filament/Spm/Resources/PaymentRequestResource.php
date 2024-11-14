@@ -44,10 +44,12 @@ class PaymentRequestResource extends Resource
 
     protected static ?string $navigationLabel = 'Verifikasi Dok. Pendukung';
 
-
-
-
     protected static ?string $navigationGroup = 'Menu Utama';
+
+    public static function canAccess(): bool
+    {
+        return false;
+    }
 
     public static function canCreate(): bool
     {
