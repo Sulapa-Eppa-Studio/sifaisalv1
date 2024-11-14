@@ -149,7 +149,15 @@ nav span.name-navbar {
     display: inline-block;
 }
 
-.fi-no-notification {}
+
+.fi-icon-btn-icon {
+    color: #fafafa !important;
+    /* make circle */
+    border-radius: 50% !important;
+    /* width: 50px !important;
+    height: 40px !important; */
+    background-color: #09090b !important;
+}
 
 /* .bg-custom-50 {
 
