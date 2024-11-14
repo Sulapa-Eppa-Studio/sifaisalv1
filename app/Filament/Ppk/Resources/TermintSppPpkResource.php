@@ -157,7 +157,7 @@ class TermintSppPpkResource extends Resource
     {
         $pdfValidation = [
             'acceptedFileTypes' => ['application/pdf'],
-            'maxSize' => 2048, // 2MB
+            'maxSize' => 32768, // 2MB
         ];
 
         if ($hasAdvancePayment) {
