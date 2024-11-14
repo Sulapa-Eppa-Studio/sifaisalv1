@@ -62,7 +62,7 @@ class UserResource extends Resource
                     ->image()
                     ->imageEditor()
                     ->columnSpanFull()
-                    ->maxSize(1024 * 4),
+                    ->maxSize(1024 * 32),
 
                 TextInput::make('name')
                     ->label('Nama Pengguna')
