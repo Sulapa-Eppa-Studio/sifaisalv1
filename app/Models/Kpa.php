@@ -10,4 +10,6 @@ class Kpa extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    protected $table = 'k_p_a_s';
 }

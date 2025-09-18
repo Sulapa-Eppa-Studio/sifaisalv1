@@ -22,7 +22,7 @@ function get_my_contracts_for_options_by_ppk()
     $contracts = $user->ppk ? $user->ppk->contracts : collect();
 
     // Pluck contract_number sebagai label dan id sebagai value
-    return $contracts->pluck('contract_number', 'id');
+    return $contracts?->pluck('contract_number', 'id');
 }
 
 

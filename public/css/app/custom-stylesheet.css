@@ -145,11 +145,6 @@ div.fi-topbar nav {
     display: none;
 }
 
-nav span.name-navbar {
-    display: inline-block;
-}
-
-
 .fi-icon-btn-icon {
     color: #fafafa !important;
     /* make circle */
@@ -159,7 +154,7 @@ nav span.name-navbar {
     background-color: #09090b !important;
 }
 
-/* .bg-custom-50 {
 
-    background-color: var(--c-50) !important;
-} */
+nav span.name-navbar {
+    display: inline-block;
+}
