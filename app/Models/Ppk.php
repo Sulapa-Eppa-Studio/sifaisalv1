@@ -5,16 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Ppk extends Model
+class PPK extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    protected $table = 'p_p_k_s';
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class, 'ppk_id', 'id');
+    }
+
+    // Di model PPK
     public function workPackages()
     {
-        return $this->morphToMany(WorkPackage::class, 'model', 'role_has_work_packages', 'model_id', 'work_package');
+        return $this->morphToMany(WorkPackage::class, 'role', 'role_has_work_packages');
     }
 }
